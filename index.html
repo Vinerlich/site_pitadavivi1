@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitadavivi - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Ícones Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+                <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+            </filter>
+        </defs>
+    </svg>
+
+    <header class="logo-container">
+        <img src="img/Logo.png" alt="Pitadavivi" class="header-logo">
+    </header>
+
+    <nav class="main-nav">
+        <div class="menu-links">
+            <a href="#sobremesas" class="blob-btn">Sobremesas
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                </span></span>
+            </a>
+            <a href="#bolos" class="blob-btn">Bolos
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                </span></span>
+            </a>
+            <a href="#paes" class="blob-btn">Pães
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                </span></span>
+            </a>
+        </div>
+
+        <div class="cart-summary">
+            🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
+        </div>
+    </nav>
+
+    <main>
+        <section id="sobremesas" class="product-section">
+            <h2>Sobremesas</h2>
+            <div class="grid-container" id="grid-sobremesas"></div>
+        </section>
+
+        <section id="bolos" class="product-section">
+            <h2>Bolos</h2>
+            <h3>Caseirinhos</h3>
+            <div class="grid-container" id="grid-caseirinhos"></div>
+            <h3>Festa</h3>
+            <div class="grid-container" id="grid-festa"></div>
+        </section>
+
+        <section id="paes" class="product-section">
+            <h2>Pães e Tortas</h2>
+            <div class="grid-container" id="grid-paes"></div>
+        </section>
+
+        <section class="shipping-section">
+            <div class="shipping-box">
+                <h3>Calcular Entrega</h3>
+                <input type="text" id="cep-input" placeholder="00000-000" maxlength="9">
+                <button class="action-btn" onclick="buscarCep()">Calcular Frete</button>
+                <div id="shipping-result" style="margin-top:15px;"></div>
+            </div>
+            <button class="checkout-btn" onclick="finalizarCompra()">Finalizar Pedido via WhatsApp</button>
+        </section>
+    </main>
+
+    <div id="promo-modal" class="modal">
+        <div class="modal-content">
+            <h2>🍰 Boas-vindas!</h2>
+            <p>Usa o cupom <strong>SUBLIME10</strong> para 10% de desconto!</p>
+            <button class="action-btn" style="margin-top:20px" onclick="fecharModal()">Começar a Comprar</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Confeitaria Sublime Ltda. | Todos os direitos reservados.</p>
+        <div class="social-links">
+            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://wa.me/5511999999999" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante WhatsApp -->
+    <a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

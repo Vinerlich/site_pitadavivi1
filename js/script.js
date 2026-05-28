@@ -5,9 +5,7 @@ let totalCompra = 0;
 const catalogoProdutos = {
     'grid-sobremesas': [
         { nome: 'Pudim de Leite', preco: 75.30, img: 'sobr1.jpg' },
-        { nome: 'Ovo de Colher Brigadeiro de Café', preco: 12.00, img: 'OvodeColher .webp' },
-        /*{ nome: 'Pavê de Chocolate', preco: 16.00, img: 'pave.jpg' },
-        { nome: 'Cheesecake de Frutas Vermelhas', preco: 18.00, img: 'cheesecake.jpg' }*/
+        { nome: 'Ovo de Colher Brigadeiro de Café', preco: 12.00, img: 'OvodeColher .webp' }
     ],
     'grid-caseirinhos': [
         { nome: 'Bolo de Cenoura com Brigadeiro', preco: 37.90, img: 'BoloCenoura.jpg' },
@@ -19,11 +17,37 @@ const catalogoProdutos = {
         { nome: 'Bolo Red Velvet', preco: 173.80, img: 'RedVelvet.jpg' },
         { nome: 'Naked Cake Frutas Vermelhas', preco: 198.90, img: 'NakedCake.jpg' }
     ],
-    'grid-paes': [
+    'grid-paes-doces': [
         { nome: 'Rosca Creme de Coco', preco: 66.80, img: 'RoscaCoco.jpg' },
-        { nome: 'Tranças de Canela e Açúcar', preco: 38.50, img: 'TrancasCanelaAcucar.jpeg' },
+        { nome: 'Tranças de Canela e Açúcar', preco: 38.50, img: 'TrancasCanelaAcucar.jpeg' }
+    ],
+    'grid-paes-salgados': [
+        { nome: 'Pão de Queijo Recheado', preco: 15.00, img: 'pao-queijo.jpg' }
+    ],
+    'grid-tortas-doces': [
+        { nome: 'Torta de Limão Sublime', preco: 45.00, img: 'torta-limao.jpg' }
+    ],
+    'grid-tortas-salgadas': [
         { nome: 'Mini Torta de Frango Cremoso', preco: 21.90, img: 'MiniTorta.webp' }
-    ]
+    ],
+    'grid-geleias': [
+        { nome: 'Geleia de Morango Artesanal', preco: 18.50, img: 'geleia-morango.jpg' }
+    ],
+    'grid-antepastos': [
+        { nome: 'Caponata de Berinjela', preco: 22.00, img: 'caponata.jpg' }
+    ],
+    'grid-pascoa': [
+        { nome: 'Ovo de Páscoa Crocante', preco: 85.00, img: 'ovo-crocante.jpg' }
+    ],
+    'grid-dia-das-maes': [],
+    'grid-dia-dos-namorados': [],
+    'grid-copa-do-mundo': [],
+    'grid-dia-dos-pais': [],
+    'grid-criancas-professores': [],
+    'grid-natal': [
+        { nome: 'Panetone Trufado', preco: 65.00, img: 'panetone.jpg' }
+    ],
+    'grid-ano-novo': []
 };
 
 window.onload = () => {
@@ -32,6 +56,7 @@ window.onload = () => {
         if(modal) modal.style.display = 'block'; 
     }, 1000);
     renderizarCatalogo();
+    configurarCliquesSubmenu(); // Ativa o fechamento inteligente dos submenus flutuantes
 };
 
 function fecharModal() { 
@@ -59,9 +84,16 @@ function renderizarCatalogo() {
         const container = document.getElementById(idGrid);
         if (container) {
             container.innerHTML = ''; // Limpa o container antes de renderizar
-            catalogoProdutos[idGrid].forEach(produto => {
-                container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img);
-            });
+            
+            // Se a categoria tiver produtos cadastrados, renderiza
+            if (catalogoProdutos[idGrid].length > 0) {
+                catalogoProdutos[idGrid].forEach(produto => {
+                    container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img);
+                });
+            } else {
+                // Caso não tenha produtos (comum em seções sazonais fora de época)
+                container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Em breve novidades nesta categoria!</p>`;
+            }
         }
     }
 }
@@ -112,4 +144,24 @@ function finalizarCompra() {
     
     const link = `https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`;
     window.open(link, '_blank');
+}
+
+// Fecha o submenu correspondente de forma dinâmica assim que o link é clicado
+function configurarCliquesSubmenu() {
+    const linksSubmenu = document.querySelectorAll('.submenu a');
+    
+    linksSubmenu.forEach(link => {
+        link.addEventListener('click', () => {
+            // Encontra a caixinha '.submenu' em que este link específico está dentro
+            const submenuContainer = link.closest('.submenu');
+            
+            if (submenuContainer) {
+                // Esconde temporariamente para sumir logo após o clique
+                submenuContainer.style.display = 'none';
+                setTimeout(() => {
+                    submenuContainer.style.display = '';
+                }, 600);
+            }
+        });
+    });
 }

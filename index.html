@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pitadavivi - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Ícones Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -33,18 +32,78 @@
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                 </span></span>
             </a>
-            <a href="#bolos" class="blob-btn">Bolos
+            
+            <div class="dropdown-item">
+                <a href="#bolos" class="blob-btn">Bolos <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    </span></span>
+                </a>
+                <div class="submenu">
+                    <a href="#grid-caseirinhos">Caseirinhos</a>
+                    <a href="#grid-festa">Festa</a>
+                </div>
+            </div>
+
+            <div class="dropdown-item">
+                <a href="#paes" class="blob-btn">Pães <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    </span></span>
+                </a>
+                <div class="submenu">
+                    <a href="#grid-paes-doces">Doces</a>
+                    <a href="#grid-paes-salgados">Salgados</a>
+                </div>
+            </div>
+
+            <div class="dropdown-item">
+                <a href="#tortas" class="blob-btn">Tortas <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    </span></span>
+                </a>
+                <div class="submenu">
+                    <a href="#grid-tortas-doces">Doces</a>
+                    <a href="#grid-tortas-salgadas">Salgadas</a>
+                </div>
+            </div>
+
+            <a href="#geleias" class="blob-btn">Geleias
                 <span class="blob-btn__inner"><span class="blob-btn__blobs">
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                 </span></span>
             </a>
-            <a href="#paes" class="blob-btn">Pães
+
+            <a href="#antepastos" class="blob-btn">Antepastos
                 <span class="blob-btn__inner"><span class="blob-btn__blobs">
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                 </span></span>
             </a>
+
+            <div class="dropdown-item">
+                <a href="#sazonais" class="blob-btn">Sazonais <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    </span></span>
+                </a>
+                <div class="submenu">
+                    <a href="#grid-pascoa">Páscoa</a>
+                    <a href="#grid-dia-das-maes">Dia das Mães</a>
+                    <a href="#grid-dia-dos-namorados">Dia dos Namorados</a>
+                    <a href="#grid-copa-do-mundo">Copa do Mundo</a>
+                    <a href="#grid-dia-dos-pais">Dia dos Pais</a>
+                    <a href="#grid-criancas-professores">Crianças / Professores</a>
+                    <a href="#grid-natal">Natal</a>
+                    <a href="#grid-ano-novo">Ano Novo</a>
+                </div>
+            </div>
         </div>
 
         <div class="cart-summary">
@@ -67,8 +126,49 @@
         </section>
 
         <section id="paes" class="product-section">
-            <h2>Pães e Tortas</h2>
-            <div class="grid-container" id="grid-paes"></div>
+            <h2>Pães</h2>
+            <h3>Doces</h3>
+            <div class="grid-container" id="grid-paes-doces"></div>
+            <h3>Salgados</h3>
+            <div class="grid-container" id="grid-paes-salgados"></div>
+        </section>
+
+        <section id="tortas" class="product-section">
+            <h2>Tortas</h2>
+            <h3>Doces</h3>
+            <div class="grid-container" id="grid-tortas-doces"></div>
+            <h3>Salgadas</h3>
+            <div class="grid-container" id="grid-tortas-salgadas"></div>
+        </section>
+
+        <section id="geleias" class="product-section">
+            <h2>Geleias</h2>
+            <div class="grid-container" id="grid-geleias"></div>
+        </section>
+
+        <section id="antepastos" class="product-section">
+            <h2>Antepastos</h2>
+            <div class="grid-container" id="grid-antepastos"></div>
+        </section>
+
+        <section id="sazonais" class="product-section">
+            <h2>Sazonais</h2>
+            <h3>Páscoa</h3>
+            <div class="grid-container" id="grid-pascoa"></div>
+            <h3>Dia das Mães</h3>
+            <div class="grid-container" id="grid-dia-das-maes"></div>
+            <h3>Dia dos Namorados</h3>
+            <div class="grid-container" id="grid-dia-dos-namorados"></div>
+            <h3>Copa do Mundo</h3>
+            <div class="grid-container" id="grid-copa-do-mundo"></div>
+            <h3>Dia dos Pais</h3>
+            <div class="grid-container" id="grid-dia-dos-pais"></div>
+            <h3>Dia das Crianças e Professores</h3>
+            <div class="grid-container" id="grid-criancas-professores"></div>
+            <h3>Natal</h3>
+            <div class="grid-container" id="grid-natal"></div>
+            <h3>Ano Novo</h3>
+            <div class="grid-container" id="grid-ano-novo"></div>
         </section>
 
         <section class="shipping-section">
@@ -99,7 +199,6 @@
         </div>
     </footer>
 
-    <!-- Botão Flutuante WhatsApp -->
     <a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>

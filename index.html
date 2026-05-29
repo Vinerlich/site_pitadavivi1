@@ -26,13 +26,28 @@
 
     <nav class="main-nav">
         <div class="menu-links">
+
+            <a href="#geleias" class="blob-btn">Geleias
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                </span></span>
+            </a>
+
+            <a href="#antepastos" class="blob-btn">Antepastos
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                </span></span>
+            </a>
+
             <a href="#sobremesas" class="blob-btn">Sobremesas
                 <span class="blob-btn__inner"><span class="blob-btn__blobs">
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                     <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                 </span></span>
             </a>
-            
+           
             <div class="dropdown-item">
                 <a href="#bolos" class="blob-btn">Bolos <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
                     <span class="blob-btn__inner"><span class="blob-btn__blobs">
@@ -56,6 +71,7 @@
                 <div class="submenu">
                     <a href="#grid-paes-doces">Doces</a>
                     <a href="#grid-paes-salgados">Salgados</a>
+                    <a href="#grid-paes-semgluten">Sem gluten</a>
                 </div>
             </div>
 
@@ -71,20 +87,6 @@
                     <a href="#grid-tortas-salgadas">Salgadas</a>
                 </div>
             </div>
-
-            <a href="#geleias" class="blob-btn">Geleias
-                <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                </span></span>
-            </a>
-
-            <a href="#antepastos" class="blob-btn">Antepastos
-                <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                    <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                </span></span>
-            </a>
 
             <div class="dropdown-item">
                 <a href="#sazonais" class="blob-btn">Sazonais <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
@@ -106,12 +108,32 @@
             </div>
         </div>
 
-        <div class="cart-summary">
-            🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
+        <div class="cart-container-wrapper" id="cart-wrapper">
+            <div class="cart-summary" onclick="toggleCarrinho(event)">
+                🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
+            </div>
+            <div class="cart-dropdown" id="cart-dropdown">
+                <div class="cart-items-list" id="cart-items-list">
+                    <p class="empty-cart-msg">Seu carrinho está vazio.</p>
+                </div>
+                <div class="cart-dropdown-footer">
+                    <button class="action-btn" onclick="solicitarConfirmacaoCompra()">Finalizar por WhatsApp</button>
+                </div>
+            </div>
         </div>
     </nav>
 
     <main>
+         <section id="geleias" class="product-section">
+            <h2>Geleias</h2>
+            <div class="grid-container" id="grid-geleias"></div>
+        </section>
+
+        <section id="antepastos" class="product-section">
+            <h2>Antepastos</h2>
+            <div class="grid-container" id="grid-antepastos"></div>
+        </section>
+
         <section id="sobremesas" class="product-section">
             <h2>Sobremesas</h2>
             <div class="grid-container" id="grid-sobremesas"></div>
@@ -141,16 +163,6 @@
             <div class="grid-container" id="grid-tortas-salgadas"></div>
         </section>
 
-        <section id="geleias" class="product-section">
-            <h2>Geleias</h2>
-            <div class="grid-container" id="grid-geleias"></div>
-        </section>
-
-        <section id="antepastos" class="product-section">
-            <h2>Antepastos</h2>
-            <div class="grid-container" id="grid-antepastos"></div>
-        </section>
-
         <section id="sazonais" class="product-section">
             <h2>Sazonais</h2>
             <h3>Páscoa</h3>
@@ -178,28 +190,40 @@
                 <button class="action-btn" onclick="buscarCep()">Calcular Frete</button>
                 <div id="shipping-result" style="margin-top:15px;"></div>
             </div>
-            <button class="checkout-btn" onclick="finalizarCompra()">Finalizar Pedido via WhatsApp</button>
+            <button class="checkout-btn" onclick="solicitarConfirmacaoCompra()">Finalizar Pedido via WhatsApp</button>
         </section>
     </main>
 
     <div id="promo-modal" class="modal">
         <div class="modal-content">
             <h2>🍰 Boas-vindas!</h2>
-            <p>Usa o cupom <strong>SUBLIME10</strong> para 10% de desconto!</p>
+            <p>Usa o cupom <strong>Contexto10</strong> para 10% de desconto na primeira compra!</p>
             <button class="action-btn" style="margin-top:20px" onclick="fecharModal()">Começar a Comprar</button>
         </div>
     </div>
 
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <h2>🛒 Quase lá!</h2>
+            <p>Seu pedido foi enviado ao WhatsApp!</p>
+            <p style="font-size: 0.95rem; margin-top: 10px; color: #666;">Deseja **limpar o seu carrinho** agora ou quer mantê-lo ativo para **adicionar mais itens**?</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <button class="action-btn" onclick="confirmarLimpezaCarrinho(true)">Concluir e Limpar Carrinho</button>
+                <button class="action-btn" style="background-color: #777 !important;" onclick="confirmarLimpezaCarrinho(false)">Manter Itens (Adicionar Mais)</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
-        <p>&copy; 2026 Confeitaria Sublime Ltda. | Todos os direitos reservados.</p>
+        <p>&copy; 2026 Pitadavivi Ltda. | Todos os direitos reservados.</p>
         <div class="social-links">
             <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
-            <a href="https://wa.me/5511999999999" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/5511987342562" target="_blank"><i class="fab fa-whatsapp"></i></a>
         </div>
     </footer>
 
-    <a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/5511987342562" class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
 

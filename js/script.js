@@ -192,7 +192,6 @@ function atualizarInterfaceCarrinho() {
 
         const labelTipo = item.tipo === 'Quilo' ? 'kg' : 'un';
 
-        // Estilização inline sutil para manter os itens organizados dentro do dropdown existente
         htmlItens += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #eee;">
                 <div style="flex: 1; padding-right: 10px;">
@@ -259,12 +258,11 @@ async function buscarCep() {
 }
 
 /* ==========================================================================
-   7. FLUXO WHATSAPP & MODAL DE CONFIRMAÇÃO (REQUISITO CHAVE)
+   7. FLUXO WHATSAPP & MODAL DE CONFIRMAÇÃO
    ========================================================================== */
 function solicitarConfirmacaoCompra() {
     if (carrinho.length === 0) return alert("O carrinho está vazio!");
     
-    // 1. Monta o texto legível e profissional do pedido para o WhatsApp
     let mensagem = "🍰 *Novo Pedido - Pitadavivi*\n\n";
     carrinho.forEach(item => {
         const rotuloVenda = item.tipo === 'Quilo' ? 'Kg' : 'Unid.';
@@ -282,11 +280,9 @@ function solicitarConfirmacaoCompra() {
         mensagem += `\n_(Frete a combinar na entrega)_`;
     }
     
-    // 2. Dispara o link externo abrindo uma nova aba do navegador
     const link = `https://wa.me/5511987342562?text=${encodeURIComponent(mensagem)}`;
     window.open(link, '_blank');
     
-    // 3. Abre o modal customizado na tela atual para colher a decisão do cliente
     const confirmModal = document.getElementById('confirm-modal');
     if (confirmModal) confirmModal.style.display = 'block';
 }
@@ -295,7 +291,6 @@ function confirmarLimpezaCarrinho(limpar) {
     const confirmModal = document.getElementById('confirm-modal');
     if (confirmModal) confirmModal.style.display = 'none';
 
-    // Se o cliente escolheu "Concluir e Limpar"
     if (limpar) {
         carrinho = [];
         valorFrete = 0;
@@ -307,7 +302,6 @@ function confirmarLimpezaCarrinho(limpar) {
         
         atualizarInterfaceCarrinho();
     }
-    // Se "limpar" for false, a função fecha o modal e mantém a lista de produtos intacta!
 }
 
 /* ==========================================================================
@@ -319,9 +313,14 @@ function configurarCliquesSubmenu() {
         link.addEventListener('click', () => {
             const submenuContainer = link.closest('.submenu');
             if (submenuContainer) {
+                // Remove o estilo temporariamente para fechar o menu no mobile/desktop
                 submenuContainer.style.display = 'none';
                 setTimeout(() => { submenuContainer.style.display = ''; }, 600);
             }
+            
+            // Otimização para fechar o carrinho se ele estiver aberto junto no mobile
+            const wrapper = document.getElementById('cart-wrapper');
+            if (wrapper) wrapper.classList.remove('active');
         });
     });
 }
@@ -329,9 +328,10 @@ function configurarCliquesSubmenu() {
 function toggleCarrinho(event) {
     event.stopPropagation();
     const wrapper = document.getElementById('cart-wrapper');
-    wrapper.classList.toggle('active');
+    if (wrapper) wrapper.classList.toggle('active');
 }
 
+// Fecha o carrinho ao clicar em qualquer lugar fora dele
 document.addEventListener('click', (event) => {
     const wrapper = document.getElementById('cart-wrapper');
     if (wrapper && !wrapper.contains(event.target)) {

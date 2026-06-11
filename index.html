@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,141 +9,182 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
         <defs>
             <filter id="goo">
                 <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo">
+                </feColorMatrix>
                 <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
             </filter>
         </defs>
     </svg>
 
-    <div class="header-sticky">
-        <header class="logo-container">
-            <img src="img/Logo.png" alt="Pitadavivi" class="header-logo">
-        </header>
+    <div class="logo-container">
+        <img src="img/Logo.png" alt="Pitadavivi" class="header-logo">
+    </div>
 
-        <nav class="main-nav">
-            <div class="menu-links">
+    <nav class="main-nav">
+        <div class="menu-links">
 
-                <a href="#geleias" class="blob-btn">Geleias
-                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+            <a href="#geleias" class="blob-btn">Geleias
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
                         <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                     </span></span>
-                </a>
+            </a>
 
-                <a href="#antepastos" class="blob-btn">Antepastos
-                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+            <a href="#antepastos" class="blob-btn">Antepastos
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
                         <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                     </span></span>
-                </a>
+            </a>
 
-                <a href="#sobremesas" class="blob-btn">Sobremesas
-                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+            <a href="#sobremesas" class="blob-btn">Sobremesas
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
                         <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                     </span></span>
-                </a>
-                
-                <div class="dropdown-item">
-                    <a href="#bolos" class="blob-btn dropdown-toggle">Bolos <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
-                        <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        </span></span>
-                    </a>
-                    <div class="submenu">
-                        <a href="#grid-caseirinhos">Caseirinhos</a>
-                        <a href="#grid-festa">Festa</a>
-                    </div>
-                </div>
+            </a>
 
-                <div class="dropdown-item">
-                    <a href="#paes" class="blob-btn dropdown-toggle">Pães <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
-                        <span class="blob-btn__inner"><span class="blob-btn__blobs">
+            <div class="dropdown-item">
+                <button type="button" class="blob-btn toggle-menu" onclick="window.location.href='#bolos'">Bolos <i
+                        class="fas fa-chevron-down arrow-icon" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         </span></span>
-                    </a>
-                    <div class="submenu">
-                        <a href="#grid-paes-doces">Doces</a>
-                        <a href="#grid-paes-salgados">Salgados</a>
-                        <a href="#grid-paes-semgluten">Sem gluten</a>
-                    </div>
-                </div>
-
-                <div class="dropdown-item">
-                    <a href="#tortas" class="blob-btn dropdown-toggle">Tortas <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
-                        <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        </span></span>
-                    </a>
-                    <div class="submenu">
-                        <a href="#grid-tortas-doces">Doces</a>
-                        <a href="#grid-tortas-salgadas">Salgadas</a>
-                    </div>
-                </div>
-
-                <div class="dropdown-item">
-                    <a href="#sazonais" class="blob-btn dropdown-toggle">Sazonais <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
-                        <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        </span></span>
-                    </a>
-                    <div class="submenu">
-                        <a href="#grid-pascoa">Páscoa</a>
-                        <a href="#grid-dia-das-maes">Dia das Mães</a>
-                        <a href="#grid-dia-dos-namorados">Dia dos Namorados</a>
-                        <a href="#grid-copa-do-mundo">Copa do Mundo</a>
-                        <a href="#grid-dia-dos-pais">Dia dos Pais</a>
-                        <a href="#grid-criancas-professores">Crianças / Professores</a>
-                        <a href="#grid-natal">Natal</a>
-                        <a href="#grid-ano-novo">Ano Novo</a>
-                    </div>
+                </button>
+                <div class="submenu">
+                    <a href="#grid-caseirinhos">Caseirinhos</a>
+                    <a href="#grid-festa">Festa</a>
                 </div>
             </div>
 
-            <div class="cart-container-wrapper" id="cart-wrapper">
-                <div class="cart-summary" onclick="toggleCarrinho(event)">
-                    🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
-                </div>
-                <div class="cart-dropdown" id="cart-dropdown">
-                    <div class="cart-items-list" id="cart-items-list">
-                        <p class="empty-cart-msg">Seu carrinho está vazio.</p>
-                    </div>
-                    <div class="cart-dropdown-footer">
-                        <button class="action-btn" onclick="solicitarConfirmacaoCompra()">Finalizar por WhatsApp</button>
-                    </div>
+            <div class="dropdown-item">
+                <button type="button" class="blob-btn toggle-menu" onclick="window.location.href='#paes'">Pães <i
+                        class="fas fa-chevron-down arrow-icon" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        </span></span>
+                </button>
+                <div class="submenu">
+                    <a href="#grid-paes-doces">Doces</a>
+                    <a href="#grid-paes-salgados">Salgados</a>
+                    <a href="#grid-paes-semgluten">Sem gluten</a>
                 </div>
             </div>
-        </nav>
-    </div> 
+
+            <div class="dropdown-item">
+                <button type="button" class="blob-btn toggle-menu" onclick="window.location.href='#tortas'">Tortas <i
+                        class="fas fa-chevron-down arrow-icon" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        </span></span>
+                </button>
+                <div class="submenu">
+                    <a href="#grid-tortas-doces">Doces</a>
+                    <a href="#grid-tortas-salgadas">Salgadas</a>
+                </div>
+            </div>
+
+            <div class="dropdown-item">
+                <button type="button" class="blob-btn toggle-menu" onclick="window.location.href='#sazonais'">Sazonais
+                    <i class="fas fa-chevron-down arrow-icon" style="font-size: 12px; margin-left: 5px;"></i>
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        </span></span>
+                </button>
+                <div class="submenu">
+                    <a href="#grid-pascoa">Páscoa</a>
+                    <a href="#grid-dia-das-maes">Dia das Mães</a>
+                    <a href="#grid-dia-dos-namorados">Dia dos Namorados</a>
+                    <a href="#grid-festa-junina-julina">Festa Junina/ Julina</a>
+                    <a href="#grid-copa-do-mundo">Copa do Mundo</a>
+                    <a href="#grid-dia-dos-pais">Dia dos Pais</a>
+                    <a href="#grid-criancas-professores">Crianças / Professores</a>
+                    <a href="#grid-natal">Natal</a>
+                    <a href="#grid-ano-novo">Ano Novo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-container-wrapper" id="cart-wrapper">
+            <div class="cart-summary" onclick="toggleCarrinho(event)">
+                🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
+            </div>
+            <div class="cart-dropdown" id="cart-dropdown">
+                <div class="cart-items-list" id="cart-items-list">
+                    <p class="empty-cart-msg">Seu carrinho ainda está vazio... Que tal recheá-lo com nossas delícias?
+                        👩‍🍳</p>
+                </div>
+                <div class="cart-dropdown-footer">
+                    <button class="action-btn" onclick="solicitarConfirmacaoCompra()">Finalizar por WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <main>
+
         <section id="geleias" class="product-section">
-            <h2>Geleias</h2>
+            <div class="section-header-premium">
+                <h2>Geleias</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Frutas selecionadas e doçura na medida exata</p>
+            </div>
             <div class="grid-container" id="grid-geleias"></div>
         </section>
 
         <section id="antepastos" class="product-section">
-            <h2>Antepastos</h2>
+            <div class="section-header-premium">
+                <h2>Antepastos</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-cheese"></i> <i class="fas fa-bread-slice"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Acompanhamentos artesanais perfeitos para momentos especiais</p>
+            </div>
             <div class="grid-container" id="grid-antepastos"></div>
         </section>
 
         <section id="sobremesas" class="product-section">
-            <h2>Sobremesas</h2>
+            <div class="section-header-premium">
+                <h2>Sobremesas</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-birthday-cake"></i> <i class="fas fa-ice-cream"></i> <i
+                            class="fas fa-cookie"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Uma Coleção de Delícias Artesanais Afetivas - Feito com Carinho</p>
+            </div>
             <div class="grid-container" id="grid-sobremesas"></div>
         </section>
 
         <section id="bolos" class="product-section">
-            <h2>Bolos</h2>
+            <div class="section-header-premium">
+                <h2>Bolos</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-mortar-pestle"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Massas fofinhas e recheios caseiros inesquecíveis</p>
+            </div>
+
             <h3>Caseirinhos</h3>
             <div class="grid-container" id="grid-caseirinhos"></div>
             <h3>Festa</h3>
@@ -150,7 +192,16 @@
         </section>
 
         <section id="paes" class="product-section">
-            <h2>Pães</h2>
+            <div class="section-header-premium">
+                <h2>Pães</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-bread-slice"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Fornadas quentinhas com fermentação natural e afeto</p>
+            </div>
+
             <h3>Doces</h3>
             <div class="grid-container" id="grid-paes-doces"></div>
             <h3>Salgados</h3>
@@ -160,7 +211,16 @@
         </section>
 
         <section id="tortas" class="product-section">
-            <h2>Tortas</h2>
+            <div class="section-header-premium">
+                <h2>Tortas</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-stroopwafel"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Crostas crocantes e combinações que derretem na boca</p>
+            </div>
+
             <h3>Doces</h3>
             <div class="grid-container" id="grid-tortas-doces"></div>
             <h3>Salgadas</h3>
@@ -168,30 +228,60 @@
         </section>
 
         <section id="sazonais" class="product-section">
-            <h2>Sazonais</h2>
+            <div class="section-header-premium">
+                <h2>Sazonais</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">
+                        <i class="fas fa-gift"></i> <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+                <p class="premium-subtitle">Edições limitadas para celebrar datas com muito mais sabor</p>
+            </div>
+
             <h3>Páscoa</h3>
             <div class="grid-container" id="grid-pascoa"></div>
-            
+
             <h3>Dia das Mães</h3>
             <div class="grid-container" id="grid-dia-das-maes"></div>
             
             <h3>Dia dos Namorados</h3>
             <div class="grid-container" id="grid-dia-dos-namorados"></div>
-            
+
+            <h3>Festa Junina/ Julina</h3>
+            <div class="grid-container" id="grid-festa-junina-julina"></div>
+
             <h3>Copa do Mundo</h3>
             <div class="grid-container" id="grid-copa-do-mundo"></div>
             
             <h3>Dia dos Pais</h3>
             <div class="grid-container" id="grid-dia-dos-pais"></div>
-            
+
             <h3>Dia das Crianças e Professores</h3>
             <div class="grid-container" id="grid-criancas-professores"></div>
-            
+
             <h3>Natal</h3>
             <div class="grid-container" id="grid-natal"></div>
-            
+
             <h3>Ano Novo</h3>
             <div class="grid-container" id="grid-ano-novo"></div>
+        </section>
+
+        <section class="about-section" style="background: #fff; padding: 60px 20px; text-align: center;">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2
+                    style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
+                    Feito com Afeto
+                    <span
+                        style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
+                </h2>
+                <p
+                    style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
+                    A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples em sorrisos
+                    partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma história,
+                    um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
+                    rotina!
+                </p>
+            </div>
         </section>
 
         <section class="shipping-section">
@@ -207,9 +297,10 @@
 
     <div id="promo-modal" class="modal">
         <div class="modal-content">
-            <h2>🍰 Boas-vindas!</h2>
-            <p>Usa o cupom <strong>Pitadavivi10</strong> para 10% de desconto na primeira compra!</p>
-            <button class="action-btn" style="margin-top:20px" onclick="fecharModal()">Começar a Comprar</button>
+            <h2>🍰 Que bom ter você aqui!</h2>
+            <p>Queremos deixar o seu dia muito mais doce. Use o cupom <strong>Pitadavivi10</strong> e ganhe 10% de
+                carinho (em forma de desconto) na sua primeira fornada!</p>
+            <button class="action-btn" style="margin-top:20px" onclick="fecharModal()">Comprar</button>
         </div>
     </div>
 
@@ -217,10 +308,12 @@
         <div class="modal-content">
             <h2>🛒 Quase lá!</h2>
             <p>Seu pedido foi enviado ao WhatsApp!</p>
-            <p style="font-size: 0.95rem; margin-top: 10px; color: #666;">Deseja **limpar o seu carrinho** agora ou quer mantê-lo ativo para **adicionar mais itens**?</p>
+            <p style="font-size: 0.95rem; margin-top: 10px; color: #666;">Deseja limpar o seu carrinho agora ou quer
+                mantê-lo ativo para adicionar mais itens?</p>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
                 <button class="action-btn" onclick="confirmarLimpezaCarrinho(true)">Limpar Carrinho</button>
-                <button class="action-btn" style="background-color: #777 !important;" onclick="confirmarLimpezaCarrinho(false)">Manter Itens (Adicionar Mais)</button>
+                <button class="action-btn" style="background-color: #777 !important;"
+                    onclick="confirmarLimpezaCarrinho(false)">Manter Itens (Adicionar Mais)</button>
             </div>
         </div>
     </div>
@@ -228,9 +321,8 @@
     <footer>
         <p>&copy; 2026 Pitadavivi Ltda. | Todos os direitos reservados.</p>
         <div class="social-links">
-            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-instagram"></i>@pitadavivi</a>
             <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
-            
             <a href="https://wa.me/5511987342562" target="_blank"><i class="fab fa-whatsapp"></i></a>
         </div>
     </footer>
@@ -241,4 +333,5 @@
 
     <script src="js/script.js"></script>
 </body>
+
 </html>

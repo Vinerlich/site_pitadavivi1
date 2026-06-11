@@ -14,7 +14,7 @@ html {
 
 body {
     background: #f9f9f9;
-    color: #333;
+    color: #4a302a; /* Mudança para o marrom acolhedor */
     line-height: 1.6;
     display: flex;
     flex-direction: column;
@@ -25,16 +25,15 @@ body {
    2. CABEÇALHO E BANNER ESTENDIDO
    ========================================================================== */
 .header-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 9999; /* Garante prioridade total sobre os produtos */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: none; 
 }
 
-/* Cria o recuo necessário no desktop para o conteúdo não começar atrás do banner */
+/* Cria o recuo necessário no desktop para o conteúdo */
 main {
-    padding-top: 40px; 
+    padding-top: 20px; 
     flex: 1;
 }
 
@@ -60,15 +59,20 @@ main {
 }
 
 /* ==========================================================================
-   3. MENU COM EFEITO BLOB
+   3. MENU COM EFEITO BLOB (FIXO NO TOPO GARANTIDO)
    ========================================================================== */
 .main-nav {
+    position: -webkit-sticky; /* Suporte para Safari/iOS */
+    position: sticky;
+    top: 0;
+    z-index: 99999; /* Garante prioridade total sobre os produtos ao rolar */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 5%;
-    background: #fff;
+    background: #ffffff;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra para destacar o menu fixo */
 }
 
 .menu-links {
@@ -153,6 +157,11 @@ main {
     display: inline-block;
 }
 
+.arrow-icon {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
 .submenu {
     display: none;
     position: absolute;
@@ -163,7 +172,7 @@ main {
     min-width: 190px; 
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
-    z-index: 99999; /* Sobrevepõe qualquer imagem ou card na tela */
+    z-index: 99999; 
     padding: 6px 0; 
     border: 1px solid #e0e0e0;
     max-height: 400px; 
@@ -243,14 +252,12 @@ main {
     text-align: left;
 }
 
-/* Ativa o hover em qualquer dispositivo com ponteiro de mouse (janelas grandes ou reduzidas no PC) */
 @media (hover: hover) {
     .cart-container-wrapper:hover .cart-dropdown {
         display: block;
     }
 }
 
-/* Mantém a abertura por clique via JavaScript ativa */
 .cart-container-wrapper.active .cart-dropdown {
     display: block;
 }
@@ -266,7 +273,7 @@ main {
 .product-section h2,
 .product-section h3,
 .grid-container[id] {
-    scroll-margin-top: 260px; /* Alinhamento correto das âncoras do menu */
+    scroll-margin-top: 90px; /* Alinhamento corrigido para o tamanho do menu fixo */
 }
 
 .product-section h2 {
@@ -330,7 +337,7 @@ main {
 }
 
 .product-img:hover {
-    z-index: 10; /* Z-index controlado para não quebrar os menus suspensos */
+    z-index: 10; 
     transform: scale(1.3); 
     object-fit: contain; 
     background: #fff; 
@@ -379,7 +386,6 @@ span.sale-type {
     font-weight: bold;
 }
 
-/* INPUT DE QUANTIDADE - CORRIGIDO */
 .qty-input {
     width: 60px; 
     padding: 5px;
@@ -387,15 +393,15 @@ span.sale-type {
     border: 1px solid #ddd;
     text-align: center;
     font-weight: bold;
-    -moz-appearance: textfield; /* Suporte Firefox */
+    -moz-appearance: textfield;
 }
 
-/* Garante que as setas fiquem sempre visíveis no Desktop (Chrome, Safari, Edge) */
 .qty-input::-webkit-outer-spin-button,
 .qty-input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button !important;
     opacity: 1 !important;
     display: block !important;
+    幕: block !important;
 }
 
 .action-btn {
@@ -542,10 +548,13 @@ footer {
     .product-section h2,
     .product-section h3,
     .grid-container[id] {
-        scroll-margin-top: 320px; 
+        scroll-margin-top: 140px; 
     }
 
     .main-nav {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
         flex-direction: column;
         gap: 12px;
         padding: 12px 10px;
@@ -567,8 +576,7 @@ footer {
         font-size: 11px;
     }
 
-    .dropdown-item.active .submenu,
-    .dropdown-item:focus-within .submenu {
+    .dropdown-item.open .submenu {
         display: block;
         position: absolute;
         top: 105%;
@@ -579,7 +587,10 @@ footer {
         z-index: 99999;
     }
 
-    /* AJUSTE MOBILE - Input ligeiramente mais largo para as setas no toque */
+    .dropdown-item.open .arrow-icon {
+        transform: rotate(180deg);
+    }
+
     .qty-input {
         width: 65px; 
         padding: 8px 5px;
@@ -610,4 +621,95 @@ footer {
     .cart-container-wrapper.active .cart-dropdown {
         display: block;
     }
+}
+
+/* ==========================================================================
+   8. ESTILIZAÇÃO PREMIUM DOS TÍTULOS (DNA PITADAVIVI)
+   ========================================================================== */
+
+/* Corrige o seletor de quantidade para navegadores Webkit */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+/* Container do título da seção */
+.section-header-premium {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 35px;
+    padding: 0 10px;
+}
+
+/* O título principal (ex: Sobremesas) */
+.section-header-premium h2 {
+    color: #4a302a !important;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* Espaço para as folhinhas laterais */
+    border-bottom: none !important; /* Remove a linha antiga feia */
+}
+
+/* Adiciona o ornamento de folha/arabesco antes e depois do texto */
+.section-header-premium h2::before,
+.section-header-premium h2::after {
+    content: "❧"; /* Símbolo elegante de folha/arabesco tipográfico */
+    color: #4a302a;
+    font-size: 1.8rem;
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+/* A linha fina decorativa com o ícone no centro */
+.premium-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+    margin: 8px auto;
+    position: relative;
+}
+
+/* As duas linhas finas laranjas laterais */
+.premium-divider::before,
+.premium-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: #e67e22;
+}
+
+/* O ícone centralizado que divide a linha */
+.premium-divider-icon {
+    color: #4a302a;
+    padding: 0 15px;
+    font-size: 1rem;
+    display: flex;
+    gap: 8px;
+}
+
+/* O texto sutil descritivo logo abaixo */
+.premium-subtitle {
+    color: #7a605a;
+    font-size: 0.95rem;
+    font-style: italic;
+    font-weight: 400;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* Ajuste nos subtítulos internos (Caseirinhos, Festa, etc.) para harmonizar */
+.product-section h3 {
+    color: #e67e22 !important;
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-style: italic;
+    margin-top: 25px;
+    margin-bottom: 20px;
 }

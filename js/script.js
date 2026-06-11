@@ -8,7 +8,9 @@ let valorFrete = 0;
 // Catálogo com a estrutura integrada e nomes reais das suas imagens
 const catalogoProdutos = {
     'grid-geleias': [
-        { nome: 'Geleia de Morango Artesanal', preco: 18.50, img: 'geleia-morango.jpg' }
+        { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg' },
+        { nome: 'Geleia de Damasco Artesanal', preco: 22.00, img: 'GeleiaDamasco.jpg' },
+        { nome: 'Geleia de Pimeta Premium', preco: 24.50, img: 'GeleiaPimenta.jpg' }
     ],
     'grid-antepastos': [
         { nome: 'Caponata de Berinjela', preco: 22.00, img: 'caponata.jpg' }
@@ -45,14 +47,29 @@ const catalogoProdutos = {
         { nome: 'Ovo de Páscoa Crocante', preco: 85.00, img: 'ovo-crocante.jpg' }
     ],
     'grid-dia-das-maes': [],
-    'grid-dia-dos-namorados': [],
-    'grid-copa-do-mundo': [],
-    'grid-dia-dos-pais': [],
-    'grid-criancas-professores': [],
-    'grid-natal': [
-        { nome: 'Panetone Trufado', preco: 65.00, img: 'panetone.jpg' }
+
+    'grid-dia-dos-namorados': [
+        { nome: 'Caixa Brigadeiro Gourmet', preco: 32.00, img: 'Brigadeiroscxa6.jpg' }
     ],
-    'grid-ano-novo': []
+    'grid-festa-junina-julina': [
+        { nome: 'Kit Estrela de São João', preco: 105.00, img: 'KitSaoJoao.png' },
+        { nome: 'Kit Arraiá do Mundo', preco: 135.00, img: 'KitMundo.png' }
+    ],
+    'grid-copa-do-mundo': [
+        { nome: 'Kit Rumo ao Hexa', preco: 95.00, img: 'KitHexa.png' },
+        { nome: 'Kit Arraiá do Mundo', preco: 135.00, img: 'KitMundo.png' }
+    ],
+    'grid-dia-dos-pais': [],
+
+    'grid-criancas-professores': [],
+
+    'grid-natal': [
+        { nome: 'Panetone de Pistache', preco: 110.00, img: 'panetonePistache.jpg' },
+        { nome: 'Lombo recheado com farofa', preco: 120.00, img: 'Lomborecheado.jpg' }
+    ],
+    'grid-ano-novo': [
+        { nome: 'Pernil assado com Batatas e Cebolas ao Alecrim', preco: 89.00, img: 'PernilaoAlecrim.jpg' }
+    ]
 };
 
 /* ==========================================================================
@@ -67,6 +84,7 @@ window.onload = () => {
     
     renderizarCatalogo();
     configurarCliquesSubmenu();
+    configurarMenuSanfonaMobile(); /* Nova função ativada na inicialização */
     atualizarInterfaceCarrinho();
 };
 
@@ -174,7 +192,7 @@ function atualizarInterfaceCarrinho() {
     if (!listaContainer) return;
 
     if (carrinho.length === 0) {
-        listaContainer.innerHTML = `<p class="empty-cart-msg">Seu carrinho está vazio.</p>`;
+        listaContainer.innerHTML = `<p class="empty-cart-msg">Seu carrinho ainda está vazio... Que tal recheá-lo com nossas delícias? 👩‍🍳</p>`;
         if (totalCountSpan) totalCountSpan.innerText = '0';
         if (totalMoneySpan) totalMoneySpan.innerText = '0,00';
         totalCompra = 0;
@@ -318,23 +336,64 @@ function configurarCliquesSubmenu() {
                 setTimeout(() => { submenuContainer.style.display = ''; }, 600);
             }
             
+            // Remove a classe 'open' do item pai para resetar a sanfona no mobile ao clicar numa opção
+            const dropdownItem = link.closest('.dropdown-item');
+            if (dropdownItem) dropdownItem.classList.remove('open');
+            
             // Otimização para fechar o carrinho se ele estiver aberto junto no mobile
-            const wrapper = document.getElementById('cart-wrapper');
+            const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
             if (wrapper) wrapper.classList.remove('active');
+        });
+    });
+}
+
+/* GERENCIA o gatilho da Sanfona no Mobile */
+function configurarMenuSanfonaMobile() {
+    const menuToggles = document.querySelectorAll('.toggle-menu');
+
+    menuToggles.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Só executa a lógica de sanfona se a tela for Mobile (<= 768px)
+            if (window.innerWidth <= 768) {
+                // Previne comportamentos inesperados do botão/link
+                e.preventDefault(); 
+                
+                // Encontra a linha pai correspondente (.dropdown-item)
+                const currentItem = this.parentElement; 
+                
+                // Fecha todas as outras abas abertas para manter o visual limpo
+                document.querySelectorAll('.dropdown-item').forEach(item => {
+                    if (item !== currentItem) {
+                        item.classList.remove('open');
+                    }
+                });
+
+                // Adiciona ou remove a classe "open" (faz o efeito abrir/fechar de sanfona)
+                currentItem.classList.toggle('open');
+            }
         });
     });
 }
 
 function toggleCarrinho(event) {
     event.stopPropagation();
-    const wrapper = document.getElementById('cart-wrapper');
+    const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
     if (wrapper) wrapper.classList.toggle('active');
 }
 
-// Fecha o carrinho ao clicar em qualquer lugar fora dele
+// Fecha o carrinho e as sanfonas ao clicar em qualquer lugar fora deles
 document.addEventListener('click', (event) => {
-    const wrapper = document.getElementById('cart-wrapper');
+    const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
     if (wrapper && !wrapper.contains(event.target)) {
         wrapper.classList.remove('active');
+    }
+});
+
+// Limpeza de segurança caso o usuário redimensione o navegador no desktop
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.classList.remove('open');
+        });
     }
 });

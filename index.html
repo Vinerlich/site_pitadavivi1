@@ -103,15 +103,18 @@
                         </span></span>
                 </button>
                 <div class="submenu">
-                    <a href="#grid-pascoa">Páscoa</a>
-                    <a href="#grid-dia-das-maes">Dia das Mães</a>
-                    <a href="#grid-dia-dos-namorados">Dia dos Namorados</a>
-                    <a href="#grid-festa-junina-julina">Festa Junina/ Julina</a>
-                    <a href="#grid-copa-do-mundo">Copa do Mundo</a>
-                    <a href="#grid-dia-dos-pais">Dia dos Pais</a>
-                    <a href="#grid-criancas-professores">Crianças / Professores</a>
-                    <a href="#grid-natal">Natal</a>
-                    <a href="#grid-ano-novo">Ano Novo</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Páscoa">Páscoa</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Dia das Mães">Dia das Mães</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Dia dos Namorados">Dia dos
+                        Namorados</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Festa Junina/Julina">Festa Junina /
+                        Julina</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Copa do Mundo">Copa do Mundo</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Dia dos Pais">Dia dos Pais</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Crianças e Professores">Crianças /
+                        Professores</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Natal">Natal</a>
+                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Ano Novo">Ano Novo</a>
                 </div>
             </div>
         </div>
@@ -228,14 +231,16 @@
         </section>
 
         <section id="sazonais" class="product-section">
-            <div class="section-header-premium">
-                <h2>Sazonais</h2>
+
+            <div id="encomendas-especiais" class="section-header-premium">
+                <h2>Encomendas Especiais</h2>
                 <div class="premium-divider">
                     <div class="premium-divider-icon">
                         <i class="fas fa-gift"></i> <i class="fas fa-heart"></i>
                     </div>
                 </div>
-                <p class="premium-subtitle">Edições limitadas para celebrar datas com muito mais sabor</p>
+                <p class="premium-subtitle">Edições limitadas e portfólio completo para celebrar datas com muito mais
+                    sabor</p>
             </div>
 
             <h3>Páscoa</h3>
@@ -243,16 +248,22 @@
 
             <h3>Dia das Mães</h3>
             <div class="grid-container" id="grid-dia-das-maes"></div>
-            
+
             <h3>Dia dos Namorados</h3>
             <div class="grid-container" id="grid-dia-dos-namorados"></div>
 
             <h3>Festa Junina/ Julina</h3>
             <div class="grid-container" id="grid-festa-junina-julina"></div>
 
-            <h3>Copa do Mundo</h3>
+            <div class="section-header-premium" style="margin-top: 30px; margin-bottom: 15px;">
+                <h2>Copa do Mundo</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">⚽✨🏆</div>
+                </div>
+                <p class="premium-subtitle">Kits Torcida e Doces Temáticos para vibrar pelo Hexa</p>
+            </div>
             <div class="grid-container" id="grid-copa-do-mundo"></div>
-            
+
             <h3>Dia dos Pais</h3>
             <div class="grid-container" id="grid-dia-dos-pais"></div>
 
@@ -318,12 +329,26 @@
         </div>
     </div>
 
+    <div id="sazonal-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="sazonal-modal-title">📅 Cardápio Especial</h2>
+            <p id="sazonal-modal-text" style="margin: 15px 0; color: #7a605a;"></p>
+            <button class="action-btn" style="width: auto; padding: 10px 30px; margin-top: 10px;"
+                onclick="document.getElementById('sazonal-modal').style.display='none'">Visualizar Portfólio</button>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2026 Pitadavivi Ltda. | Todos os direitos reservados.</p>
         <div class="social-links">
-            <a href="#" target="_blank"><i class="fab fa-instagram"></i>@pitadavivi</a>
-            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
-            <a href="https://wa.me/5511987342562" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i
+                    class="fab fa-instagram"></i></a>
+
+            <a href="https://www.facebook.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i
+                    class="fab fa-facebook"></i></a>
+
+            <a href="https://wa.me/5511987342562" target="_blank" rel="noopener noreferrer"><i
+                    class="fab fa-whatsapp"></i></a>
         </div>
     </footer>
 

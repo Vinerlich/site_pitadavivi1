@@ -14,7 +14,7 @@ html {
 
 body {
     background: #f9f9f9;
-    color: #4a302a; /* Mudança para o marrom acolhedor */
+    color: #4a302a; /* Marrom acolhedor */
     line-height: 1.6;
     display: flex;
     flex-direction: column;
@@ -31,7 +31,6 @@ body {
     box-shadow: none; 
 }
 
-/* Cria o recuo necessário no desktop para o conteúdo */
 main {
     padding-top: 20px; 
     flex: 1;
@@ -72,7 +71,7 @@ main {
     padding: 15px 5%;
     background: #ffffff;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra para destacar o menu fixo */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
 }
 
 .menu-links {
@@ -97,7 +96,9 @@ main {
     border-radius: 30px;
     transition: color 0.5s;
     overflow: hidden;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .blob-btn:before {
@@ -140,7 +141,7 @@ main {
     background: #4a302a;
     border-radius: 100%;
     transform: translate3d(0, 150%, 0) scale(1.7);
-    transition: transform 0.45s;
+    transition: transform 0.45s ease;
 }
 
 .blob-btn__blob:nth-child(1) { left: 0%; transition-delay: 0s; }
@@ -148,8 +149,9 @@ main {
 .blob-btn__blob:nth-child(3) { left: 60%; transition-delay: 0.16s; }
 .blob-btn__blob:nth-child(4) { left: 90%; transition-delay: 0.24s; }
 
+/* CORREÇÃO: Translação adicionada para o efeito blob funcionar perfeitamente */
 .blob-btn:hover .blob-btn__blob {
-    transform: translateZ(0) scale(1.7);
+    transform: translate3d(0, 0, 0) scale(1.7);
 }
 
 .dropdown-item {
@@ -160,6 +162,10 @@ main {
 .arrow-icon {
     transition: transform 0.3s ease;
     display: inline-block;
+}
+
+.dropdown-item:hover .arrow-icon {
+    transform: rotate(180deg);
 }
 
 .submenu {
@@ -242,13 +248,13 @@ main {
     position: absolute;
     right: 0;
     top: 110%;
-    width: 320px;
+    width: 340px;
     background: #ffffff;
     border: 1px solid #eee;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     z-index: 99999; 
-    padding: 15px;
+    padding: 20px;
     text-align: left;
 }
 
@@ -262,6 +268,21 @@ main {
     display: block;
 }
 
+/* Customização interna para os itens inseridos dinamicamente no carrinho */
+.cart-items-list {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.empty-cart-msg {
+    text-align: center;
+    color: #7a605a;
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 15px 0;
+}
+
 /* ==========================================================================
    5. CARDS E GRID 
    ========================================================================== */
@@ -270,10 +291,12 @@ main {
     text-align: center;
 }
 
+/* CORREÇÃO: Adicionado o contêiner premium para travar a rolagem perfeitamente no menu fixo */
 .product-section h2,
 .product-section h3,
+.section-header-premium,
 .grid-container[id] {
-    scroll-margin-top: 90px; /* Alinhamento corrigido para o tamanho do menu fixo */
+    scroll-margin-top: 100px; 
 }
 
 .product-section h2 {
@@ -290,7 +313,7 @@ main {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 25px;
     justify-content: center;
     max-width: 1200px;
@@ -300,26 +323,33 @@ main {
 .card {
     background: #fff;
     border-radius: 12px;
-    padding: 15px;
+    padding: 18px;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100%; 
     z-index: 1;
+    border: 1px solid #f1ece4;
 }
 
 .card h4 {
     color: #4a302a;
-    font-size: 1rem;
-    margin-bottom: 5px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card:hover {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(74, 48, 42, 0.08);
 }
 
 .product-img {
@@ -328,7 +358,7 @@ main {
     object-fit: cover;
     object-position: center; 
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     background: #eee;
     position: relative;
     z-index: 1;
@@ -338,15 +368,15 @@ main {
 
 .product-img:hover {
     z-index: 10; 
-    transform: scale(1.3); 
+    transform: scale(1.15); 
     object-fit: contain; 
     background: #fff; 
     border-radius: 8px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); 
 }
 
 .unit-selector {
-    margin: 4px 0;
+    margin: 6px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -376,7 +406,10 @@ span.sale-type {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 0;
+    margin: 12px 0;
+    background: #faf8f5;
+    padding: 6px 10px;
+    border-radius: 8px;
 }
 
 .price {
@@ -387,29 +420,22 @@ span.sale-type {
 }
 
 .qty-input {
-    width: 60px; 
+    width: 55px; 
     padding: 5px;
-    border-radius: 5px;
+    border-radius: 6px;
     border: 1px solid #ddd;
     text-align: center;
     font-weight: bold;
-    -moz-appearance: textfield;
-}
-
-.qty-input::-webkit-outer-spin-button,
-.qty-input::-webkit-inner-spin-button {
-    -webkit-appearance: inner-spin-button !important;
-    opacity: 1 !important;
-    display: block !important;
-    幕: block !important;
+    color: #4a302a;
+    outline: none;
 }
 
 .action-btn {
     background-color: #e67e22 !important;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
+    padding: 11px 15px;
+    border-radius: 8px;
     font-size: 0.95rem;
     font-weight: bold;
     cursor: pointer;
@@ -434,7 +460,7 @@ footer {
     background-color: #f2c84b; 
     color: #4a302a; 
     text-align: center;
-    padding: 30px;
+    padding: 40px 20px;
     margin-top: 40px;
     font-weight: bold;
 }
@@ -473,43 +499,59 @@ footer {
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.08);
 }
 
 .shipping-section {
     background: #fff;
-    padding: 40px 5%;
+    padding: 50px 5%;
     text-align: center;
     border-top: 1px solid #eee;
 }
 
 .shipping-box {
-    max-width: 300px;
-    margin: 0 auto 20px auto;
+    max-width: 320px;
+    margin: 0 auto 25px auto;
+}
+
+.shipping-box h3 {
+    margin-bottom: 10px;
+    color: #4a302a;
 }
 
 .shipping-box input {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin: 10px 0;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     text-align: center;
+    outline: none;
 }
 
 .checkout-btn {
     background: #27ae60;
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 5px;
+    padding: 15px 40px;
+    border-radius: 30px;
     font-size: 1.1rem;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.2s;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+    transition: background-color 0.2s, transform 0.1s ease;
 }
 
 .checkout-btn:hover {
     background-color: #219653;
+}
+
+.checkout-btn:active {
+    transform: scale(0.98);
 }
 
 .modal {
@@ -520,21 +562,29 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
 }
 
 .modal-content {
     background: white;
-    margin: 15% auto;
-    padding: 30px;
+    margin: 12% auto;
+    padding: 35px 25px;
     width: 90%;
     max-width: 400px;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 /* ==========================================================================
-   7. SEÇÃO DE RESPONSIVIDADE (MOBILE & TABLET)
+   7. SEÇÃO DE RESPONSIVIDADE (MOBILE & TABLET REVISADA)
    ========================================================================== */
 @media (max-width: 768px) {
     main {
@@ -545,10 +595,21 @@ footer {
         height: 28vw; 
     }
 
+    /* Ajuste para que o título caia no lugar certo no mobile com o menu duplo */
     .product-section h2,
     .product-section h3,
+    .section-header-premium,
     .grid-container[id] {
-        scroll-margin-top: 140px; 
+        scroll-margin-top: 175px; 
+    }
+
+    /* CORREÇÃO MOBILE: Evita que títulos longos quebrem ou saiam da tela */
+    .section-header-premium h2 {
+        font-size: 1.5rem !important;
+    }
+    .section-header-premium h2::before,
+    .section-header-premium h2::after {
+        font-size: 1.2rem !important;
     }
 
     .main-nav {
@@ -567,33 +628,62 @@ footer {
         width: 100%;
         padding: 5px 0;
         gap: 8px;
-        overflow-x: visible; 
     }
 
     .blob-btn {
-        flex: 0 1 auto;
-        padding: 8px 14px;
+        flex: 1 1 auto; /* Permite melhor distribuição do toque no mobile */
+        padding: 10px 14px;
         font-size: 11px;
     }
 
+    /* Submenu Mobile adaptado em formato sanfona para não flutuar solto */
     .dropdown-item.open .submenu {
         display: block;
-        position: absolute;
-        top: 105%;
-        left: 50%;
-        transform: translateX(-50%);
-        box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
-        width: 190px;
-        z-index: 99999;
+        position: static;
+        transform: none;
+        width: 100%;
+        box-shadow: none;
+        border: 1px solid #4a302a;
+        margin-top: 5px;
+        border-radius: 8px;
+        background-color: #faf8f5;
     }
 
     .dropdown-item.open .arrow-icon {
         transform: rotate(180deg);
     }
 
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Grid de 2 colunas excelente para celular */
+        gap: 12px;
+    }
+
+    .card {
+        padding: 12px;
+    }
+
+    .product-img {
+        height: 130px;
+    }
+
+    .product-img:hover {
+        transform: none; /* Desativa o zoom pesado que quebra o layout touch */
+    }
+
+    .card h4 {
+        font-size: 0.95rem;
+        min-height: 36px;
+    }
+
+    .price-qty-container {
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+    }
+
     .qty-input {
-        width: 65px; 
-        padding: 8px 5px;
+        width: 100%; 
+        padding: 6px;
     }
 
     .cart-container-wrapper {
@@ -603,7 +693,8 @@ footer {
 
     .cart-summary {
         width: 100%;
-        text-align: center;
+        display: flex;
+        justify-content: center;
         font-size: 13px;
         padding: 12px 16px;
     }
@@ -613,13 +704,9 @@ footer {
         position: absolute;
         top: 105%;
         left: 0;
+        right: 0;
         box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
         border: 1px solid #ddd;
-        z-index: 99999;
-    }
-
-    .cart-container-wrapper.active .cart-dropdown {
-        display: block;
     }
 }
 
@@ -627,18 +714,10 @@ footer {
    8. ESTILIZAÇÃO PREMIUM DOS TÍTULOS (DNA PITADAVIVI)
    ========================================================================== */
 
-/* Corrige o seletor de quantidade para navegadores Webkit */
-.qty-input::-webkit-outer-spin-button,
-.qty-input::-webkit-inner-spin-button {
-    -webkit-appearance: inner-spin-button !important;
-    opacity: 1 !important;
-    display: block !important;
-}
-
 /* Container do título da seção */
 .section-header-premium {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 50px; /* CORREÇÃO: Garante um bom respiro entre seções dinâmicas */
     margin-bottom: 35px;
     padding: 0 10px;
 }
@@ -652,14 +731,14 @@ footer {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 15px; /* Espaço para as folhinhas laterais */
-    border-bottom: none !important; /* Remove a linha antiga feia */
+    gap: 15px; 
+    border-bottom: none !important; 
 }
 
 /* Adiciona o ornamento de folha/arabesco antes e depois do texto */
 .section-header-premium h2::before,
 .section-header-premium h2::after {
-    content: "❧"; /* Símbolo elegante de folha/arabesco tipográfico */
+    content: "❧"; 
     color: #4a302a;
     font-size: 1.8rem;
     font-weight: normal;

@@ -58,13 +58,13 @@ main {
 }
 
 /* ==========================================================================
-   3. MENU COM EFEITO BLOB (FIXO NO TOPO GARANTIDO)
+   3. MENU COM EFEITO BLOB (DESKTOP PADRÃO)
    ========================================================================== */
 .main-nav {
     position: -webkit-sticky; /* Suporte para Safari/iOS */
     position: sticky;
     top: 0;
-    z-index: 99999; /* Garante prioridade total sobre os produtos ao rolar */
+    z-index: 99999; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -78,7 +78,7 @@ main {
     display: flex;
     gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: wrap; 
 }
 
 .blob-btn {
@@ -149,7 +149,6 @@ main {
 .blob-btn__blob:nth-child(3) { left: 60%; transition-delay: 0.16s; }
 .blob-btn__blob:nth-child(4) { left: 90%; transition-delay: 0.24s; }
 
-/* CORREÇÃO: Translação adicionada para o efeito blob funcionar perfeitamente */
 .blob-btn:hover .blob-btn__blob {
     transform: translate3d(0, 0, 0) scale(1.7);
 }
@@ -162,9 +161,18 @@ main {
 .arrow-icon {
     transition: transform 0.3s ease;
     display: inline-block;
+    cursor: pointer; /* Garante feedback visual de clique na seta */
 }
 
-.dropdown-item:hover .arrow-icon {
+/* Força a abertura também caso a classe active/open seja aplicada via JS */
+.dropdown-item.open .submenu,
+.dropdown-item.active .submenu {
+    display: block !important;
+}
+
+.dropdown-item:hover .arrow-icon,
+.dropdown-item.open .arrow-icon,
+.dropdown-item.active .arrow-icon {
     transform: rotate(180deg);
 }
 
@@ -268,7 +276,6 @@ main {
     display: block;
 }
 
-/* Customização interna para os itens inseridos dinamicamente no carrinho */
 .cart-items-list {
     max-height: 250px;
     overflow-y: auto;
@@ -291,7 +298,6 @@ main {
     text-align: center;
 }
 
-/* CORREÇÃO: Adicionado o contêiner premium para travar a rolagem perfeitamente no menu fixo */
 .product-section h2,
 .product-section h3,
 .section-header-premium,
@@ -303,12 +309,6 @@ main {
     margin-bottom: 20px;
     border-bottom: 2px solid #e67e22;
     display: inline-block;
-}
-
-.product-section h3 {
-    margin-top: 30px;
-    margin-bottom: 15px;
-    color: #4a302a;
 }
 
 .grid-container {
@@ -362,16 +362,13 @@ main {
     background: #eee;
     position: relative;
     z-index: 1;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, border-radius 0.3s ease;
     cursor: zoom-in;
 }
 
 .product-img:hover {
     z-index: 10; 
-    transform: scale(1.15); 
-    object-fit: contain; 
-    background: #fff; 
-    border-radius: 8px;
+    transform: scale(1.12); 
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); 
 }
 
@@ -419,8 +416,11 @@ span.sale-type {
     font-weight: bold;
 }
 
-.qty-input {
-    width: 55px; 
+/* Força a exibição das setas nativas de quantidade (Desktop contexto geral) */
+input[type=number].qty-input {
+    -moz-appearance: textfield !important; /* Firefox */
+    appearance: textfield !important;
+    width: 60px; 
     padding: 5px;
     border-radius: 6px;
     border: 1px solid #ddd;
@@ -428,6 +428,13 @@ span.sale-type {
     font-weight: bold;
     color: #4a302a;
     outline: none;
+}
+
+input[type=number].qty-input::-webkit-outer-spin-button,
+input[type=number].qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button !important; 
+    opacity: 1 !important; 
+    display: block !important;
 }
 
 .action-btn {
@@ -595,7 +602,6 @@ footer {
         height: 28vw; 
     }
 
-    /* Ajuste para que o título caia no lugar certo no mobile com o menu duplo */
     .product-section h2,
     .product-section h3,
     .section-header-premium,
@@ -603,58 +609,140 @@ footer {
         scroll-margin-top: 175px; 
     }
 
-    /* CORREÇÃO MOBILE: Evita que títulos longos quebrem ou saiam da tela */
-    .section-header-premium h2 {
-        font-size: 1.5rem !important;
-    }
-    .section-header-premium h2::before,
-    .section-header-premium h2::after {
-        font-size: 1.2rem !important;
-    }
-
+    /* BARRA DE NAVEGAÇÃO MOBILE */
     .main-nav {
         position: -webkit-sticky;
         position: sticky;
         top: 0;
         flex-direction: column;
-        gap: 12px;
-        padding: 12px 10px;
+        gap: 15px;
+        padding: 15px 10px;
+        height: auto !important;
+        overflow: visible !important;
+        background: #ffffff;
     }
 
     .menu-links {
         display: flex;
-        flex-wrap: wrap; 
-        justify-content: center;
+        flex-direction: column; 
+        align-items: center; 
         width: 100%;
+        gap: 12px;
         padding: 5px 0;
-        gap: 8px;
     }
 
-    .blob-btn {
-        flex: 1 1 auto; /* Permite melhor distribuição do toque no mobile */
-        padding: 10px 14px;
-        font-size: 11px;
-    }
-
-    /* Submenu Mobile adaptado em formato sanfona para não flutuar solto */
-    .dropdown-item.open .submenu {
-        display: block;
-        position: static;
-        transform: none;
+    .dropdown-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         width: 100%;
-        box-shadow: none;
-        border: 1px solid #4a302a;
-        margin-top: 5px;
-        border-radius: 8px;
-        background-color: #faf8f5;
+        height: auto !important;
+        position: relative;
     }
 
-    .dropdown-item.open .arrow-icon {
-        transform: rotate(180deg);
+    /* RESET COMPLETO DOS BOTÕES NO MOBILE (Evita sumiço de texto e bugs) */
+    .blob-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 240px !important; 
+        height: 45px !important; /* Altura fixa ideal para clique touch */
+        padding: 0 20px !important;
+        font-size: 13px !important;
+        color: #4a302a !important;
+        background: transparent !important;
+        border: 2px solid #4a302a !important;
+        border-radius: 30px !important;
+        position: relative !important;
+        overflow: visible !important; /* Permite ver o texto e a seta sempre */
+        text-align: center !important;
     }
 
+    /* Garante que o texto dentro do botão não suma por causa das sub-tags */
+    .blob-btn span, 
+    .blob-btn strong {
+        color: inherit !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    /* Estado Aberto/Ativo: Fundo marrom sólido e texto branco sem efeitos complexos */
+    .dropdown-item.open .blob-btn,
+    .dropdown-item.active .blob-btn {
+        background-color: #4a302a !important;
+        color: #ffffff !important;
+    }
+
+    /* Desliga COMPLETAMENTE as camadas do efeito blob que geram o borrão ou escondem textos */
+    .blob-btn__inner, 
+    .blob-btn__blobs, 
+    .blob-btn__blob {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+
+    /* Força o contorno do botão a se manter limpo */
+    .blob-btn:before {
+        display: none !important; /* Remove o pseudo-elemento conflitante */
+    }
+
+    /* SUBMENU SANFONA MOBILE (Aparece logo abaixo do botão respectivo) */
+    .dropdown-item .submenu {
+        display: none !important; /* Escondido por padrão */
+    }
+
+    .dropdown-item.open .submenu,
+    .dropdown-item.active .submenu {
+        display: block !important;
+        position: relative !important; /* Empurra os itens abaixo e a barra laranja */
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        width: 240px !important; 
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08) !important;
+        border: 2px solid #4a302a !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+        border-radius: 14px !important;
+        background-color: #ffffff !important;
+        max-height: none !important;
+        padding: 5px 0 !important;
+        z-index: 9999 !important;
+    }
+
+    /* Links do Submenu */
+    .submenu a {
+        display: block !important;
+        color: #4a302a !important;
+        padding: 12px 16px !important;
+        font-size: 13px !important;
+        text-transform: uppercase !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        border-bottom: 1px solid #f5ede6 !important;
+        white-space: normal !important;
+    }
+
+    .submenu a:last-child {
+        border-bottom: none !important;
+    }
+
+    .submenu a:hover {
+        background-color: #fcf8f2 !important;
+        color: #e67e22 !important;
+    }
+
+    /* Rotação da setinha indicadora */
+    .dropdown-item.open .arrow-icon,
+    .dropdown-item.active .arrow-icon {
+        transform: rotate(180deg) !important;
+    }
+
+    /* GRID E PRODUTOS MOBILE */
     .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Grid de 2 colunas excelente para celular */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
         gap: 12px;
     }
 
@@ -667,7 +755,7 @@ footer {
     }
 
     .product-img:hover {
-        transform: none; /* Desativa o zoom pesado que quebra o layout touch */
+        transform: none; 
     }
 
     .card h4 {
@@ -676,16 +764,19 @@ footer {
     }
 
     .price-qty-container {
-        flex-direction: column;
-        gap: 6px;
+        flex-direction: row; 
+        justify-content: space-between;
+        width: 100%;
+        gap: 4px;
         align-items: center;
     }
 
     .qty-input {
-        width: 100%; 
+        width: 65px !important; 
         padding: 6px;
     }
 
+    /* CARRINHO NO MOBILE */
     .cart-container-wrapper {
         width: 100%;
         margin-top: 5px;
@@ -713,16 +804,13 @@ footer {
 /* ==========================================================================
    8. ESTILIZAÇÃO PREMIUM DOS TÍTULOS (DNA PITADAVIVI)
    ========================================================================== */
-
-/* Container do título da seção */
 .section-header-premium {
     text-align: center;
-    margin-top: 50px; /* CORREÇÃO: Garante um bom respiro entre seções dinâmicas */
+    margin-top: 50px; 
     margin-bottom: 35px;
     padding: 0 10px;
 }
 
-/* O título principal (ex: Sobremesas) */
 .section-header-premium h2 {
     color: #4a302a !important;
     font-size: 2.5rem;
@@ -735,7 +823,6 @@ footer {
     border-bottom: none !important; 
 }
 
-/* Adiciona o ornamento de folha/arabesco antes e depois do texto */
 .section-header-premium h2::before,
 .section-header-premium h2::after {
     content: "❧"; 
@@ -745,7 +832,6 @@ footer {
     opacity: 0.8;
 }
 
-/* A linha fina decorativa com o ícone no centro */
 .premium-divider {
     display: flex;
     align-items: center;
@@ -755,7 +841,6 @@ footer {
     position: relative;
 }
 
-/* As duas linhas finas laranjas laterais */
 .premium-divider::before,
 .premium-divider::after {
     content: "";
@@ -764,7 +849,6 @@ footer {
     background-color: #e67e22;
 }
 
-/* O ícone centralizado que divide a linha */
 .premium-divider-icon {
     color: #4a302a;
     padding: 0 15px;
@@ -773,7 +857,6 @@ footer {
     gap: 8px;
 }
 
-/* O texto sutil descritivo logo abaixo */
 .premium-subtitle {
     color: #7a605a;
     font-size: 0.95rem;
@@ -783,7 +866,6 @@ footer {
     letter-spacing: 0.5px;
 }
 
-/* Ajuste nos subtítulos internos (Caseirinhos, Festa, etc.) para harmonizar */
 .product-section h3 {
     color: #e67e22 !important;
     font-size: 1.4rem;

@@ -5,7 +5,6 @@ let carrinho = [];
 let totalCompra = 0;
 let valorFrete = 0;
 
-// Catálogo com a estrutura integrada e nomes reais das suas imagens
 const catalogoProdutos = {
     'grid-geleias': [
         { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg' },
@@ -44,7 +43,7 @@ const catalogoProdutos = {
         { nome: 'Mini Torta de Frango Cremoso', preco: 21.90, img: 'MiniTorta.webp' }
     ],
 
-    // CATEGORIAS SAZONAIS (Controladas por data e portfólio)
+    // CATEGORIAS SAZONAIS
     'grid-pascoa': [
         { nome: 'Ovo de Páscoa Crocante', preco: 85.00, img: 'ovo-crocante.jpg' }
     ],
@@ -71,8 +70,7 @@ const catalogoProdutos = {
     ]
 };
 
-// Configuração das janelas de exibição ativa de cada sazonal (Mês iniciando em 0 para Janeiro)
-const regrasSazonais = {
+const rulesSazonais = {
     'grid-pascoa': { mesInicio: 2, diaInicio: 1, mesFim: 3, diaFim: 30, titulo: 'Páscoa' },
     'grid-dia-das-maes': { mesInicio: 4, diaInicio: 1, mesFim: 4, diaFim: 15, titulo: 'Dia das Mães' },
     'grid-dia-dos-namorados': { mesInicio: 5, diaInicio: 1, mesFim: 5, diaFim: 15, titulo: 'Dia dos Namorados' },
@@ -88,7 +86,6 @@ const regrasSazonais = {
    2. INICIALIZAÇÃO DA PÁGINA
    ========================================================================== */
 window.onload = () => {
-    // Exibe o modal de boas-vindas após 1 segundo
     setTimeout(() => {
         const modal = document.getElementById('promo-modal');
         if (modal) modal.style.display = 'block';
@@ -120,14 +117,13 @@ function atualizarPrecoCard(inputElement, precoBase) {
    4. RENDERIZAÇÃO DINÂMICA DO CATÁLOGO COM INTELIGÊNCIA SAZONAL
    ========================================================================== */
 function verificarSazonalAtivo(idGrid) {
-    if (!regrasSazonais[idGrid]) return true; // Categoria comum sempre ativa
+    if (!rulesSazonais[idGrid]) return true;
 
     const hoje = new Date();
     const mes = hoje.getMonth();
     const dia = hoje.getDate();
-    const regra = regrasSazonais[idGrid];
+    const regra = rulesSazonais[idGrid];
 
-    // Lógica para tratar virada de ano (ex: Ano Novo vai de Dezembro a Janeiro)
     if (regra.mesInicio > regra.mesFim) {
         return (mes === regra.mesInicio && dia >= regra.diaInicio) || (mes === regra.mesFim && dia <= regra.diaFim);
     }
@@ -141,15 +137,9 @@ function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEp
     let seletorHTML = '';
 
     if (eBoloFesta) {
-        seletorHTML = `
-            <div class="unit-selector">
-                <span class="sale-type">Por Quilo (kg)</span>
-            </div>`;
+        seletorHTML = `<div class="unit-selector"><span class="sale-type">Por Quilo (kg)</span></div>`;
     } else if (ehSazonalForaDeEpoca) {
-        seletorHTML = `
-            <div class="unit-selector">
-                <span class="sale-type" style="background: #7f8c8d; color: white;">Portfólio / Eventos</span>
-            </div>`;
+        seletorHTML = `<div class="unit-selector"><span class="sale-type" style="background: #7f8c8d; color: white;">Portfólio / Eventos</span></div>`;
     } else {
         seletorHTML = `<div class="unit-selector" style="visibility: hidden; margin: 0; height: 0;"></div>`;
     }
@@ -167,7 +157,6 @@ function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEp
             </div>`;
     }
 
-    // ALTERAÇÃO: Mudança do texto padrão do botão para "Encomendar"
     return `
         <div class="card">
             <img src="img/${arquivoImagem}" alt="${nome}" class="product-img">
@@ -185,23 +174,19 @@ function renderizarCatalogo() {
     let containerSazonaisOcultosHTML = '';
     const sectionSazonais = document.getElementById('sazonais');
 
-    // INJEÇÃO NO TOPO FIXADO: Posiciona o banner estrategicamente abaixo do cabeçalho de navegação principal
     if (!document.getElementById('aviso-encomenda-geral')) {
         const avisoGeral = document.createElement('div');
         avisoGeral.id = 'aviso-encomenda-geral';
-        
-        // Estilos limpos para exibição centralizada logo abaixo do menu/header do site
         avisoGeral.style.cssText = "margin: 15px auto 25px auto; max-width: 1200px; padding: 15px; background: #fff9f3; border-left: 5px solid #d35400; border-radius: 4px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); width: 90%; box-sizing: border-box;";
         avisoGeral.innerHTML = `
             <p style="margin: 0; color: #4a302a; font-weight: bold; font-size: 1rem;">
                 👩‍🍳 <span style="color: #d35400;">Aviso importante:</span> Trabalhamos exclusivamente sob encomenda! 
                 <span style="font-weight: normal; display: block; font-size: 0.9rem; margin-top: 4px; color: #666;">
-                    Todos os nossos produtos (fixos ou sazonais) são produzidos artesanalmente para a data do seu evento. Garanta sua vaga com antecedência!
+                    Todos os nossos produtos são produzidos artesanalmente para a data do seu evento. Garanta sua vaga com antecedência!
                 </span>
             </p>
         `;
         
-        // Identifica o container estrutural ou a tag principal para inserir o aviso no topo do conteúdo
         const corpoPrincipal = document.querySelector('main') || document.querySelector('.container') || document.body.firstElementChild;
         if (corpoPrincipal) {
             if (corpoPrincipal.tagName === 'MAIN' || corpoPrincipal.classList.contains('container')) {
@@ -217,10 +202,9 @@ function renderizarCatalogo() {
         }
     }
 
-    // Processa e renderiza os grids de todas as seções
     for (let idGrid in catalogoProdutos) {
         const container = document.getElementById(idGrid);
-        const ehSazonal = !!regrasSazonais[idGrid];
+        const ehSazonal = !!rulesSazonais[idGrid];
         const ativoAtualmente = verificarSazonalAtivo(idGrid);
 
         if (ehSazonal) {
@@ -254,7 +238,7 @@ function renderizarCatalogo() {
 
                     containerSazonaisOcultosHTML += `
                         <div style="margin-top: 20px;">
-                            <h4 style="color: #4a302a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px;">Menu de ${regrasSazonais[idGrid].titulo}</h4>
+                            <h4 style="color: #4a302a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px;">Menu de ${rulesSazonais[idGrid].titulo}</h4>
                             <div class="grid-container" style="display: grid;">${cardsDoBloco}</div>
                         </div>`;
                 }
@@ -285,9 +269,9 @@ function renderizarCatalogo() {
 
         portfolioWrapper.innerHTML = `
             <div style="text-align: center; margin-bottom: 20px;">
-                <h3 style="color: #4a302a; font-size: 1.4rem;"><i class="fas fa-folder-open"></i> Portfólio de Encomendas Especiais</h3>
-                <p style="font-size: 0.9rem; color: #666; font-style: italic; margin-top: 5px;">Deseja alguma destas delícias temáticas fora de época? Nós produzimos sob encomenda para eventos!</p>
-                <button id="btn-toggle-portfolio" style="margin-top: 12px; background: #4a302a; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;">Exibir Catálogo Anual</button>
+                <h3 style="color: #4a302a; font-size: 1.4rem; font-weight: bold;"><i class="fas fa-images"></i> Galeria de Criações Exclusivas</h3>
+                <p style="font-size: 0.9rem; color: #666; font-style: italic; margin-top: 5px;">Inspirações e sabores que marcam época. Produzimos sob encomenda para tornar seu evento inesquecível!</p>
+                <button id="btn-toggle-portfolio" style="margin-top: 12px; background: #4a302a; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.3s;">Conhecer Menu Anual Completo</button>
             </div>
             <div id="conteudo-portfolio-oculto" style="display: none; margin-top: 25px;">
                 ${containerSazonaisOcultosHTML}
@@ -300,10 +284,10 @@ function renderizarCatalogo() {
             const painel = document.getElementById('conteudo-portfolio-oculto');
             if (painel.style.display === 'none') {
                 painel.style.display = 'block';
-                this.innerText = 'Recolher Catálogo Anual';
+                this.innerText = 'Recolher Menu Anual';
             } else {
                 painel.style.display = 'none';
-                this.innerText = 'Exibir Catálogo Anual';
+                this.innerText = 'Conhecer Menu Anual Completo';
             }
         });
     }
@@ -328,19 +312,13 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
     const itemExistente = carrinho.find(item => item.nome === nome && item.tipo === tipoVenda);
 
     if (itemExistente) {
-        itemExistente.quantidade += quantidade;
+        itemExistente.quantidade = quantidade;
     } else {
-        carrinho.push({
-            nome: nome,
-            tipo: tipoVenda,
-            preco: precoBase,
-            quantidade: quantidade
-        });
+        carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, quantidade: quantidade });
     }
 
     atualizarInterfaceCarrinho();
 
-    // ALTERAÇÃO: Feedback visual alterado para "✓ Encomendado" e retorno do botão para "Encomendar"
     botao.innerText = "✓ Encomendado";
     botao.style.background = "#27ae60";
     setTimeout(() => {
@@ -372,7 +350,6 @@ function atualizarInterfaceCarrinho() {
         const subtotalItem = item.preco * item.quantidade;
         totalGeral += subtotalItem;
         totalItensContador += item.quantidade;
-
         const labelTipo = item.tipo === 'Quilo' ? 'kg' : 'un';
 
         htmlItens += `
@@ -385,16 +362,13 @@ function atualizarInterfaceCarrinho() {
                     <button style="background: #eee; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold;" onclick="event.stopPropagation(); alterarQuantidadeDropdown(${index}, -1)">-</button>
                     <span style="font-size: 0.85rem; font-weight: bold; min-width: 15px; text-align: center;">${item.quantidade}</span>
                     <button style="background: #eee; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold;" onclick="event.stopPropagation(); alterarQuantidadeDropdown(${index}, 1)">+</button>
-                    <button style="background: transparent; border: none; color: #c0392b; cursor: pointer; margin-left: 5px;" onclick="event.stopPropagation(); removerItemDropdown(${index})">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <button style="background: transparent; border: none; color: #c0392b; cursor: pointer; margin-left: 5px;" onclick="event.stopPropagation(); removerItemDropdown(${index})"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>`;
     });
 
     listaContainer.innerHTML = htmlItens;
     totalCompra = totalGeral;
-
     if (totalCountSpan) totalCountSpan.innerText = totalItensContador;
     if (totalMoneySpan) totalMoneySpan.innerText = totalGeral.toFixed(2).replace('.', ',');
 }
@@ -402,15 +376,13 @@ function atualizarInterfaceCarrinho() {
 function alterarQuantidadeDropdown(index, modificador) {
     if (!carrinho[index]) return;
     carrinho[index].quantidade += modificador;
-    if (carrinho[index].quantidade <= 0) {
-        carrinho.splice(index, 1);
-    }
+    if (carrinho[index].quantidade <= 0) { carrinho.splice(index, 1); }
     atualizarInterfaceCarrinho();
 }
 
 function removerItemDropdown(index) {
     if (!carrinho[index]) return;
-    carrinho[index].splice(index, 1);
+    carrinho.splice(index, 1);
     atualizarInterfaceCarrinho();
 }
 
@@ -477,21 +449,59 @@ function confirmarLimpezaCarrinho(limpar) {
     if (limpar) {
         carrinho = [];
         valorFrete = 0;
-
         const shippingResult = document.getElementById('shipping-result');
         const cepInput = document.getElementById('cep-input');
         if (shippingResult) shippingResult.innerHTML = '';
         if (cepInput) cepInput.value = '';
-
         atualizarInterfaceCarrinho();
     }
 }
 
 /* ==========================================================================
-   8. COMPORTAMENTOS AUXILIARES DE NAVEGAÇÃO E RECURSOS VISUAIS
+   8. COMPORTAMENTOS AUXILIARES (CORREÇÃO DE DIRECIONAMENTO E MENU MOBILE)
    ========================================================================== */
+function configurarMenuSanfonaMobile() {
+    // Escuta cliques nos seletores estruturais que contêm itens de menu e submenus
+    const botoesMenuComSub = document.querySelectorAll('.nav-menu-mobile > li > a, .navbar-nav > li > a, button.dropdown-toggle, .dropdown-item > a');
+    
+    botoesMenuComSub.forEach(botao => {
+        botao.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                const elementoPai = this.parentElement;
+                const submenu = elementoPai.querySelector('.submenu, .dropdown-menu, ul');
+                
+                if (submenu) {
+                    e.preventDefault(); 
+                    e.stopPropagation(); // Evita que cliques fechem o próprio menu acidentalmente
+
+                    const jaEstaoAbertos = elementoPai.classList.contains('open');
+
+                    // Remove classes de ativação e limpa displays inline de outros submenus (Efeito Sanfona)
+                    document.querySelectorAll('.nav-menu-mobile > li, .navbar-nav > li').forEach(li => {
+                        li.classList.remove('open');
+                        const sub = li.querySelector('.submenu, .dropdown-menu, ul');
+                        if (sub) {
+                            sub.style.display = 'none';
+                            sub.classList.remove('show-forced');
+                        }
+                    });
+
+                    // Caso o elemento clicado não estivesse aberto, força a exibição visual dele
+                    if (!jaEstaoAbertos) {
+                        elementoPai.classList.add('open');
+                        submenu.classList.add('show-forced');
+                        submenu.style.setProperty('display', 'block', 'important');
+                        submenu.style.setProperty('visibility', 'visible', 'important');
+                        submenu.style.setProperty('opacity', '1', 'important');
+                    }
+                }
+            }
+        });
+    });
+}
+
 function configurarCliquesSubmenu() {
-    const linksSazonais = document.querySelectorAll('.sazonal-link');
+    const linksSazonais = document.querySelectorAll('.sazonal-link, .dropdown-menu a[data-data]');
     linksSazonais.forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault(); 
@@ -516,12 +526,21 @@ function configurarCliquesSubmenu() {
             if (estaAtivo) {
                 const gridAlvo = document.getElementById(containerId);
                 if (gridAlvo) {
-                    gridAlvo.scrollIntoView({ behavior: 'smooth' });
+                    gridAlvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             } else {
+                const painelOculto = document.getElementById('conteudo-portfolio-oculto');
+                const btnToggle = document.getElementById('btn-toggle-portfolio');
+                if (painelOculto) {
+                    painelOculto.style.display = 'block';
+                    if (btnToggle) btnToggle.innerText = 'Recolher Menu Anual';
+                }
+
                 const portfolioWrapper = document.getElementById('portfolio-sazonal-compacto');
                 if (portfolioWrapper) {
-                    portfolioWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => {
+                        portfolioWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 800);
                 }
 
                 const modal = document.getElementById('sazonal-modal');
@@ -530,40 +549,35 @@ function configurarCliquesSubmenu() {
 
                 if (modal && modalTitle && modalText) {
                     modalTitle.innerText = `📅 Especial de ${nomeData}`;
-                    modalText.innerHTML = `No momento não estamos na época de <strong>${nomeData}</strong>. <br><br>Mas não se preocupe! Você pode conferir nosso portfólio completo abaixo e fazer o seu pedido sob encomenda direto pelo nosso WhatsApp.`;
+                    modalText.innerHTML = `No momento não estamos na época de <strong>${nomeData}</strong>. <br><br>Mas preparamos tudo sob encomenda para festas! Veja as fotos logo abaixo e fale conosco no WhatsApp.`;
                     modal.style.display = 'block';
-                }
-                
-                const painelOculto = document.getElementById('conteudo-portfolio-oculto');
-                const btnToggle = document.getElementById('btn-toggle-portfolio');
-                if (painelOculto && painelOculto.style.display === 'none') {
-                    painelOculto.style.display = 'block';
-                    if (btnToggle) btnToggle.innerText = 'Recolher Catálogo Anual';
                 }
             }
 
-            const dropdownItem = this.closest('.dropdown-item');
-            if (dropdownItem) dropdownItem.classList.remove('open');
+            const paiDireto = this.closest('.submenu, .dropdown-menu, ul');
+            if (paiDireto && window.innerWidth <= 768) {
+                paiDireto.style.display = 'none';
+                paiDireto.classList.remove('show-forced');
+            }
+            const itemMenuMaior = this.closest('.dropdown-item, li');
+            if (itemMenuMaior) itemMenuMaior.classList.remove('open');
 
             const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
             if (wrapper) wrapper.classList.remove('active');
         });
     });
 
-    const linksNormais = document.querySelectorAll('.submenu a:not(.sazonal-link)');
+    const linksNormais = document.querySelectorAll('.submenu a:not([data-data]), .dropdown-menu a:not([data-data])');
     linksNormais.forEach(link => {
         link.addEventListener('click', () => {
-            const submenuContainer = link.closest('.submenu');
+            const submenuContainer = link.closest('.submenu, .dropdown-menu');
             if (submenuContainer) {
                 submenuContainer.style.display = 'none';
+                submenuContainer.classList.remove('show-forced');
                 setTimeout(() => { submenuContainer.style.display = ''; }, 600);
             }
-
-            const dropdownItem = link.closest('.dropdown-item');
+            const dropdownItem = link.closest('.dropdown-item, li');
             if (dropdownItem) dropdownItem.classList.remove('open');
-
-            const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
-            if (wrapper) wrapper.classList.remove('active');
         });
     });
 }

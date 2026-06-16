@@ -1,6 +1,6 @@
 /* ==========================================================================
-   1. RESET E BASE
-   ========================================================================== */
+    1. RESET E BASE
+    ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -22,13 +22,14 @@ body {
 }
 
 /* ==========================================================================
-   2. CABEÇALHO E BANNER ESTENDIDO
-   ========================================================================== */
+    2. CABEÇALHO E BANNER ESTENDIDO
+    ========================================================================== */
 .header-sticky {
     width: 100%;
     display: flex;
     flex-direction: column;
     box-shadow: none; 
+    z-index: 999;
 }
 
 main {
@@ -58,8 +59,8 @@ main {
 }
 
 /* ==========================================================================
-   3. MENU COM EFEITO BLOB (DESKTOP PADRÃO)
-   ========================================================================== */
+    3. MENU COM EFEITO BLOB (DESKTOP PADRÃO)
+    ========================================================================== */
 .main-nav {
     position: -webkit-sticky; /* Suporte para Safari/iOS */
     position: sticky;
@@ -72,6 +73,15 @@ main {
     background: #ffffff;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+}
+
+/* Botão Hamburger */
+.menu-toggle {
+    display: none;
+    font-size: 24px;
+    color: #4a302a;
+    cursor: pointer;
+    padding: 5px 10px;
 }
 
 .menu-links {
@@ -161,10 +171,10 @@ main {
 .arrow-icon {
     transition: transform 0.3s ease;
     display: inline-block;
-    cursor: pointer; /* Garante feedback visual de clique na seta */
+    cursor: pointer;
 }
 
-/* Força a abertura também caso a classe active/open seja aplicada via JS */
+/* Abertura via JS */
 .dropdown-item.open .submenu,
 .dropdown-item.active .submenu {
     display: block !important;
@@ -229,8 +239,8 @@ main {
 }
 
 /* ==========================================================================
-   4. ESTRUTURA DO MINI-CARRINHO FLUTUANTE (DROPDOWN)
-   ========================================================================== */
+    4. ESTRUTURA DO MINI-CARRINHO FLUTUANTE (DROPDOWN COMPATÍVEL COM CLIQUE E HOVER)
+    ========================================================================== */
 .cart-container-wrapper {
     position: relative;
     display: inline-block;
@@ -266,14 +276,20 @@ main {
     text-align: left;
 }
 
-@media (hover: hover) {
+/* REGRAS DE VISIBILIDADE DO CARRINHO (BLINDADAS CONTRA CONFLITOS) */
+@media (min-width: 769px) {
     .cart-container-wrapper:hover .cart-dropdown {
-        display: block;
+        display: block !important;
     }
 }
 
-.cart-container-wrapper.active .cart-dropdown {
-    display: block;
+/* Se o wrapper do carrinho OU o próprio botão tiverem a classe .active, força a exibição (Resolve Desktop e Mobile) */
+.cart-container-wrapper.active .cart-dropdown,
+.cart-summary.active + .cart-dropdown,
+.cart-dropdown.active {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .cart-items-list {
@@ -290,19 +306,62 @@ main {
     padding: 15px 0;
 }
 
+/* Estilização do Botão Finalizar dentro do Carrinho Dropdown */
+.cart-dropdown button,
+.cart-dropdown .encomendar-btn,
+.cart-dropdown input[type="button"],
+.cart-dropdown input[type="submit"] {
+    background: #4a302a !important; /* Marrom elegante combinando com a marca */
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 20px !important;
+    font-size: 0.95rem !important;
+    font-weight: bold !important;
+    border-radius: 30px !important; /* Cantos arredondados e modernos */
+    cursor: pointer !important;
+    width: 100% !important;
+    display: block !important;
+    transition: background-color 0.2s ease, transform 0.1s ease !important;
+    box-shadow: 0 4px 10px rgba(74, 48, 42, 0.15) !important;
+    text-transform: none !important;
+    outline: none !important;
+    margin-top: 10px !important;
+}
+
+.cart-dropdown button:hover,
+.cart-dropdown .encomendar-btn:hover {
+    background-color: #e67e22 !important; /* Laranja no hover para dar destaque */
+}
+
+/* Correção dos botões de +/- dentro da lista do carrinho para não herdarem o estilo do marrom grande */
+.cart-dropdown .cart-items-list button,
+.cart-dropdown .qty-wrapper button {
+    width: auto !important;
+    display: inline-block !important;
+    padding: 2px 8px !important;
+    background: #f1ece4 !important;
+    color: #4a302a !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}
+
 /* ==========================================================================
-   5. CARDS E GRID 
-   ========================================================================== */
+    5. CARDS, GRID E BOTÕES GERAIS
+    ========================================================================== */
 .product-section {
     padding: 10px 5% 40px 5%; 
     text-align: center;
 }
 
+.product-section,
 .product-section h2,
 .product-section h3,
 .section-header-premium,
-.grid-container[id] {
-    scroll-margin-top: 100px; 
+.grid-container[id],
+div[id],
+section[id] {
+    scroll-margin-top: 130px; 
 }
 
 .product-section h2 {
@@ -372,6 +431,34 @@ main {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); 
 }
 
+.card button,
+.encomendar-btn {
+    background: #e67e22 !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 20px !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    display: inline-block !important;
+    transition: background-color 0.2s ease, transform 0.1s ease !important;
+    box-shadow: 0 3px 6px rgba(230, 126, 34, 0.2) !important;
+    text-transform: none !important;
+    outline: none !important;
+}
+
+.card button:hover,
+.encomendar-btn:hover {
+    background-color: #d35400 !important;
+}
+
+.card button:active,
+.encomendar-btn:active {
+    transform: scale(0.98) !important;
+}
+
 .unit-selector {
     margin: 6px 0;
     display: flex;
@@ -416,10 +503,9 @@ span.sale-type {
     font-weight: bold;
 }
 
-/* Força a exibição das setas nativas de quantidade (Desktop contexto geral) */
 input[type=number].qty-input {
-    -moz-appearance: textfield !important; /* Firefox */
-    appearance: textfield !important;
+    -moz-appearance: number-input !important;
+    appearance: number-input !important;
     width: 60px; 
     padding: 5px;
     border-radius: 6px;
@@ -428,6 +514,7 @@ input[type=number].qty-input {
     font-weight: bold;
     color: #4a302a;
     outline: none;
+    background: #ffffff;
 }
 
 input[type=number].qty-input::-webkit-outer-spin-button,
@@ -437,32 +524,9 @@ input[type=number].qty-input::-webkit-inner-spin-button {
     display: block !important;
 }
 
-.action-btn {
-    background-color: #e67e22 !important;
-    color: white;
-    border: none;
-    padding: 11px 15px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    outline: none;
-    margin-top: auto;
-}
-
-.action-btn:hover {
-    background-color: #d35400 !important;
-}
-
-.action-btn:active {
-    transform: scale(0.98);
-}
-
 /* ==========================================================================
-   6. RODAPÉ E RECURSOS FLUTUANTES
-   ========================================================================== */
+    6. RODAPÉ, RECURSOS FLUTUANTES E MODAIS GERAIS
+    ========================================================================== */
 footer {
     background-color: #f2c84b; 
     color: #4a302a; 
@@ -564,7 +628,7 @@ footer {
 .modal {
     display: none;
     position: fixed;
-    z-index: 99999; 
+    z-index: 999999; 
     left: 0;
     top: 0;
     width: 100%;
@@ -591,44 +655,247 @@ footer {
 }
 
 /* ==========================================================================
-   7. SEÇÃO DE RESPONSIVIDADE (MOBILE & TABLET REVISADA)
-   ========================================================================== */
+    #promo-modal VERSÃO COMPACTA E ULTRA-MINIMALISTA (310px)
+    ========================================================================== */
+#promo-modal {
+    display: none; 
+    position: fixed;
+    z-index: 9999999 !important; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(74, 48, 42, 0.5) !important; 
+    backdrop-filter: blur(4px) !important; 
+    opacity: 0;
+    transition: opacity 0.15s ease-out !important;
+    pointer-events: none;
+}
+
+#promo-modal.show {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+#promo-modal .modal-content {
+    background-color: #ffffff !important;
+    background-image: radial-gradient(#fff9f3 1px, transparent 0) !important; 
+    background-size: 12px 12px !important;
+    padding: 22px 18px 20px 18px !important; 
+    border: 2px solid #e2dacb !important;
+    border-radius: 16px !important;
+    width: 88% !important;
+    max-width: 310px !important; 
+    text-align: center !important;
+    box-shadow: 0 12px 25px rgba(74, 48, 42, 0.18) !important;
+    position: relative !important; 
+    margin: auto !important; 
+    transform: scale(0.95) !important; 
+    transition: transform 0.15s ease-out !important; 
+    animation: none !important; 
+}
+
+#promo-modal.show .modal-content {
+    transform: scale(1) !important;
+}
+
+/* CORREÇÃO DO "X" DE FECHAR */
+#promo-modal button.btn-modal-close-x,
+#promo-modal .btn-modal-close-x,
+.btn-modal-close-x {
+    position: absolute !important;
+    top: 10px !important;
+    right: 12px !important;
+    background: transparent !important; 
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 1.5rem !important; 
+    font-weight: 300 !important;
+    color: #bcad9d !important; 
+    cursor: pointer !important;
+    line-height: 1 !important;
+    padding: 0px !important;
+    width: 24px !important; 
+    height: 24px !important;
+    max-width: 24px !important;
+    min-width: 24px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: color 0.2s ease, transform 0.2s ease !important;
+    text-transform: none !important;
+}
+
+#promo-modal button.btn-modal-close-x:hover,
+#promo-modal .btn-modal-close-x:hover,
+.btn-modal-close-x:hover {
+    color: #e67e22 !important; 
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    transform: scale(1.1) !important;
+}
+
+#promo-modal .modal-icon {
+    font-size: 2.3rem; 
+    margin-bottom: 6px;
+    display: block;
+}
+
+#promo-modal h2 {
+    color: #4a302a !important;
+    font-size: 1.25rem; 
+    font-weight: 800;
+    margin-bottom: 6px;
+    border-bottom: none !important; 
+}
+
+#promo-modal p {
+    color: #666666 !important;
+    font-size: 0.85rem; 
+    line-height: 1.4;
+    margin-bottom: 12px;
+    padding: 0;
+    font-style: normal !important;
+}
+
+#promo-modal .cupom-tag {
+    display: inline-block;
+    background: #fff3e6;
+    border: 1.5px dashed #e67e22;
+    color: #e67e22;
+    padding: 4px 14px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+}
+
+#promo-modal .btn-promo-fechar {
+    background: #4a302a !important; 
+    color: #ffffff !important;
+    width: 100% !important;
+    max-width: 100% !important; 
+    border-radius: 25px !important;
+    box-shadow: 0 4px 10px rgba(74, 48, 42, 0.15) !important;
+    padding: 10px 18px !important;
+    font-size: 0.95rem !important;
+    margin-top: 0 !important;
+}
+
+#promo-modal .btn-promo-fechar:hover {
+    background-color: #e67e22 !important; 
+}
+
+/* Lembrete Flutuante do Cupom */
+#cupom-lembrete {
+    position: fixed;
+    bottom: 25px;
+    left: -180px; 
+    background: #fff3e6;
+    border: 2px dashed #e67e22;
+    color: #e67e22;
+    padding: 10px 18px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 0 30px 30px 0; 
+    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2);
+    cursor: pointer;
+    z-index: 99999;
+    transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#cupom-lembrete.show {
+    left: 0; 
+}
+
+#cupom-lembrete:hover {
+    background: #e67e22;
+    color: #ffffff;
+    border-style: solid;
+}
+
+/* ==========================================================================
+    7. SEÇÃO DE RESPONSIVIDADE (MOBILE AJUSTADO)
+    ========================================================================== */
 @media (max-width: 768px) {
     main {
         padding-top: 10px; 
     }
 
     .logo-container {
-        height: 28vw; 
+        height: 25vw; 
+        min-height: 90px;
     }
 
+    .product-section,
     .product-section h2,
     .product-section h3,
     .section-header-premium,
-    .grid-container[id] {
-        scroll-margin-top: 175px; 
+    .grid-container[id],
+    div[id],
+    section[id] {
+        scroll-margin-top: 170px !important; 
     }
 
-    /* BARRA DE NAVEGAÇÃO MOBILE */
     .main-nav {
         position: -webkit-sticky;
         position: sticky;
         top: 0;
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px 10px;
-        height: auto !important;
-        overflow: visible !important;
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        padding: 10px 15px;
         background: #ffffff;
+        height: auto;
+    }
+
+    .menu-toggle {
+        display: block !important;
+        order: 1;
+    }
+
+    .cart-container-wrapper {
+        width: auto;
+        margin-top: 0;
+        order: 2; 
+    }
+
+    .cart-summary {
+        font-size: 13px;
+        padding: 8px 16px;
+        white-space: nowrap;
     }
 
     .menu-links {
-        display: flex;
+        display: none; 
         flex-direction: column; 
         align-items: center; 
+        position: absolute;
+        top: 100%;
+        left: 0;
         width: 100%;
-        gap: 12px;
-        padding: 5px 0;
+        background: #ffffff;
+        gap: 10px;
+        padding: 15px 0;
+        border-top: 1px solid #f1ece4;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 999999 !important;
+    }
+
+    .menu-links.active {
+        display: flex !important;
     }
 
     .dropdown-item {
@@ -636,91 +903,63 @@ footer {
         flex-direction: column;
         align-items: center;
         width: 100%;
-        height: auto !important;
-        position: relative;
     }
 
-    /* RESET COMPLETO DOS BOTÕES NO MOBILE (Evita sumiço de texto e bugs) */
     .blob-btn {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 240px !important; 
-        height: 45px !important; /* Altura fixa ideal para clique touch */
-        padding: 0 20px !important;
-        font-size: 13px !important;
+        width: 100% !important;
+        max-width: 260px !important; 
+        height: 40px !important;
+        font-size: 12px !important;
         color: #4a302a !important;
         background: transparent !important;
         border: 2px solid #4a302a !important;
         border-radius: 30px !important;
-        position: relative !important;
-        overflow: visible !important; /* Permite ver o texto e a seta sempre */
-        text-align: center !important;
     }
 
-    /* Garante que o texto dentro do botão não suma por causa das sub-tags */
-    .blob-btn span, 
-    .blob-btn strong {
-        color: inherit !important;
-        position: relative !important;
-        z-index: 10 !important;
-    }
-
-    /* Estado Aberto/Ativo: Fundo marrom sólido e texto branco sem efeitos complexos */
     .dropdown-item.open .blob-btn,
     .dropdown-item.active .blob-btn {
         background-color: #4a302a !important;
         color: #ffffff !important;
     }
 
-    /* Desliga COMPLETAMENTE as camadas do efeito blob que geram o borrão ou escondem textos */
     .blob-btn__inner, 
     .blob-btn__blobs, 
-    .blob-btn__blob {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-    }
-
-    /* Força o contorno do botão a se manter limpo */
+    .blob-btn__blob,
     .blob-btn:before {
-        display: none !important; /* Remove o pseudo-elemento conflitante */
+        display: none !important;
     }
 
-    /* SUBMENU SANFONA MOBILE (Aparece logo abaixo do botão respectivo) */
     .dropdown-item .submenu {
-        display: none !important; /* Escondido por padrão */
+        display: none !important; 
     }
 
     .dropdown-item.open .submenu,
     .dropdown-item.active .submenu {
         display: block !important;
-        position: relative !important; /* Empurra os itens abaixo e a barra laranja */
+        position: relative !important; 
         top: 0 !important;
         left: 0 !important;
         transform: none !important;
-        width: 240px !important; 
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08) !important;
-        border: 2px solid #4a302a !important;
-        margin-top: 8px !important;
-        margin-bottom: 8px !important;
-        border-radius: 14px !important;
-        background-color: #ffffff !important;
+        width: 100% !important;
+        max-width: 260px !important;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05) !important;
+        border: 1px solid #4a302a !important;
+        margin: 5px 0 !important;
+        border-radius: 10px !important;
+        background-color: #fdfbf7 !important;
         max-height: none !important;
-        padding: 5px 0 !important;
-        z-index: 9999 !important;
+        padding: 4px 0 !important;
+        z-index: 999999 !important;
     }
 
-    /* Links do Submenu */
     .submenu a {
         display: block !important;
         color: #4a302a !important;
-        padding: 12px 16px !important;
-        font-size: 13px !important;
-        text-transform: uppercase !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        text-decoration: none !important;
+        padding: 10px 16px !important;
+        font-size: 12px !important;
         border-bottom: 1px solid #f5ede6 !important;
         white-space: normal !important;
     }
@@ -729,18 +968,16 @@ footer {
         border-bottom: none !important;
     }
 
-    .submenu a:hover {
-        background-color: #fcf8f2 !important;
-        color: #e67e22 !important;
+    /* Ajuste fino do carrinho mobile */
+    .cart-dropdown {
+        width: calc(100vw - 30px);
+        position: absolute;
+        top: 45px;
+        right: 0;
+        left: auto;
+        z-index: 999999 !important;
     }
 
-    /* Rotação da setinha indicadora */
-    .dropdown-item.open .arrow-icon,
-    .dropdown-item.active .arrow-icon {
-        transform: rotate(180deg) !important;
-    }
-
-    /* GRID E PRODUTOS MOBILE */
     .grid-container {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
         gap: 12px;
@@ -764,46 +1001,23 @@ footer {
     }
 
     .price-qty-container {
-        flex-direction: row; 
-        justify-content: space-between;
-        width: 100%;
-        gap: 4px;
-        align-items: center;
+        flex-direction: row !important; 
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 6px 8px !important;
     }
 
     .qty-input {
-        width: 65px !important; 
-        padding: 6px;
-    }
-
-    /* CARRINHO NO MOBILE */
-    .cart-container-wrapper {
-        width: 100%;
-        margin-top: 5px;
-    }
-
-    .cart-summary {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        font-size: 13px;
-        padding: 12px 16px;
-    }
-
-    .cart-dropdown {
-        width: 100%;
-        position: absolute;
-        top: 105%;
-        left: 0;
-        right: 0;
-        box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
-        border: 1px solid #ddd;
+        width: 50px !important; 
+        padding: 4px !important;
+        font-size: 13px !important;
     }
 }
 
 /* ==========================================================================
-   8. ESTILIZAÇÃO PREMIUM DOS TÍTULOS (DNA PITADAVIVI)
-   ========================================================================== */
+    8. ESTILIZAÇÃO PREMIUM DOS TÍTULOS (DNA PITADAVIVI)
+    ========================================================================== */
 .section-header-premium {
     text-align: center;
     margin-top: 50px; 

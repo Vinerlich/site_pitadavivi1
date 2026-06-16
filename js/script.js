@@ -74,7 +74,7 @@ const rulesSazonais = {
     'grid-pascoa': { mesInicio: 2, diaInicio: 1, mesFim: 3, diaFim: 30, titulo: 'Páscoa' },
     'grid-dia-das-maes': { mesInicio: 4, diaInicio: 1, mesFim: 4, diaFim: 15, titulo: 'Dia das Mães' },
     'grid-dia-dos-namorados': { mesInicio: 5, diaInicio: 1, mesFim: 5, diaFim: 15, titulo: 'Dia dos Namorados' },
-    'grid-festa-junina-julina': { mesInicio: 5, diaInicio: 1, mesFim: 6, diaFim: 31, titulo: 'Festa Junina/ Julina' },
+    'grid-festa-junina-julina': { mesInicio: 5, diaInicio: 1, mesFim: 6, diaFim: 31, titulo: 'Festa Junina/Julina' },
     'grid-copa-do-mundo': { mesInicio: 5, diaInicio: 1, mesFim: 7, diaFim: 19, titulo: 'Copa do Mundo' },
     'grid-dia-dos-pais': { mesInicio: 7, diaInicio: 1, mesFim: 7, diaFim: 15, titulo: 'Dia dos Pais' },
     'grid-criancas-professores': { mesInicio: 9, diaInicio: 1, mesFim: 9, diaFim: 20, titulo: 'Crianças e Professores' },
@@ -88,7 +88,9 @@ const rulesSazonais = {
 window.onload = () => {
     setTimeout(() => {
         const modal = document.getElementById('promo-modal');
-        if (modal) modal.style.display = 'block';
+        if (modal) {
+            modal.classList.add('show');
+        }
     }, 1000);
 
     renderizarCatalogo();
@@ -99,8 +101,22 @@ window.onload = () => {
 
 function fecharModal() {
     const modal = document.getElementById('promo-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) modal.classList.remove('show');
+    
+    // Mostra o botãozinho de lembrete no canto da tela quando o modal fecha
+    const lembrete = document.getElementById('cupom-lembrete');
+    if (lembrete) lembrete.classList.add('show');
 }
+window.fecharModal = fecharModal;
+
+// Função para o cliente clicar no lembrete e abrir o modal de novo
+function abrirModalReverso() {
+    const modal = document.getElementById('promo-modal');
+    const lembrete = document.getElementById('cupom-lembrete');
+    if (modal) modal.classList.add('show');
+    if (lembrete) lembrete.classList.remove('show');
+}
+window.abrirModalReverso = abrirModalReverso;
 
 /* ==========================================================================
    3. ATUALIZAÇÃO DE PREÇO EM TEMPO REAL NO CARD
@@ -108,10 +124,14 @@ function fecharModal() {
 function atualizarPrecoCard(inputElement, precoBase) {
     const quantidade = parseInt(inputElement.value) || 1;
     const card = inputElement.closest('.card');
+    if (!card) return;
     const priceSpan = card.querySelector('.price');
-    const precoCalculado = precoBase * quantidade;
-    priceSpan.innerText = `R$ ${precoCalculado.toFixed(2).replace('.', ',')}`;
+    if (priceSpan) {
+        const precoCalculado = precoBase * quantidade;
+        priceSpan.innerText = `R$ ${precoCalculado.toFixed(2).replace('.', ',')}`;
+    }
 }
+window.atualizarPrecoCard = atualizarPrecoCard;
 
 /* ==========================================================================
    4. RENDERIZAÇÃO DINÂMICA DO CATÁLOGO COM INTELIGÊNCIA SAZONAL
@@ -182,7 +202,7 @@ function renderizarCatalogo() {
             <p style="margin: 0; color: #4a302a; font-weight: bold; font-size: 1rem;">
                 👩‍🍳 <span style="color: #d35400;">Aviso importante:</span> Trabalhamos exclusivamente sob encomenda! 
                 <span style="font-weight: normal; display: block; font-size: 0.9rem; margin-top: 4px; color: #666;">
-                    Todos os nossos produtos são produzidos artesanalmente para a data do seu evento. Garanta sua vaga com antecedência!
+                    Todos os nossos produtos são produzidos artesanalmente para a data do seu evento. Garanta sua delícia artesanal com antecedência!
                 </span>
             </p>
         `;
@@ -280,16 +300,20 @@ function renderizarCatalogo() {
 
         sectionSazonais.appendChild(portfolioWrapper);
 
-        document.getElementById('btn-toggle-portfolio').addEventListener('click', function () {
-            const painel = document.getElementById('conteudo-portfolio-oculto');
-            if (painel.style.display === 'none') {
-                painel.style.display = 'block';
-                this.innerText = 'Recolher Menu Anual';
-            } else {
-                painel.style.display = 'none';
-                this.innerText = 'Conhecer Menu Anual Completo';
-            }
-        });
+        const btnToggle = document.getElementById('btn-toggle-portfolio');
+        if (btnToggle) {
+            btnToggle.addEventListener('click', function () {
+                const painel = document.getElementById('conteudo-portfolio-oculto');
+                if (!painel) return;
+                if (painel.style.display === 'none') {
+                    painel.style.display = 'block';
+                    this.innerText = 'Recolher Menu Anual';
+                } else {
+                    painel.style.display = 'none';
+                    this.innerText = 'Conhecer Menu Anual Completo';
+                }
+            });
+        }
     }
 }
 
@@ -298,12 +322,14 @@ function consultarProdutoForaDeEpoca(nomeProduto) {
     const linkWa = `https://wa.me/5511987342562?text=${encodeURIComponent(txtMensagem)}`;
     window.open(linkWa, '_blank');
 }
+window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;
 
 /* ==========================================================================
    5. GERENCIAMENTO E INTERFACE DO CARRINHO
    ========================================================================== */
 function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
     const card = botao.closest('.card');
+    if (!card) return;
     const quantidadeInput = card.querySelector('.qty-input');
     const quantidade = parseInt(quantidadeInput.value);
 
@@ -314,7 +340,7 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
     if (itemExistente) {
         itemExistente.quantidade = quantidade;
     } else {
-        carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, quantidade: quantidade });
+        carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, grandmother: quantidade, quantidade: quantidade });
     }
 
     atualizarInterfaceCarrinho();
@@ -326,6 +352,7 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
         botao.style.background = "";
     }, 800);
 }
+window.adicionarAoCarrinho = adicionarAoCarrinho;
 
 function atualizarInterfaceCarrinho() {
     const listaContainer = document.getElementById('cart-items-list');
@@ -379,12 +406,14 @@ function alterarQuantidadeDropdown(index, modificador) {
     if (carrinho[index].quantidade <= 0) { carrinho.splice(index, 1); }
     atualizarInterfaceCarrinho();
 }
+window.alterarQuantidadeDropdown = alterarQuantidadeDropdown;
 
 function removerItemDropdown(index) {
     if (!carrinho[index]) return;
-    carrinho.splice(index, 1);
+    carrinho[index].splice(index, 1);
     atualizarInterfaceCarrinho();
 }
+window.removerItemDropdown = removerItemDropdown;
 
 /* ==========================================================================
    6. CÁLCULO DE FRETE (ViaCEP)
@@ -402,15 +431,19 @@ async function buscarCep() {
         if (dados.erro) throw new Error();
 
         valorFrete = 12.00;
-        document.getElementById('shipping-result').innerHTML = `
-            <p style="font-size:0.9rem; margin-top:10px; color:#4a302a;">Entrega para: <strong>${dados.logradouro} - ${dados.bairro}</strong></p>
-            <p style="color:#27ae60;">Frete: <strong>R$ ${valorFrete.toFixed(2).replace('.', ',')}</strong></p>
-        `;
+        const resultContainer = document.getElementById('shipping-result');
+        if (resultContainer) {
+            resultContainer.innerHTML = `
+                <p style="font-size:0.9rem; margin-top:10px; color:#4a302a;">Entrega para: <strong>${dados.logradouro} - ${dados.bairro}</strong></p>
+                <p style="color:#27ae60;">Frete: <strong>R$ ${valorFrete.toFixed(2).replace('.', ',')}</strong></p>
+            `;
+        }
     } catch (e) {
         alert("CEP não encontrado. Verifique os números digitados.");
         valorFrete = 0;
     }
 }
+window.buscarCep = buscarCep;
 
 /* ==========================================================================
    7. FLUXO WHATSAPP & MODAL DE CONFIRMAÇÃO
@@ -418,29 +451,30 @@ async function buscarCep() {
 function solicitarConfirmacaoCompra() {
     if (carrinho.length === 0) return alert("O carrinho está vazio!");
 
-    let mensagem = "🍰 *Novo Pedido Sob Encomenda - Pitadavivi*\n\n";
+    let message = "🍰 *Novo Pedido Sob Encomenda - Pitadavivi*\n\n";
     carrinho.forEach(item => {
         const rotuloVenda = item.tipo === 'Quilo' ? 'Kg' : 'Unid.';
-        mensagem += `• ${item.quantidade}x ${item.nome} (${rotuloVenda}) - R$ ${(item.preco * item.quantidade).toFixed(2).replace('.', ',')}\n`;
+        message += `• ${item.quantidade}x ${item.nome} (${rotuloVenda}) - R$ ${(item.preco * item.quantidade).toFixed(2).replace('.', ',')}\n`;
     });
 
-    mensagem += `\n----------------------------------`;
-    mensagem += `\n*Subtotal:* R$ ${totalCompra.toFixed(2).replace('.', ',')}`;
+    message += `\n----------------------------------`;
+    message += `\n*Subtotal:* R$ ${totalCompra.toFixed(2).replace('.', ',')}`;
 
     if (valorFrete > 0) {
-        mensagem += `\n*Frete:* R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
-        mensagem += `\n*Total Geral:* R$ ${(totalCompra + valorFrete).toFixed(2).replace('.', ',')}`;
+        message += `\n*Frete:* R$ ${valorFrete.toFixed(2).replace('.', ',')}`;
+        message += `\n*Total Geral:* R$ ${(totalCompra + valorFrete).toFixed(2).replace('.', ',')}`;
     } else {
-        mensagem += `\n*Total:* R$ ${totalCompra.toFixed(2).replace('.', ',')}`;
-        mensagem += `\n_(Frete e data de entrega a combinar no WhatsApp)_`;
+        message += `\n*Total:* R$ ${totalCompra.toFixed(2).replace('.', ',')}`;
+        message += `\n_(Frete e data de entrega a combinar no WhatsApp)_`;
     }
 
-    const link = `https://wa.me/5511987342562?text=${encodeURIComponent(mensagem)}`;
+    const link = `https://wa.me/5511987342562?text=${encodeURIComponent(message)}`;
     window.open(link, '_blank');
 
     const confirmModal = document.getElementById('confirm-modal');
     if (confirmModal) confirmModal.style.display = 'block';
 }
+window.solicitarConfirmacaoCompra = solicitarConfirmacaoCompra;
 
 function confirmarLimpezaCarrinho(limpar) {
     const confirmModal = document.getElementById('confirm-modal');
@@ -456,52 +490,63 @@ function confirmarLimpezaCarrinho(limpar) {
         atualizarInterfaceCarrinho();
     }
 }
+window.confirmarLimpezaCarrinho = confirmarLimpezaCarrinho;
 
 /* ==========================================================================
-   8. COMPORTAMENTOS AUXILIARES (CORREÇÃO DE DIRECIONAMENTO E MENU MOBILE)
+   8. COMPORTAMENTOS AUXILIARES (MENU MOBILE CORRIGIDO E INTEGRADO)
    ========================================================================== */
 function configurarMenuSanfonaMobile() {
-    // Escuta cliques nos seletores estruturais que contêm itens de menu e submenus
-    const botoesMenuComSub = document.querySelectorAll('.nav-menu-mobile > li > a, .navbar-nav > li > a, button.dropdown-toggle, .dropdown-item > a');
-    
-    botoesMenuComSub.forEach(botao => {
-        botao.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) {
-                const elementoPai = this.parentElement;
-                const submenu = elementoPai.querySelector('.submenu, .dropdown-menu, ul');
-                
-                if (submenu) {
-                    e.preventDefault(); 
-                    e.stopPropagation(); // Evita que cliques fechem o próprio menu acidentalmente
+    const menuToggle = document.querySelector(".menu-toggle");
+    const menuLinks = document.querySelector(".menu-links");
 
-                    const jaEstaoAbertos = elementoPai.classList.contains('open');
+    // Abre e fecha o painel geral ao clicar nos 3 risquinhos
+    if (menuToggle && menuLinks) {
+        menuToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menuLinks.classList.toggle("active");
+        });
+    }
 
-                    // Remove classes de ativação e limpa displays inline de outros submenus (Efeito Sanfona)
-                    document.querySelectorAll('.nav-menu-mobile > li, .navbar-nav > li').forEach(li => {
-                        li.classList.remove('open');
-                        const sub = li.querySelector('.submenu, .dropdown-menu, ul');
-                        if (sub) {
-                            sub.style.display = 'none';
-                            sub.classList.remove('show-forced');
+    // Gerencia a abertura e fechamento dos submenus de forma limpa (via classes CSS)
+    const dropdownItems = document.querySelectorAll(".dropdown-item");
+
+    dropdownItems.forEach(item => {
+        const mainBtn = item.querySelector(".blob-btn");
+        
+        if (mainBtn) {
+            mainBtn.addEventListener("click", function (e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Fecha outros submenus para não embolar a tela do celular
+                    dropdownItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove("open", "active");
                         }
                     });
 
-                    // Caso o elemento clicado não estivesse aberto, força a exibição visual dele
-                    if (!jaEstaoAbertos) {
-                        elementoPai.classList.add('open');
-                        submenu.classList.add('show-forced');
-                        submenu.style.setProperty('display', 'block', 'important');
-                        submenu.style.setProperty('visibility', 'visible', 'important');
-                        submenu.style.setProperty('opacity', '1', 'important');
-                    }
+                    // Alterna o estado do submenu clicado
+                    item.classList.toggle("open");
+                    item.classList.toggle("active");
                 }
+            });
+        }
+    });
+
+    // Se o usuário clicar fora do menu com ele aberto, fecha o painel automaticamente
+    document.addEventListener("click", function (e) {
+        if (menuLinks && menuLinks.classList.contains("active")) {
+            if (!menuLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+                menuLinks.classList.remove("active");
+                dropdownItems.forEach(item => item.classList.remove("open", "active"));
             }
-        });
+        }
     });
 }
 
 function configurarCliquesSubmenu() {
-    const linksSazonais = document.querySelectorAll('.sazonal-link, .dropdown-menu a[data-data]');
+    const linksSazonais = document.querySelectorAll('.sazonal-link, .dropdown-item .submenu a[data-data], .submenu a[data-data]');
     linksSazonais.forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault(); 
@@ -521,6 +566,7 @@ function configurarCliquesSubmenu() {
             };
 
             const containerId = mapeamentoContainers[nomeData];
+            if (!containerId) return;
             const estaAtivo = verificarSazonalAtivo(containerId);
 
             if (estaAtivo) {
@@ -554,30 +600,27 @@ function configurarCliquesSubmenu() {
                 }
             }
 
-            const paiDireto = this.closest('.submenu, .dropdown-menu, ul');
-            if (paiDireto && window.innerWidth <= 768) {
-                paiDireto.style.display = 'none';
-                paiDireto.classList.remove('show-forced');
+            // Fecha o menu suavemente após clicar em um link interno
+            const menuLinks = document.querySelector(".menu-links");
+            if (menuLinks) {
+                menuLinks.classList.remove("active");
             }
-            const itemMenuMaior = this.closest('.dropdown-item, li');
-            if (itemMenuMaior) itemMenuMaior.classList.remove('open');
+            document.querySelectorAll(".dropdown-item").forEach(item => item.classList.remove("open", "active"));
 
             const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
             if (wrapper) wrapper.classList.remove('active');
         });
     });
 
-    const linksNormais = document.querySelectorAll('.submenu a:not([data-data]), .dropdown-menu a:not([data-data])');
+    const linksNormais = document.querySelectorAll('.submenu a:not([data-data])');
     linksNormais.forEach(link => {
         link.addEventListener('click', () => {
-            const submenuContainer = link.closest('.submenu, .dropdown-menu');
-            if (submenuContainer) {
-                submenuContainer.style.display = 'none';
-                submenuContainer.classList.remove('show-forced');
-                setTimeout(() => { submenuContainer.style.display = ''; }, 600);
+            const menuLinks = document.querySelector(".menu-links");
+            if (menuLinks) {
+                menuLinks.classList.remove("active");
             }
-            const dropdownItem = link.closest('.dropdown-item, li');
-            if (dropdownItem) dropdownItem.classList.remove('open');
+            const dropdownItem = link.closest('.dropdown-item');
+            if (dropdownItem) dropdownItem.classList.remove('open', 'active');
         });
     });
 }

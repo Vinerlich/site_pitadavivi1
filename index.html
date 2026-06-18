@@ -8,6 +8,53 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
+
+    <style>
+        /* Esconde todos os blocos de eventos por padrão */
+        .bloco-sazonal-epoca {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        /* Mostra com suavidade apenas o bloco que receber a classe 'ativo' */
+        .bloco-sazonal-epoca.ativo {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Garante que o subtítulo da galeria continue visível se você quiser */
+        .instrucao-sazonal {
+            text-align: center;
+            color: #7a605a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* Estilização interna para o resultado do frete */
+        .frete-sucesso {
+            background-color: #fcf8f2;
+            border: 1px solid #e67e22;
+            padding: 12px;
+            border-radius: 8px;
+            color: #4a302a;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .frete-sucesso p {
+            margin: 4px 0;
+        }
+
+        .frete-erro {
+            color: #c0392b;
+            background-color: #fdedec;
+            border: 1px solid #e74c3c;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -107,24 +154,22 @@
                         </span></span>
                 </a>
                 <div class="submenu">
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Páscoa"
-                        onclick="fecharMenuAoClicar()">Páscoa</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Dia das Mães"
-                        onclick="fecharMenuAoClicar()">Dia das Mães</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Dia dos Namorados"
+                    <a href="javascript:mostrarApenasEpoca('bloco-pascoa')" onclick="fecharMenuAoClicar()">Páscoa</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-dia-das-maes')" onclick="fecharMenuAoClicar()">Dia das
+                        Mães</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-namorados')"
                         onclick="fecharMenuAoClicar()">Dia dos Namorados</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Festa Junina/Julina"
+                    <a href="javascript:mostrarApenasEpoca('bloco-festa-junina-julina')"
                         onclick="fecharMenuAoClicar()">Festa Junina / Julina</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Copa do Mundo"
-                        onclick="fecharMenuAoClicar()">Copa do Mundo</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Dia dos Pais"
-                        onclick="fecharMenuAoClicar()">Dia dos Pais</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Crianças e Professores"
+                    <a href="javascript:mostrarApenasEpoca('bloco-copa-do-mundo')" onclick="fecharMenuAoClicar()">Copa
+                        do Mundo</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-pais')" onclick="fecharMenuAoClicar()">Dia dos
+                        Pais</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-criancas-professores')"
                         onclick="fecharMenuAoClicar()">Crianças / Professores</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Natal"
-                        onclick="fecharMenuAoClicar()">Natal</a>
-                    <a href="#encomendas-especiais" class="sazonal-link" data-data="Ano Novo"
-                        onclick="fecharMenuAoClicar()">Ano Novo</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-natal')" onclick="fecharMenuAoClicar()">Natal</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-ano-novo')" onclick="fecharMenuAoClicar()">Ano
+                        Novo</a>
                 </div>
             </div>
         </div>
@@ -247,39 +292,69 @@
                 <p class="premium-subtitle">Edições limitadas e menu completo para celebrar datas com muito mais sabor
                 </p>
             </div>
-            <h3>Páscoa</h3>
-            <div class="grid-container" id="grid-pascoa"></div>
-            <h3>Dia das Mães</h3>
-            <div class="grid-container" id="grid-dia-das-maes"></div>
-            <h3>Dia dos Namorados</h3>
-            <div class="grid-container" id="grid-dia-dos-namorados"></div>
-            <h3>Festa Junina/ Julina</h3>
-            <div class="grid-container" id="grid-festa-junina-julina"></div>
-            <div class="section-header-premium" style="margin-top: 30px; margin-bottom: 15px;">
-                <h2>Copa do Mundo</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">⚽✨🏆</div>
-                </div>
-                <p class="premium-subtitle">Kits Torcida e Doces Temáticos para vibrar pelo Hexa</p>
+
+            <div id="bloco-pascoa" class="bloco-sazonal-epoca">
+                <h3>Páscoa</h3>
+                <div class="grid-container" id="grid-pascoa"></div>
             </div>
-            <div class="grid-container" id="grid-copa-do-mundo"></div>
-            <h3>Dia dos Pais</h3>
-            <div class="grid-container" id="grid-dia-dos-pais"></div>
-            <h3>Dia das Crianças e Professores</h3>
-            <div class="grid-container" id="grid-criancas-professores"></div>
-            <h3>Natal</h3>
-            <div class="grid-container" id="grid-natal"></div>
-            <h3>Ano Novo</h3>
-            <div class="grid-container" id="grid-ano-novo"></div>
+
+            <div id="bloco-dia-das-maes" class="bloco-sazonal-epoca">
+                <h3>Dia das Mães</h3>
+                <div class="grid-container" id="grid-dia-das-maes"></div>
+            </div>
+
+            <div id="bloco-dia-dos-namorados" class="bloco-sazonal-epoca">
+                <h3>Dia dos Namorados</h3>
+                <div class="grid-container" id="grid-dia-dos-namorados"></div>
+            </div>
+
+            <div id="bloco-festa-junina-julina" class="bloco-sazonal-epoca">
+                <h3>Festa Junina / Julina</h3>
+                <div class="grid-container" id="grid-festa-junina-julina"></div>
+            </div>
+
+            <div id="bloco-copa-do-mundo" class="bloco-sazonal-epoca">
+                <div class="section-header-premium" style="margin-top: 10px; margin-bottom: 15px;">
+                    <h2>Copa do Mundo</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">⚽✨🏆</div>
+                    </div>
+                    <p class="premium-subtitle">Kits Torcida e Doces Temáticos para vibrar pelo Hexa</p>
+                </div>
+                <div class="grid-container" id="grid-copa-do-mundo"></div>
+            </div>
+
+            <div id="bloco-dia-dos-pais" class="bloco-sazonal-epoca">
+                <h3>Dia dos Pais</h3>
+                <div class="grid-container" id="grid-dia-dos-pais"></div>
+            </div>
+
+            <div id="bloco-criancas-professores" class="bloco-sazonal-epoca">
+                <h3>Dia das Crianças e Professores</h3>
+                <div class="grid-container" id="grid-criancas-professores"></div>
+            </div>
+
+            <div id="bloco-natal" class="bloco-sazonal-epoca">
+                <h3>Natal</h3>
+                <div class="grid-container" id="grid-natal"></div>
+            </div>
+
+            <div id="bloco-ano-novo" class="bloco-sazonal-epoca">
+                <h3>Ano Novo</h3>
+                <div class="grid-container" id="grid-ano-novo"></div>
+            </div>
         </section>
 
         <section class="about-section" style="background: #fff; padding: 60px 20px; text-align: center;">
             <div style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
+                <h2
+                    style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
                     Feito com Afeto
-                    <span style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
+                    <span
+                        style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
                 </h2>
-                <p style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
+                <p
+                    style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
                     A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples em sorrisos
                     partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma história,
                     um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
@@ -299,40 +374,69 @@
         </section>
     </main>
 
-    <div id="promo-modal">
+    <div id="promo-modal" class="modal">
         <div class="modal-content">
+
+            <img src="./img/manjericao.png" class="manjericao-topo-esquerdo" alt="Decor">
+            <img src="./img/manjericao.png" class="manjericao-topo-direito" alt="Decor">
+            <img src="./img/manjericao.png" class="manjericao-baixo-esquerdo" alt="Decor">
+            <img src="./img/manjericao.png" class="manjericao-baixo-direito" alt="Decor">
+
             <button class="btn-modal-close-x" onclick="fecharModal()">&times;</button>
-            <span class="modal-icon">👩‍🍳🎁</span>
+
+            <div class="modal-icons-wrapper">
+                <span class="modal-icon">👩‍🍳🎁</span>
+            </div>
+
             <h2>Um mimo para você!</h2>
             <p>Faça sua primeira encomenda e ganhe um presente artesanal exclusivo.</p>
-            <div class="cupom-tag">QUEROMIMO</div>
+
+            <div class="cupom-container">
+                <div class="cupom-tag">QUEROMIMO</div>
+            </div>
+
             <button class="btn-promo-fechar" onclick="fecharModal()">Garantir meu Mimo!</button>
         </div>
-    </div>
 
-    <div id="cupom-lembrete" onclick="abrirModalReverso()">
-        🎁 <span>Cupom Ativo</span>
+        <div id="promo-modal" class="modal">
+            <div class="modal-content">
+                <img src="./img/manjericao.png" class="manjericao-topo-esquerdo" alt="Decor">
+                <img src="./img/manjericao.png" class="manjericao-topo-direito" alt="Decor">
+                <img src="./img/manjericao.png" class="manjericao-baixo-esquerdo" alt="Decor">
+                <img src="./img/manjericao.png" class="manjericao-baixo-direito" alt="Decor">
+
+                <button class="btn-modal-close-x" onclick="fecharModal()">&times;</button>
+
+                <div class="modal-icons-wrapper">
+                    <span class="modal-icon">👩‍🍳🎁</span>
+                </div>
+
+                <h2>Um mimo para você!</h2>
+                <p>Faça sua primeira encomenda e ganhe um presente artesanal exclusivo.</p>
+
+                <div class="cupom-container">
+                    <div class="cupom-tag">QUEROMIMO</div>
+                </div>
+
+                <button class="btn-promo-fechar" onclick="fecharModal()">Garantir meu Mimo!</button>
+            </div>
+        </div>
+
+        <div id="cupom-lembrete" class="cupom-flutuante">
+            <span onclick="abrirModalReverso()">🎁 Pegar Cupom</span>
+        </div>
     </div>
 
     <div id="confirm-modal" class="modal">
         <div class="modal-content">
             <h2>🛒 Quase lá!</h2>
             <p>Seu pedido foi enviado ao WhatsApp!</p>
-            <p style="font-size: 0.95rem; margin-top: 10px; color: #666;">Deseja limpar o seu carrinho?</p>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-                <button class="action-btn" onclick="confirmarLimpezaCarrinho(true)">Limpar Carrinho</button>
-                <button class="action-btn" style="background-color: #777 !important;"
-                    onclick="confirmarLimpezaCarrinho(false)">Manter e Adicionar Mais Itens</button>
+            <p class="sub-text">Deseja limpar o seu carrinho?</p>
+            <div class="btn-container">
+                <button class="action-btn btn-limpar" onclick="confirmarLimpezaCarrinho(true)">Limpar Carrinho</button>
+                <button class="action-btn btn-manter" onclick="confirmarLimpezaCarrinho(false)">Manter e Adicionar Mais
+                    Itens</button>
             </div>
-        </div>
-    </div>
-
-    <div id="sazonal-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="sazonal-modal-title">📅 Menu Especial</h2>
-            <p id="sazonal-modal-text" style="margin: 15px 0; color: #7a605a;"></p>
-            <button class="action-btn" style="width: auto; padding: 10px 30px; margin-top: 10px;"
-                onclick="document.getElementById('sazonal-modal').style.display='none'">Menu Especial</button>
         </div>
     </div>
 
@@ -353,20 +457,97 @@
     </a>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Função mágica que esconde as outras datas e mostra apenas a selecionada
+        function mostrarApenasEpoca(idBlocoAlvo) {
+            // 1. Remove a classe ativo de absolutamente todas as épocas
+            document.querySelectorAll('.bloco-sazonal-epoca').forEach(bloco => {
+                bloco.classList.remove('ativo');
+            });
+
+            // 2. Localiza o bloco que o cliente clicou e adiciona o 'ativo'
+            const blocoSelecionado = document.getElementById(idBlocoAlvo);
+            if (blocoSelecionado) {
+                blocoSelecionado.classList.add('ativo');
+
+                // 3. Rola a tela suavemente para o cabeçalho dos eventos especiais ou direto para o produto
+                const cabecalhoSecao = document.getElementById('encomendas-especiais');
+                if (cabecalhoSecao) {
+                    cabecalhoSecao.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        // ==========================================
+        // INTEGRAÇÃO COM A SUA API EM C# (.NET)
+        // ==========================================
+        async function buscarCep() {
+            const cepInput = document.getElementById('cep-input');
+            const resultadoDiv = document.getElementById('shipping-result');
+
+            // Remove traços ou espaços do valor digitado
+            const cepDigitado = cepInput.value.replace(/\D/g, '');
+
+            if (cepDigitado.length !== 8) {
+                resultadoDiv.innerHTML = `<div class="frete-erro">Por favor, digite um CEP válido com 8 números.</div>`;
+                return;
+            }
+
+            resultadoDiv.innerHTML = `<span>⏳ Calculando valor do frete...</span>`;
+
+            try {
+                // ATENÇÃO: Verifique a porta exata (ex: 5001, 7154, 5210) que o seu C# mostra ao rodar e ajuste aqui!
+                const urlApi = 'http://localhost:5254';
+
+                const resposta = await fetch(urlApi, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cepDestino: cepDigitado })
+                });
+
+                const dados = await resposta.json();
+
+                if (resposta.ok) {
+                    // Preenche a div com os dados retornados do seu FreteResponse do C#
+                    resultadoDiv.innerHTML = `
+                        <div class="frete-sucesso">
+                            <p>📍 <strong>Endereço:</strong> ${dados.logradouroDestino} - ${dados.bairroDestino}, ${dados.cidadeDestino}</p>
+                            <p>🛣️ <strong>Distância:</strong> ${dados.distanciaKm} km</p>
+                            <p>💰 <strong>Valor do Frete:</strong> R$ ${dados.valorFrete.toFixed(2)}</p>
+                        </div>
+                    `;
+                } else {
+                    // Exibe a mensagem de erro retornada pelas validações da sua API (Ex: Fora da região metropolitana)
+                    resultadoDiv.innerHTML = `<div class="frete-erro">❌ ${dados.mensagem || 'Erro ao processar frete.'}</div>`;
+                }
+
+            } catch (error) {
+                console.error("Erro ao conectar no servidor local C#:", error);
+                resultadoDiv.innerHTML = `<div class="frete-erro">⚠️ Não foi possível conectar ao sistema de cálculo. Certifique-se que sua API C# está rodando!</div>`;
+            }
+        }
+
+        // Scripts do Carrinho mantidos intactos conforme original
+        document.addEventListener('DOMContentLoaded', function () {
             const cartWrapper = document.getElementById('cart-wrapper');
             const cartBtn = document.getElementById('cart-summary-btn');
 
-            cartBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                cartWrapper.classList.toggle('active');
-            });
+            if (cartBtn && cartWrapper) {
+                cartBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    cartWrapper.classList.toggle('active');
+                });
 
-            document.addEventListener('click', function(e) {
-                if (!cartWrapper.contains(e.target)) {
-                    cartWrapper.classList.remove('active');
-                }
-            });
+                document.addEventListener('click', function (e) {
+                    if (!cartWrapper.contains(e.target)) {
+                        cartWrapper.classList.remove('active');
+                    }
+                });
+            }
+
+            // Opcional: Ativa uma época padrão caso o usuário venha direto pelo link comum (Ex: Páscoa)
+            //mostrarApenasEpoca('bloco-dia-dos-pais');
         });
     </script>
     <script src="./js/script.js"></script>

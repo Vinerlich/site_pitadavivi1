@@ -9,14 +9,14 @@ const catalogoProdutos = {
     'grid-geleias': [
         { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg' },
         { nome: 'Geleia de Damasco Artesanal', preco: 22.00, img: 'GeleiaDamasco.jpg' },
-        { nome: 'Geleia de Pimeta Premium', preco: 24.50, img: 'GeleiaPimenta.jpg' }
+        { nome: 'Geleia de Pimenta Premium', preco: 24.50, img: 'GeleiaPimenta.jpg' }
     ],
     'grid-antepastos': [
         { nome: 'Caponata de Berinjela', preco: 22.00, img: 'caponata.jpg' }
     ],
     'grid-sobremesas': [
         { nome: 'Pudim de Leite', preco: 75.30, img: 'sobr1.jpg' },
-        { nome: 'Ovo de Colher Brigadeiro de Café', preco: 12.00, img: 'OvodeColher .webp' }
+        { nome: 'Ovo de Colher Brigadeiro de Café', preco: 12.00, img: 'OvodeColher.webp' }
     ],
     'grid-caseirinhos': [
         { nome: 'Bolo de Cenoura com Brigadeiro', preco: 37.90, img: 'BoloCenoura.jpg' },
@@ -99,24 +99,34 @@ window.onload = () => {
     atualizarInterfaceCarrinho();
 };
 
+/**
+ * Fecha o modal de promoção, salva a preferência do usuário 
+ * e exibe o lembrete flutuante para garantir o cupom.
+ */
 function fecharModal() {
     const modal = document.getElementById('promo-modal');
-    if (modal) modal.classList.remove('show');
-    
-    // Mostra o botãozinho de lembrete no canto da tela quando o modal fecha
     const lembrete = document.getElementById('cupom-lembrete');
-    if (lembrete) lembrete.classList.add('show');
-}
-window.fecharModal = fecharModal;
 
-// Função para o cliente clicar no lembrete e abrir o modal de novo
-function abrirModalReverso() {
-    const modal = document.getElementById('promo-modal');
-    const lembrete = document.getElementById('cupom-lembrete');
-    if (modal) modal.classList.add('show');
-    if (lembrete) lembrete.classList.remove('show');
+    // 1. Remove a classe que exibe o modal
+    if (modal) {
+        modal.classList.remove('show');
+    }
+
+    // 2. Persiste a escolha do usuário no navegador
+    // Isso evita que o modal "pule" na tela em toda nova visita
+    localStorage.setItem('modalMimoVisto', 'true');
+
+    // 3. Exibe o lembrete flutuante (ícone/botão de acesso rápido ao cupom)
+    // Usamos um pequeno atraso para suavizar a transição visual
+    if (lembrete) {
+        setTimeout(() => {
+            lembrete.classList.add('show');
+        }, 300); // 300ms de delay para uma transição mais elegante
+    }
 }
-window.abrirModalReverso = abrirModalReverso;
+
+// Garantir que a função seja acessível globalmente
+window.fecharModal = fecharModal;
 
 /* ==========================================================================
    3. ATUALIZAÇÃO DE PREÇO EM TEMPO REAL NO CARD
@@ -202,11 +212,11 @@ function renderizarCatalogo() {
             <p style="margin: 0; color: #4a302a; font-weight: bold; font-size: 1rem;">
                 👩‍🍳 <span style="color: #d35400;">Aviso importante:</span> Trabalhamos exclusivamente sob encomenda! 
                 <span style="font-weight: normal; display: block; font-size: 0.9rem; margin-top: 4px; color: #666;">
-                    Todos os nossos produtos são produzidos artesanalmente para a data do seu evento. Garanta sua delícia artesanal com antecedência!
+                    Todos os nossos produtos are produzidos artesanalmente para a data do seu evento. Garanta sua delícia artesanal com antecedência!
                 </span>
             </p>
         `;
-        
+
         const corpoPrincipal = document.querySelector('main') || document.querySelector('.container') || document.body.firstElementChild;
         if (corpoPrincipal) {
             if (corpoPrincipal.tagName === 'MAIN' || corpoPrincipal.classList.contains('container')) {
@@ -257,7 +267,7 @@ function renderizarCatalogo() {
                     });
 
                     containerSazonaisOcultosHTML += `
-                        <div style="margin-top: 20px;">
+                        <div id="wrapper-oculto-${idGrid}" style="margin-top: 20px;">
                             <h4 style="color: #4a302a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px;">Menu de ${rulesSazonais[idGrid].titulo}</h4>
                             <div class="grid-container" style="display: grid;">${cardsDoBloco}</div>
                         </div>`;
@@ -338,9 +348,9 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
     const itemExistente = carrinho.find(item => item.nome === nome && item.tipo === tipoVenda);
 
     if (itemExistente) {
-        itemExistente.quantidade = quantidade;
+        itemExistente.quantidade = quantidade; // Corrigido aqui de quantity para quantidade
     } else {
-        carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, grandmother: quantidade, quantidade: quantidade });
+        carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, quantidade: quantidade });
     }
 
     atualizarInterfaceCarrinho();
@@ -416,31 +426,69 @@ function removerItemDropdown(index) {
 window.removerItemDropdown = removerItemDropdown;
 
 /* ==========================================================================
-   6. CÁLCULO DE FRETE (ViaCEP)
+   6. CÁLCULO DE FRETE (Integração com API Pitadavivi)
    ========================================================================== */
 async function buscarCep() {
     const input = document.getElementById('cep-input');
     if (!input) return;
 
     const cep = input.value.replace(/\D/g, '');
-    if (cep.length !== 8) { alert("Digite um CEP válido com 8 dígitos."); return; }
+    if (cep.length !== 8) {
+        alert("Digite um CEP válido com 8 dígitos.");
+        return;
+    }
+
+    const resultContainer = document.getElementById('shipping-result');
+    if (resultContainer) {
+        resultContainer.innerHTML = `<p style="font-size:0.9rem; margin-top:10px; color:#666;">Calculando frete...</p>`;
+    }
+
+    // ATENÇÃO: Altere para a URL real da sua API (ex: http://localhost:5000/api/frete se estiver rodando local)
+    const API_URL = "http://localhost:5254/api/frete";
 
     try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const dados = await response.json();
-        if (dados.erro) throw new Error();
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cepDestino: cep })
+        });
 
-        valorFrete = 12.00;
-        const resultContainer = document.getElementById('shipping-result');
+        const dados = await response.json();
+
+        // Se a API retornar algum erro (400, 500, etc.)
+        if (!response.ok) {
+            throw new Error(dados.mensagem || "Erro ao calcular o frete.");
+        }
+
+        // Atualiza a variável global do frete com o valor real vindo da API
+        valorFrete = dados.valorFrete;
+
         if (resultContainer) {
             resultContainer.innerHTML = `
-                <p style="font-size:0.9rem; margin-top:10px; color:#4a302a;">Entrega para: <strong>${dados.logradouro} - ${dados.bairro}</strong></p>
-                <p style="color:#27ae60;">Frete: <strong>R$ ${valorFrete.toFixed(2).replace('.', ',')}</strong></p>
+                <p style="font-size:0.9rem; margin-top:10px; color:#4a302a;">
+                    Entrega para: <strong>${dados.logradouroDestino} - ${dados.bairroDestino} (${dados.cidadeDestino})</strong>
+                </p>
+                <p style="font-size:0.85rem; color:#7f8c8d; margin-bottom:5px;">
+                    Distância: <strong>${dados.distanciaKm.toString().replace('.', ',')} km</strong>
+                </p>
+                <p style="color:#27ae60; font-size:1.1rem;">
+                    Frete: <strong>R$ ${valorFrete.toFixed(2).replace('.', ',')}</strong>
+                </p>
             `;
         }
-    } catch (e) {
-        alert("CEP não encontrado. Verifique os números digitados.");
+
+        // Se você tiver uma função que atualiza o total do carrinho, chame-la aqui, ex:
+        // atualizarTotalCarrinho();
+
+    } catch (erro) {
+        alert(erro.message);
+        if (resultContainer) {
+            resultContainer.innerHTML = `<p style="font-size:0.9rem; margin-top:10px; color:#c0392b;">${erro.message}</p>`;
+        }
         valorFrete = 0;
+        // Chame a função de atualizar total aqui também para zerar o frete em caso de erro
     }
 }
 window.buscarCep = buscarCep;
@@ -499,7 +547,6 @@ function configurarMenuSanfonaMobile() {
     const menuToggle = document.querySelector(".menu-toggle");
     const menuLinks = document.querySelector(".menu-links");
 
-    // Abre e fecha o painel geral ao clicar nos 3 risquinhos
     if (menuToggle && menuLinks) {
         menuToggle.addEventListener("click", function (e) {
             e.stopPropagation();
@@ -507,26 +554,23 @@ function configurarMenuSanfonaMobile() {
         });
     }
 
-    // Gerencia a abertura e fechamento dos submenus de forma limpa (via classes CSS)
     const dropdownItems = document.querySelectorAll(".dropdown-item");
 
     dropdownItems.forEach(item => {
         const mainBtn = item.querySelector(".blob-btn");
-        
+
         if (mainBtn) {
             mainBtn.addEventListener("click", function (e) {
                 if (window.innerWidth <= 768) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Fecha outros submenus para não embolar a tela do celular
                     dropdownItems.forEach(otherItem => {
                         if (otherItem !== item) {
                             otherItem.classList.remove("open", "active");
                         }
                     });
 
-                    // Alterna o estado do submenu clicado
                     item.classList.toggle("open");
                     item.classList.toggle("active");
                 }
@@ -534,7 +578,6 @@ function configurarMenuSanfonaMobile() {
         }
     });
 
-    // Se o usuário clicar fora do menu com ele aberto, fecha o painel automaticamente
     document.addEventListener("click", function (e) {
         if (menuLinks && menuLinks.classList.contains("active")) {
             if (!menuLinks.contains(e.target) && !menuToggle.contains(e.target)) {
@@ -549,10 +592,10 @@ function configurarCliquesSubmenu() {
     const linksSazonais = document.querySelectorAll('.sazonal-link, .dropdown-item .submenu a[data-data], .submenu a[data-data]');
     linksSazonais.forEach(link => {
         link.addEventListener('click', function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
 
             const nomeData = this.getAttribute('data-data');
-            
+
             const mapeamentoContainers = {
                 "Páscoa": "grid-pascoa",
                 "Dia das Mães": "grid-dia-das-maes",
@@ -582,11 +625,18 @@ function configurarCliquesSubmenu() {
                     if (btnToggle) btnToggle.innerText = 'Recolher Menu Anual';
                 }
 
-                const portfolioWrapper = document.getElementById('portfolio-sazonal-compacto');
-                if (portfolioWrapper) {
+                const blocoEspecificoOculto = document.getElementById(`wrapper-oculto-${containerId}`);
+                if (blocoEspecificoOculto) {
                     setTimeout(() => {
-                        portfolioWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 800);
+                        blocoEspecificoOculto.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 150);
+                } else {
+                    const portfolioWrapper = document.getElementById('portfolio-sazonal-compacto');
+                    if (portfolioWrapper) {
+                        setTimeout(() => {
+                            portfolioWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 150);
+                    }
                 }
 
                 const modal = document.getElementById('sazonal-modal');
@@ -600,7 +650,6 @@ function configurarCliquesSubmenu() {
                 }
             }
 
-            // Fecha o menu suavemente após clicar em um link interno
             const menuLinks = document.querySelector(".menu-links");
             if (menuLinks) {
                 menuLinks.classList.remove("active");

@@ -656,9 +656,11 @@ footer {
 .modal-content {
     background: white;
     margin: 12% auto;
-    padding: 35px 25px;
+    padding: 15px 25px; /* 👈 Diminuímos o espaçamento de 35px para 15px (cima/baixo) */
     width: 90%;
     max-width: 400px;
+    max-height: 380px;  /* 👈 Travamos uma altura máxima para ele não esticar */
+    overflow: hidden;   /* 👈 Garante que nada vai "vazar" para fora dos cantos arredondados */
     text-align: center;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -678,10 +680,10 @@ footer {
 }
 
 /* ==========================================================================
-   #promo-modal VERSÃO ELEGANTE E COMPACTA (PITADAVIVI)
+   #promo-modal VERSÃO ARTESANAL (PITADAVIVI) - ATUALIZADO
    ========================================================================= */
 
-/* Fundo escurecido atrás do modal */
+/* Fundo escurecido atrás do modal (O "overlay") */
 #promo-modal {
     display: none;
     position: fixed;
@@ -690,7 +692,9 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(74, 48, 42, 0.45) !important;
+    /* 👇 AJUSTADO: Aqui controlamos a opacidade do fundo do site. 
+       0.4 significa 40% de escurecimento. Se o seu estava "1" ou "black", ele ficava puro preto assim! */
+    background-color: rgba(0, 0, 0, 0.4) !important; 
     backdrop-filter: blur(4px) !important;
 }
 
@@ -701,78 +705,101 @@ footer {
     justify-content: center !important;
 }
 
-/* Container do Modal - Mantém o tamanho fixo */
+/* Container do Modal - Com o papel esticado */
 #promo-modal .modal-content {
-    background-color: #fdfbf7 !important;
-    padding: 40px 30px !important;
-    border-radius: 20px !important;
-    width: 50% !important;
+    background-image: url('../img/papel-velho.jpg') !important; 
+    background-size: 100% 100% !important; /* Estica o pergaminho até as bordas */
+    background-position: center !important;    
+    background-repeat: no-repeat !important;   
+    background-color: transparent !important; /* Remove qualquer cor sólida por trás do papel */
+    
+    padding: 35px 30px 25px 30px !important; /* Aumentei um pouquinho o topo para os emojis respirarem */
+    border-radius: 20px !important; 
+    width: 90% !important;
     max-width: 320px !important;
-    /* Limita o tamanho máximo */
+    max-height: 350px !important; 
     text-align: center !important;
-    position: relative !important;
-    overflow: visible !important;
-    /* Permite que as folhas fiquem nos cantos */
+    position: relative !important; 
+    overflow: hidden !important; /* Corta as rebarbas do papel nos cantos arredondados */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* 🍃 CSS para as 4 imagens - Agora travadas no tamanho */
-#promo-modal img[class^="manjericao-"] {
-    position: absolute !important;
-    width: 100px !important;
-    /* TAMANHO FIXO E PEQUENO */
-    height: 100px !important;
-    object-fit: contain !important;
-    pointer-events: none !important;
-    z-index: 2 !important;
-}
-
-/* Posições */
-.manjericao-topo-esquerdo {
-    top: -20px;
-    left: -16px;
-}
-
-.manjericao-topo-direito {
-    top: -20px;
-    right: -16px;
-    transform: scaleX(-1);
-}
-
-.manjericao-baixo-esquerdo {
-    bottom: -20px;
-    left: -16px;
-    transform: scaleY(-1);
-}
-
-.manjericao-baixo-direito {
-    bottom: -20px;
-    right: -16px;
-    transform: scale(-1);
-}
-
-/* BOTÃO "X" DE FECHAR BRONZEADO */
+/* ✖️ BOTÃO FECHAR (X) - Elegante, laranja e integrado ao manjericão */
 #promo-modal .btn-modal-close-x {
     position: absolute !important;
-    top: 10px !important;
-    right: 14px !important;
-    background: transparent !important;
-    border: none !important;
-    outline: none !important;
-    font-size: 1.4rem !important;
-    font-weight: 300 !important;
-    color: #c48245 !important;
-    /* Tom bronze/madeira suave */
+    top: 5px !important;    
+    right: 5px !important;  
+    background: none !important;        /* Sem fundo branco */
+    border: none !important;            /* Sem bordas */
+    box-shadow: none !important;        /* Sem sombras */
+    
+    color: #e67e22 !important;          /* Tom alaranjado elegante */
+    font-size: 26px !important; 
+    font-weight: 300 !important; 
     cursor: pointer !important;
-    line-height: 1 !important;
-    padding: 0 !important;
-    transition: transform 0.2s ease, color 0.2s ease !important;
-    z-index: 10 !important;
+    z-index: 100000 !important;         /* Sempre acima das folhas */
+    
+    transition: color 0.2s ease, transform 0.2s !important;
+    opacity: 0.9 !important;
 }
 
 #promo-modal .btn-modal-close-x:hover {
-    color: #e67e22 !important;
-    transform: scale(1.1) !important;
+    color: #d35400 !important;          /* Escurece sutilmente no hover */
+    transform: scale(1.1) !important;   /* Leve efeito de crescimento */
+    opacity: 1 !important;
 }
+
+/* 📋 BOTÃO DO CUPOM (Estilo "Clique para Copiar") */
+#promo-modal .cupom-tag {
+    background-color: #d3753b !important; 
+    color: white !important;
+    border: 2px dashed #ffffff !important; 
+    padding: 12px 30px !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    letter-spacing: 1px !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    box-shadow: 0 4px 10px rgba(211, 117, 59, 0.3) !important;
+    transition: transform 0.1s ease, background-color 0.2s !important;
+}
+
+#promo-modal .cupom-tag:hover {
+    background-color: #b85e2a !important; 
+    transform: scale(1.03) !important; 
+}
+
+#promo-modal .cupom-tag:active {
+    transform: scale(0.97) !important; 
+}
+
+/* Texto explicativo abaixo do cupom */
+.dica-copiar {
+    display: block !important;
+    font-size: 11px !important;
+    color: #39302d !important;
+    margin-top: 6px !important;
+    font-style: italic !important;
+}
+
+/* 🍃 FIX: Manjericões nos 4 cantos */
+.manjericao-topo-esquerdo,
+.manjericao-topo-direito,
+.manjericao-baixo-esquerdo,
+.manjericao-baixo-direito {
+    position: absolute !important;
+    width: 60px !important;       
+    height: 60px !important;      
+    object-fit: contain !important;
+    pointer-events: none !important;
+    z-index: 9999 !important;     
+}
+
+.manjericao-topo-esquerdo { top: -15px !important; left: -15px !important; }
+.manjericao-topo-direito { top: -15px !important; right: -15px !important; transform: scaleX(-1) !important; }
+.manjericao-baixo-esquerdo { bottom: -15px !important; left: -15px !important; transform: scaleY(-1) !important; }
+.manjericao-baixo-direito { bottom: -15px !important; right: -15px !important; transform: scale(-1) !important; }
 
 /* Ajuste dos Emojis do Topo */
 #promo-modal .modal-icons-wrapper {
@@ -865,14 +892,13 @@ footer {
 
 /* Estilo final do botão flutuante */
 .cupom-flutuante {
-    display: none;
-    /* Escondido por padrão */
+    display: none; /* Escondido por padrão */
     position: fixed !important;
     bottom: 20px !important;
-    right: 20px !important;
+    left: 20px !important;
     z-index: 99999 !important;
-    background: #e67e22 !important;
-    color: #fff !important;
+    background: #f1be50 !important;
+    color: #3b2610b3 !important;
     padding: 12px 20px !important;
     border-radius: 50px !important;
     cursor: pointer !important;
@@ -882,9 +908,8 @@ footer {
     transition: all 0.3s ease !important;
 }
 
-/* Esta classe é ativada pelo seu JavaScript quando você fecha o modal */
-/* Força total para o lembrete aparecer quando a classe show estiver presente */
-#cupom-lembrete.show {
+/* 👇 CORRIGIDO: Agora usamos a mesma classe (.cupom-flutuante) combinada com o .show */
+.cupom-flutuante.show {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -896,7 +921,6 @@ footer {
         opacity: 0;
         transform: translateY(10px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1182,7 +1206,7 @@ footer {
 /* Caixa do conteúdo reestilizada com a identidade Pitadavivi */
 #confirm-modal .modal-content {
     background-color: #fdfbf7 !important;
-    border: 2px solid #e67e22 !important;
+    border: 2px solid #cd701e !important;
     border-radius: 20px !important;
     padding: 35px 25px !important;
     box-shadow: 0 12px 30px rgba(74, 48, 42, 0.15) !important;
@@ -1201,7 +1225,7 @@ footer {
 
 /* Texto principal */
 #confirm-modal .modal-content p {
-    color: #4a302a !important;
+    color: #4e332d !important;
     font-size: 1.05rem !important;
     line-height: 1.5 !important;
     margin: 0 !important;
@@ -1245,12 +1269,12 @@ footer {
 }
 
 #confirm-modal .btn-limpar:hover {
-    background-color: #d35400 !important;
+    background-color: #312c29 !important;
 }
 
 /* Botão 2: Manter e Adicionar Mais Itens (Marrom Chocolate) */
 #confirm-modal .btn-manter {
-    background: #4a302a !important;
+    background: #14100f !important;
     color: #ffffff !important;
     box-shadow: 0 4px 12px rgba(74, 48, 42, 0.2) !important;
 }

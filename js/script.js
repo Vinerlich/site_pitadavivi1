@@ -100,6 +100,22 @@ window.onload = () => {
 };
 
 /**
+ * Copia o código do cupom automaticamente para a área de transferência,
+ * avisa o cliente e fecha o modal acionando as preferências.
+ */
+function copiarCupom() {
+    navigator.clipboard.writeText("QUEROMIMO").then(() => {
+        // Alerta amigável e personalizado para a PitadaVivi
+        alert("Cupom 'QUEROMIMO' copiado com sucesso! 🎉 É só colar no carrinho para garantir seu mimo.");
+        
+        // Fecha o modal aproveitando toda a lógica elegante que você já criou abaixo
+        fecharModal();
+    }).catch(err => {
+        console.error("Erro ao copiar o cupom: ", err);
+    });
+}
+
+/**
  * Fecha o modal de promoção, salva a preferência do usuário 
  * e exibe o lembrete flutuante para garantir o cupom.
  */
@@ -125,7 +141,8 @@ function fecharModal() {
     }
 }
 
-// Garantir que a função seja acessível globalmente
+// Garantir que as funções sejam acessíveis globalmente no clique dos botões HTML
+window.copiarCupom = copiarCupom;
 window.fecharModal = fecharModal;
 
 /* ==========================================================================

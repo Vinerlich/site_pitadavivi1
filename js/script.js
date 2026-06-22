@@ -85,7 +85,17 @@ const rulesSazonais = {
 /* ==========================================================================
    2. INICIALIZAÇÃO DA PÁGINA
    ========================================================================== */
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+window.addEventListener('beforeunload', () => {
+    window.scrollTo(0, 0);
+});
+
 window.onload = () => {
+    window.scrollTo(0, 0);
+
     setTimeout(() => {
         const modal = document.getElementById('promo-modal');
         if (modal) {
@@ -97,48 +107,119 @@ window.onload = () => {
     configurarCliquesSubmenu();
     configurarMenuSanfonaMobile();
     atualizarInterfaceCarrinho();
+    configurarHoverCarrinho();
 };
 
-/**
- * Fecha o modal de promoção, salva a preferência do usuário 
- * e exibe o lembrete flutuante para garantir o cupom.
- */
+function configurarHoverCarrinho() {
+    const cartIcon = document.querySelector('.cart-icon') || document.querySelector('.cart-toggle') || document.getElementById('cart-count')?.parentElement;
+    const cartWrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
+    
+    let carrinhoTravadoAberto = false;
+
+    if (cartIcon && cartWrapper) {
+        cartIcon.addEventListener('mouseenter', () => {
+            cartWrapper.classList.add('active');
+        });
+
+        cartIcon.addEventListener('mouseleave', (e) => {
+            setTimeout(() => {
+                if (!carrinhoTravadoAberto && !cartWrapper.contains(document.activeElement)) {
+                    if (!cartWrapper.matches(':hover') && !cartIcon.matches(':hover')) {
+                        cartWrapper.classList.remove('active');
+                    }
+                }
+            }, 100);
+        });
+
+        cartWrapper.addEventListener('mouseleave', () => {
+            if (!carrinhoTravadoAberto) {
+                cartWrapper.classList.remove('active');
+            }
+        });
+
+        cartIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            carrinhoTravadoAberto = !carrinhoTravadoAberto;
+            
+            if (carrinhoTravadoAberto) {
+                cartWrapper.classList.add('active');
+                cartWrapper.style.boxShadow = "0 4px 20px rgba(74, 48, 42, 0.25)";
+            } else {
+                cartWrapper.style.boxShadow = "";
+                cartWrapper.classList.remove('active');
+            }
+        });
+
+        cartWrapper.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (carrinhoTravadoAberto) {
+                carrinhoTravadoAberto = false;
+                if (cartWrapper) {
+                    cartWrapper.style.boxShadow = "";
+                    cartWrapper.classList.remove('active');
+                }
+            }
+        });
+    }
+}
+
+function copiarCupom() {
+    navigator.clipboard.writeText("QUEROMIMO").then(() => {
+        alert("Cupom 'QUEROMIMO' copiado com sucesso! 🎉 É só colar no carrinho para garantir seu mimo.");
+        fecharModal();
+    }).catch(err => {
+        console.error("Erro ao copiar o cupom: ", err);
+    });
+}
+
 function fecharModal() {
     const modal = document.getElementById('promo-modal');
     const lembrete = document.getElementById('cupom-lembrete');
 
-    // 1. Remove a classe que exibe o modal
     if (modal) {
         modal.classList.remove('show');
     }
 
-    // 2. Persiste a escolha do usuário no navegador
-    // Isso evita que o modal "pule" na tela em toda nova visita
     localStorage.setItem('modalMimoVisto', 'true');
 
-    // 3. Exibe o lembrete flutuante (ícone/botão de acesso rápido ao cupom)
-    // Usamos um pequeno atraso para suavizar a transição visual
     if (lembrete) {
         setTimeout(() => {
             lembrete.classList.add('show');
-        }, 300); // 300ms de delay para uma transição mais elegante
+        }, 300);
     }
 }
 
-// Garantir que a função seja acessível globalmente
+window.copiarCupom = copiarCupom;
 window.fecharModal = fecharModal;
 
 /* ==========================================================================
-   3. ATUALIZAÇÃO DE PREÇO EM TEMPO REAL NO CARD
+   3. ATUALIZAÇÃO DE PREÇO EM TEMPO REAL NO CARD (INTEGRAÇÃO DIRETA)
    ========================================================================== */
 function atualizarPrecoCard(inputElement, precoBase) {
     const quantidade = parseInt(inputElement.value) || 1;
     const card = inputElement.closest('.card');
     if (!card) return;
+
     const priceSpan = card.querySelector('.price');
     if (priceSpan) {
         const precoCalculado = precoBase * quantidade;
         priceSpan.innerText = `R$ ${precoCalculado.toFixed(2).replace('.', ',')}`;
+    }
+
+    const h4Nome = card.querySelector('h4');
+    if (h4Nome) {
+        const nomeProduto = h4Nome.innerText.trim();
+        const itemNoCarrinho = carrinho.find(item => item.nome === nomeProduto);
+
+        if (itemNoCarrinho) {
+            itemNoCarrinho.quantidade = quantidade;
+            atualizarInterfaceCarrinho();
+        }
     }
 }
 window.atualizarPrecoCard = atualizarPrecoCard;
@@ -212,7 +293,7 @@ function renderizarCatalogo() {
             <p style="margin: 0; color: #4a302a; font-weight: bold; font-size: 1rem;">
                 👩‍🍳 <span style="color: #d35400;">Aviso importante:</span> Trabalhamos exclusivamente sob encomenda! 
                 <span style="font-weight: normal; display: block; font-size: 0.9rem; margin-top: 4px; color: #666;">
-                    Todos os nossos produtos are produzidos artesanalmente para a data do seu evento. Garanta sua delícia artesanal com antecedência!
+                    Todos os nossos produtos são produzidos artesanalmente para a data do seu evento. Garanta sua delícia artesanal com antecedência!
                 </span>
             </p>
         `;
@@ -348,7 +429,7 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
     const itemExistente = carrinho.find(item => item.nome === nome && item.tipo === tipoVenda);
 
     if (itemExistente) {
-        itemExistente.quantidade = quantidade; // Corrigido aqui de quantity para quantidade
+        itemExistente.quantidade = quantidade;
     } else {
         carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, quantidade: quantidade });
     }
@@ -420,7 +501,7 @@ window.alterarQuantidadeDropdown = alterarQuantidadeDropdown;
 
 function removerItemDropdown(index) {
     if (!carrinho[index]) return;
-    carrinho[index].splice(index, 1);
+    carrinho.splice(index, 1);
     atualizarInterfaceCarrinho();
 }
 window.removerItemDropdown = removerItemDropdown;
@@ -443,7 +524,6 @@ async function buscarCep() {
         resultContainer.innerHTML = `<p style="font-size:0.9rem; margin-top:10px; color:#666;">Calculando frete...</p>`;
     }
 
-    // ATENÇÃO: Altere para a URL real da sua API (ex: http://localhost:5000/api/frete se estiver rodando local)
     const API_URL = "http://localhost:5254/api/frete";
 
     try {
@@ -457,12 +537,10 @@ async function buscarCep() {
 
         const dados = await response.json();
 
-        // Se a API retornar algum erro (400, 500, etc.)
         if (!response.ok) {
             throw new Error(dados.mensagem || "Erro ao calcular o frete.");
         }
 
-        // Atualiza a variável global do frete com o valor real vindo da API
         valorFrete = dados.valorFrete;
 
         if (resultContainer) {
@@ -479,16 +557,12 @@ async function buscarCep() {
             `;
         }
 
-        // Se você tiver uma função que atualiza o total do carrinho, chame-la aqui, ex:
-        // atualizarTotalCarrinho();
-
     } catch (erro) {
         alert(erro.message);
         if (resultContainer) {
             resultContainer.innerHTML = `<p style="font-size:0.9rem; margin-top:10px; color:#c0392b;">${erro.message}</p>`;
         }
         valorFrete = 0;
-        // Chame a função de atualizar total aqui também para zerar o frete em caso de erro
     }
 }
 window.buscarCep = buscarCep;
@@ -541,11 +615,12 @@ function confirmarLimpezaCarrinho(limpar) {
 window.confirmarLimpezaCarrinho = confirmarLimpezaCarrinho;
 
 /* ==========================================================================
-   8. COMPORTAMENTOS AUXILIARES (MENU MOBILE CORRIGIDO E INTEGRADO)
+   8. COMPORTAMENTOS AUXILIARES (MENU MOBILE INTELIGENTE TOTALMENTE CORRIGIDO)
    ========================================================================== */
 function configurarMenuSanfonaMobile() {
     const menuToggle = document.querySelector(".menu-toggle");
     const menuLinks = document.querySelector(".menu-links");
+    const dropdownItems = document.querySelectorAll(".dropdown-item");
 
     if (menuToggle && menuLinks) {
         menuToggle.addEventListener("click", function (e) {
@@ -554,14 +629,22 @@ function configurarMenuSanfonaMobile() {
         });
     }
 
-    const dropdownItems = document.querySelectorAll(".dropdown-item");
-
+    // 1. CUIDA DOS DROPDOWNS COM/SEM SUBMENU
     dropdownItems.forEach(item => {
         const mainBtn = item.querySelector(".blob-btn");
+        const temSubmenu = item.querySelector(".submenu") !== null;
 
         if (mainBtn) {
             mainBtn.addEventListener("click", function (e) {
                 if (window.innerWidth <= 768) {
+                    // Se o item do dropdown NÃO possuir um submenu real, fecha tudo e deixa rolar
+                    if (!temSubmenu) {
+                        if (menuLinks) menuLinks.classList.remove("active");
+                        dropdownItems.forEach(otherItem => otherItem.classList.remove("open", "active"));
+                        return; 
+                    }
+
+                    // Se possuir submenu, aplica o efeito sanfona (abre/fecha o bloco)
                     e.preventDefault();
                     e.stopPropagation();
 
@@ -578,6 +661,29 @@ function configurarMenuSanfonaMobile() {
         }
     });
 
+    // 2. CORREÇÃO CRÍTICA: Captura qualquer link comum direto no menu que não seja dropdown (Ex: Geleias, Depoimentos, etc)
+    const linksDiretosMenu = document.querySelectorAll(".menu-links > a, .menu-links > li > a:not(.blob-btn)");
+    linksDiretosMenu.forEach(link => {
+        link.addEventListener("click", () => {
+            if (window.innerWidth <= 768 && menuLinks) {
+                menuLinks.classList.remove("active");
+                dropdownItems.forEach(item => item.classList.remove("open", "active"));
+            }
+        });
+    });
+
+    // 3. Links internos de dentro dos submenus recolhem o menu todo
+    const linksFinaisSubmenu = document.querySelectorAll(".menu-links .submenu a");
+    linksFinaisSubmenu.forEach(link => {
+        link.addEventListener("click", () => {
+            if (menuLinks && menuLinks.classList.contains("active")) {
+                menuLinks.classList.remove("active");
+                dropdownItems.forEach(item => item.classList.remove("open", "active"));
+            }
+        });
+    });
+
+    // 4. Clicar em qualquer espaço em branco fora do menu também o recolhe
     document.addEventListener("click", function (e) {
         if (menuLinks && menuLinks.classList.contains("active")) {
             if (!menuLinks.contains(e.target) && !menuToggle.contains(e.target)) {
@@ -670,6 +776,103 @@ function configurarCliquesSubmenu() {
             }
             const dropdownItem = link.closest('.dropdown-item');
             if (dropdownItem) dropdownItem.classList.remove('open', 'active');
+        });
+    });
+}
+
+/* ==========================================================================
+   9. CARROSSEL DE DEPOIMENTOS ARTESANAL
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('testimonial-track');
+    const cards = document.querySelectorAll('.testimonial-card');
+    const nextBtn = document.getElementById('next-testimonial');
+    const prevBtn = document.getElementById('prev-testimonial');
+    const dotsContainer = document.getElementById('carousel-dots');
+    
+    if (!track || cards.length === 0) return;
+
+    let currentIndex = 0;
+    const totalItems = cards.length;
+
+    function checarDispositivo() {
+        return window.innerWidth <= 768;
+    }
+
+    if (checarDispositivo() && dotsContainer) {
+        cards.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                moveSubsecao(index);
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    function moveSubsecao(index) {
+        if (!checarDispositivo()) {
+            track.style.transform = 'none';
+            return;
+        }
+
+        if (index >= totalItems) currentIndex = 0;
+        else if (index < 0) currentIndex = totalItems - 1;
+        else currentIndex = index;
+
+        const amountToMove = -currentIndex * 100;
+        track.style.transform = `translateX(calc(${amountToMove}% - ${currentIndex * 20}px))`;
+
+        const dots = document.querySelectorAll('.carousel-dot');
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === currentIndex);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => moveSubsecao(currentIndex + 1));
+    }
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => moveSubsecao(currentIndex - 1));
+    }
+
+    window.addEventListener('resize', () => {
+        if (!checarDispositivo()) {
+            track.style.transform = 'none';
+        } else {
+            moveSubsecao(currentIndex);
+        }
+    });
+});
+
+/* ==========================================================================
+   10. BOTÃO VOLTAR AO TOPO - CORREÇÃO DEFINITIVA
+   ========================================================================== */
+const btnTopo = document.getElementById("btn-topo");
+
+if (btnTopo) {
+    // 1. Função que controla a lógica
+    const checkScroll = () => {
+        if (window.scrollY > 300) {
+            btnTopo.style.display = "flex";
+        } else {
+            btnTopo.style.display = "none";
+        }
+    };
+
+    // 2. Garante o estado inicial ao carregar a página
+    window.addEventListener("load", checkScroll);
+    
+    // 3. Monitora o scroll
+    window.addEventListener("scroll", checkScroll);
+
+    // 4. Ação de clique
+    btnTopo.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
         });
     });
 }

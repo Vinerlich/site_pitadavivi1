@@ -40,6 +40,7 @@
             color: #4a302a;
             text-align: left;
             font-size: 0.95rem;
+            margin-top: 8px;
         }
 
         .frete-sucesso p {
@@ -53,6 +54,80 @@
             padding: 10px;
             border-radius: 8px;
             font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* Ajustes específicos para a caixinha de frete dentro do carrinho flutuante */
+        .shipping-box-cart {
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 10px;
+            background: #fafafa;
+            margin-top: 10px;
+        }
+
+        .shipping-box-cart h4 {
+            margin: 0 0 10px 0;
+            color: #4a302a;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        /* Layout padrão: Computador e telas grandes */
+        .shipping-input-group {
+            display: flex !important;
+            gap: 8px !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+        }
+
+        .shipping-input-group input {
+            width: 110px !important;
+            min-width: 110px !important;
+            padding: 10px !important;
+            border: 1px solid #ccc !important;
+            border-radius: 25px !important;
+            font-size: 0.9rem !important;
+            background-color: #fff !important;
+            color: #333 !important;
+            box-sizing: border-box !important;
+            text-align: center !important;
+        }
+
+        .shipping-input-group button {
+            flex: 1 !important;
+            padding: 10px 15px !important;
+            font-size: 0.9rem !important;
+            cursor: pointer !important;
+            border-radius: 25px !important;
+            border: none !important;
+            background-color: #4a302a !important;
+            color: #fff !important;
+            font-weight: bold !important;
+            transition: background 0.2s;
+        }
+
+        .shipping-input-group button:hover {
+            background-color: #e67e22 !important;
+        }
+
+        /* 📱 AJUSTE EXCLUSIVO PARA CELULARES (Telas menores que 480px) */
+        @media (max-width: 480px) {
+            .shipping-input-group {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+
+            .shipping-input-group input {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+
+            .shipping-input-group button {
+                width: 100% !important;
+                padding: 12px 15px !important;
+            }
         }
     </style>
 </head>
@@ -154,24 +229,25 @@
                         </span></span>
                 </a>
                 <div class="submenu">
-                    <a href="javascript:mostrarApenasEpoca('bloco-pascoa')" onclick="fecharMenuAoClicar()">Páscoa</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-dia-das-maes')" onclick="fecharMenuAoClicar()">Dia das
-                        Mães</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-namorados')"
-                        onclick="fecharMenuAoClicar()">Dia dos Namorados</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-festa-junina-julina')"
-                        onclick="fecharMenuAoClicar()">Festa Junina / Julina</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-copa-do-mundo')" onclick="fecharMenuAoClicar()">Copa
-                        do Mundo</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-pais')" onclick="fecharMenuAoClicar()">Dia dos
-                        Pais</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-criancas-professores')"
-                        onclick="fecharMenuAoClicar()">Crianças / Professores</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-natal')" onclick="fecharMenuAoClicar()">Natal</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-ano-novo')" onclick="fecharMenuAoClicar()">Ano
-                        Novo</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-pascoa')">Páscoa</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-dia-das-maes')">Dia das Mães</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-namorados')">Dia dos Namorados</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-festa-junina-julina')">Festa Junina / Julina</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-copa-do-mundo')">Copa do Mundo</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-pais')">Dia dos Pais</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-criancas-professores')">Crianças / Professores</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-natal')">Natal</a>
+                    <a href="javascript:mostrarApenasEpoca('bloco-ano-novo')">Ano Novo</a>
                 </div>
             </div>
+
+            <a href="#depoimentos" class="blob-btn" onclick="fecharMenuAoClicar()">Depoimentos
+                <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                    </span></span>
+            </a>
+
         </div>
 
         <div class="cart-container-wrapper" id="cart-wrapper">
@@ -183,8 +259,20 @@
                     <p class="empty-cart-msg">Seu carrinho ainda está vazio... Que tal recheá-lo com nossas delícias?
                         👩‍🍳</p>
                 </div>
+
+                <div class="shipping-box-cart">
+                    <h4>Calcular Entrega</h4>
+                    <div class="shipping-input-group">
+                        <input type="text" id="cep-input" placeholder="00000-000" maxlength="9"
+                            oninput="aplicarMascaraCep(this)">
+                        <button type="button" onclick="buscarCep(event)">Calcular</button>
+                    </div>
+                    <div id="shipping-result"></div>
+                </div>
+
                 <div class="cart-dropdown-footer">
-                    <button class="action-btn" onclick="solicitarConfirmacaoCompra()">Finalizar por WhatsApp</button>
+                    <button class="action-btn" onclick="solicitarConfirmacaoCompra()" style="width: 100%;">Finalizar por
+                        WhatsApp</button>
                 </div>
             </div>
         </div>
@@ -357,32 +445,77 @@
                     style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
                     A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples em sorrisos
                     partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma história,
-                    um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
+                    um secret de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
                     rotina!
                 </p>
             </div>
         </section>
 
-        <section class="shipping-section">
-            <div class="shipping-box">
-                <h3>Calcular Entrega</h3>
-                <input type="text" id="cep-input" placeholder="00000-000" maxlength="9">
-                <button class="action-btn" onclick="buscarCep()">Calcular Frete</button>
-                <div id="shipping-result" style="margin-top:15px;"></div>
+        <section id="depoimentos" class="testimonials-section">
+            <div class="section-header-premium">
+                <h2>Quem já provou, aprovou!</h2>
+                <div class="premium-divider">
+                    <div class="premium-divider-icon">✨</div>
+                </div>
+                <p class="premium-subtitle">O carinho e os temperos que conquistaram nossos clientes</p>
             </div>
+
+            <div class="testimonial-carousel-container">
+                <button class="carousel-nav-btn prev-btn" id="prev-testimonial"
+                    aria-label="Depoimento anterior">&#10094;</button>
+
+                <div class="testimonial-carousel-track-wrapper">
+                    <div class="testimonials-grid" id="testimonial-track">
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">★★★★★</div>
+                            <p class="testimonial-text">"O tempero é simplesmente maravilhoso, dá para sentir o cuidado
+                                e o afeto em cada detalhe. Virou item obrigatório nos meus almoços de domingo!"</p>
+                            <span class="testimonial-author">Mariana Silva
+                                <span class="testimonial-city">São Paulo - SP</span>
+                            </span>
+                        </div>
+
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">★★★★★</div>
+                            <p class="testimonial-text">"Os produtos chegaram super frescos e muito bem embalados. A
+                                Pitadavivi tem um atendimento impecável e um sabor inigualável."</p>
+                            <span class="testimonial-author">Carlos Eduardo
+                                <span class="testimonial-city">Campinas - SP</span>
+                            </span>
+                        </div>
+
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">★★★★★</div>
+                            <p class="testimonial-text">"Que grata surpresa! O aroma quando abri a caixinha já
+                                conquistou a casa toda. Recomendo de olhos fechados para quem ama comida de verdade."
+                            </p>
+                            <span class="testimonial-author">Beatriz Costa
+                                <span class="testimonial-city">Rio de Janeiro - RJ</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-nav-btn next-btn" id="next-testimonial"
+                    aria-label="Próximo depoimento">&#10095;</button>
+            </div>
+
+            <div class="carousel-dots" id="carousel-dots"></div>
+        </section>
+
+        <section class="shipping-section" style="text-align: center; padding: 40px 20px;">
             <button class="checkout-btn" onclick="solicitarConfirmacaoCompra()">Finalizar Pedido via WhatsApp</button>
         </section>
     </main>
 
     <div id="promo-modal" class="modal">
         <div class="modal-content">
-
             <img src="./img/manjericao.png" class="manjericao-topo-esquerdo" alt="Decor">
             <img src="./img/manjericao.png" class="manjericao-topo-direito" alt="Decor">
             <img src="./img/manjericao.png" class="manjericao-baixo-esquerdo" alt="Decor">
             <img src="./img/manjericao.png" class="manjericao-baixo-direito" alt="Decor">
 
-            <button class="btn-modal-close-x" onclick="fecharModal()">&times;</button>
+            <button class="btn-modal-close-x" onclick="fecharModal()" aria-label="Fechar modal">&times;</button>
 
             <div class="modal-icons-wrapper">
                 <span class="modal-icon">👩‍🍳🎁</span>
@@ -392,50 +525,54 @@
             <p>Faça sua primeira encomenda e ganhe um presente artesanal exclusivo.</p>
 
             <div class="cupom-container">
-                <div class="cupom-tag">QUEROMIMO</div>
+                <button class="cupom-tag" onclick="copiarCupom()">
+                    QUEROMIMO <span class="icone-copiar">📋</span>
+                </button>
+                <span class="dica-copiar">Clique acima para copiar o cupom!</span>
             </div>
-
-            <button class="btn-promo-fechar" onclick="fecharModal()">Garantir meu Mimo!</button>
-        </div>
-
-        <div id="promo-modal" class="modal">
-            <div class="modal-content">
-                <img src="./img/manjericao.png" class="manjericao-topo-esquerdo" alt="Decor">
-                <img src="./img/manjericao.png" class="manjericao-topo-direito" alt="Decor">
-                <img src="./img/manjericao.png" class="manjericao-baixo-esquerdo" alt="Decor">
-                <img src="./img/manjericao.png" class="manjericao-baixo-direito" alt="Decor">
-
-                <button class="btn-modal-close-x" onclick="fecharModal()">&times;</button>
-
-                <div class="modal-icons-wrapper">
-                    <span class="modal-icon">👩‍🍳🎁</span>
-                </div>
-
-                <h2>Um mimo para você!</h2>
-                <p>Faça sua primeira encomenda e ganhe um presente artesanal exclusivo.</p>
-
-                <div class="cupom-container">
-                    <div class="cupom-tag">QUEROMIMO</div>
-                </div>
-
-                <button class="btn-promo-fechar" onclick="fecharModal()">Garantir meu Mimo!</button>
-            </div>
-        </div>
-
-        <div id="cupom-lembrete" class="cupom-flutuante">
-            <span onclick="abrirModalReverso()">🎁 Pegar Cupom</span>
         </div>
     </div>
 
+    <div id="cupom-lembrete" class="cupom-flutuante" onclick="abrirModal()">
+        🎁 Meu Mimo
+    </div>
+
     <div id="confirm-modal" class="modal">
-        <div class="modal-content">
-            <h2>🛒 Quase lá!</h2>
-            <p>Seu pedido foi enviado ao WhatsApp!</p>
-            <p class="sub-text">Deseja limpar o seu carrinho?</p>
-            <div class="btn-container">
-                <button class="action-btn btn-limpar" onclick="confirmarLimpezaCarrinho(true)">Limpar Carrinho</button>
-                <button class="action-btn btn-manter" onclick="confirmarLimpezaCarrinho(false)">Manter e Adicionar Mais
-                    Itens</button>
+        <div class="modal-content"
+            style="padding: 30px 25px; box-sizing: border-box; background: url('./img/papel-velho.jpg') repeat, #fcf8f2; border: 2px solid #e67e22; position: relative; overflow: hidden;">
+
+            <img src="./img/manjericao.png" alt="Decor"
+                style="position: absolute; top: -5px; left: -5px; width: 50px; transform: rotate(0deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor"
+                style="position: absolute; top: -5px; right: -5px; width: 50px; transform: rotate(90deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor"
+                style="position: absolute; bottom: -5px; left: -5px; width: 50px; transform: rotate(270deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor"
+                style="position: absolute; bottom: -5px; right: -5px; width: 50px; transform: rotate(180deg); pointer-events: none;">
+
+            <div class="modal-icons-wrapper" style="margin-bottom: 5px; text-align: center;">
+                <span class="modal-icon" style="font-size: 2rem;">🎉🛒</span>
+            </div>
+
+            <h2
+                style="font-size: 1.45rem; margin-bottom: 8px; line-height: 1.2; color: #4a302a; text-align: center; font-weight: bold;">
+                Pedido enviado!</h2>
+
+            <p style="font-size: 0.95rem; margin-bottom: 15px; line-height: 1.4; color: #4a302a; text-align: center;">
+                Seu carrinho já está na nossa cozinha via WhatsApp. Que escolha deliciosa! 👩‍🍳
+            </p>
+
+            <div class="btn-container"
+                style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; position: relative; z-index: 2;">
+                <button class="action-btn" onclick="confirmarLimpezaCarrinho(false)"
+                    style="width: 100%; padding: 12px; font-weight: bold; background-color: #e67e22; border-radius: 25px; border: none; color: white; cursor: pointer; font-size: 0.95rem; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    🤩 Ver mais delícias e adicionar!
+                </button>
+
+                <button onclick="confirmarLimpezaCarrinho(true)"
+                    style="background: none; border: none; color: #a08075; text-decoration: underline; font-size: 0.85rem; cursor: pointer; padding: 5px; margin-top: 8px; display: inline-block; width: 100%; text-align: center;">
+                    Limpar carrinho e recomeçar
+                </button>
             </div>
         </div>
     </div>
@@ -457,34 +594,20 @@
     </a>
 
     <script>
-        // Função mágica que esconde as outras datas e mostra apenas a selecionada
-        function mostrarApenasEpoca(idBlocoAlvo) {
-            // 1. Remove a classe ativo de absolutamente todas as épocas
-            document.querySelectorAll('.bloco-sazonal-epoca').forEach(bloco => {
-                bloco.classList.remove('ativo');
-            });
-
-            // 2. Localiza o bloco que o cliente clicou e adiciona o 'ativo'
-            const blocoSelecionado = document.getElementById(idBlocoAlvo);
-            if (blocoSelecionado) {
-                blocoSelecionado.classList.add('ativo');
-
-                // 3. Rola a tela suavemente para o cabeçalho dos eventos especiais ou direto para o produto
-                const cabecalhoSecao = document.getElementById('encomendas-especiais');
-                if (cabecalhoSecao) {
-                    cabecalhoSecao.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+        // --- CÁLCULO DE FRETE E MÁSCARAS ---
+        function aplicarMascaraCep(input) {
+            let valor = input.value.replace(/\D/g, '');
+            if (valor.length > 5) {
+                valor = valor.substring(0, 5) + '-' + valor.substring(5, 8);
             }
+            input.value = valor;
         }
 
-        // ==========================================
-        // INTEGRAÇÃO COM A SUA API EM C# (.NET)
-        // ==========================================
-        async function buscarCep() {
+        async function buscarCep(event) {
+            if (event) event.stopPropagation();
+
             const cepInput = document.getElementById('cep-input');
             const resultadoDiv = document.getElementById('shipping-result');
-
-            // Remove traços ou espaços do valor digitado
             const cepDigitado = cepInput.value.replace(/\D/g, '');
 
             if (cepDigitado.length !== 8) {
@@ -492,24 +615,19 @@
                 return;
             }
 
-            resultadoDiv.innerHTML = `<span>⏳ Calculando valor do frete...</span>`;
+            resultadoDiv.innerHTML = `<span style="display:block; margin-top:8px;">⏳ Calculando...</span>`;
 
             try {
-                // ATENÇÃO: Verifique a porta exata (ex: 5001, 7154, 5210) que o seu C# mostra ao rodar e ajuste aqui!
                 const urlApi = 'http://localhost:5254';
-
                 const resposta = await fetch(urlApi, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cepDestino: cepDigitado })
                 });
 
                 const dados = await resposta.json();
 
                 if (resposta.ok) {
-                    // Preenche a div com os dados retornados do seu FreteResponse do C#
                     resultadoDiv.innerHTML = `
                         <div class="frete-sucesso">
                             <p>📍 <strong>Endereço:</strong> ${dados.logradouroDestino} - ${dados.bairroDestino}, ${dados.cidadeDestino}</p>
@@ -518,17 +636,16 @@
                         </div>
                     `;
                 } else {
-                    // Exibe a mensagem de erro retornada pelas validações da sua API (Ex: Fora da região metropolitana)
                     resultadoDiv.innerHTML = `<div class="frete-erro">❌ ${dados.mensagem || 'Erro ao processar frete.'}</div>`;
                 }
 
             } catch (error) {
                 console.error("Erro ao conectar no servidor local C#:", error);
-                resultadoDiv.innerHTML = `<div class="frete-erro">⚠️ Não foi possível conectar ao sistema de cálculo. Certifique-se que sua API C# está rodando!</div>`;
+                resultadoDiv.innerHTML = `<div class="frete-erro">⚠️ Erro de conexão. Certifique-se que sua API C# está rodando!</div>`;
             }
         }
 
-        // Scripts do Carrinho mantidos intactos conforme original
+        // --- SCRIPTS DO CARRINHO (CORRIGIDOS) ---
         document.addEventListener('DOMContentLoaded', function () {
             const cartWrapper = document.getElementById('cart-wrapper');
             const cartBtn = document.getElementById('cart-summary-btn');
@@ -538,19 +655,23 @@
                     e.stopPropagation();
                     cartWrapper.classList.toggle('active');
                 });
+            }
 
-                document.addEventListener('click', function (e) {
+            document.addEventListener('click', function (e) {
+                if (cartWrapper && cartWrapper.classList.contains('active')) {
                     if (!cartWrapper.contains(e.target)) {
                         cartWrapper.classList.remove('active');
                     }
-                });
-            }
-
-            // Opcional: Ativa uma época padrão caso o usuário venha direto pelo link comum (Ex: Páscoa)
-            //mostrarApenasEpoca('bloco-dia-dos-pais');
+                }
+            });
         });
     </script>
     <script src="./js/script.js"></script>
+
+    <button id="btn-topo" title="Voltar ao topo" aria-label="Voltar ao topo">
+        ↑
+    </button>
+    
 </body>
 
 </html>

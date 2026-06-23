@@ -63,11 +63,6 @@ main {
    3. MENU COM EFEITO BLOB (DESKTOP PADRÃO)
    ========================================================================== */
 .main-nav {
-    position: -webkit-sticky;
-    /* Suporte para Safari/iOS */
-    position: sticky;
-    top: 0;
-    z-index: 99999;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -75,22 +70,18 @@ main {
     background: #ffffff;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 99999;
+    transition: all 0.2s ease; /* Transição suave quando fixar */
 }
 
-/* Botão Hamburger */
-.menu-toggle {
-    display: none;
-    font-size: 24px;
-    color: #4a302a;
-    cursor: pointer;
-    padding: 5px 10px;
-}
-
-.menu-links {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
+/* Nova classe que o JavaScript vai injetar APENAS ao rolar a página */
+.main-nav.fixed-top {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .blob-btn {
@@ -216,8 +207,10 @@ main {
     z-index: 99999;
     padding: 6px 0;
     border: 1px solid #e0e0e0;
-    max-height: 400px;
+    
+    max-height: 350px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .dropdown-item::after {
@@ -252,6 +245,39 @@ main {
 @media (min-width: 769px) {
     .dropdown-item:hover .submenu {
         display: block;
+    }
+}
+
+/* ==========================================================================
+   AJUSTE ESPECÍFICO PARA MOBILE (ESTRATEGIA 2: ABSOLUTO CENTRALIZADO)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .dropdown-item {
+        position: relative !important;
+    }
+
+    .submenu {
+        position: absolute !important;
+        top: 100% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        
+        width: 280px !important; 
+        max-width: 90vw !important; 
+        
+        max-height: 300px !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        
+        box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2) !important;
+        border: 1px solid #e2dacb !important;
+        background-color: #ffffff !important;
+        z-index: 999999 !important;
+    }
+
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
     }
 }
 
@@ -293,19 +319,24 @@ main {
     text-align: left;
 }
 
-/* REGRAS DE VISIBILIDADE DO CARRINHO */
-@media (min-width: 769px) {
-    .cart-container-wrapper:hover .cart-dropdown {
-        display: block !important;
+/* Ajuste responsivo para celulares de telas muito estreitas */
+@media (max-width: 480px) {
+    .cart-dropdown {
+        width: 285px !important;
+        right: -10px !important;
+        padding: 15px !important;
     }
 }
 
+/* REGRAS DE VISIBILIDADE DO CARRINHO (ATUALIZADAS PARA HOVER E CLIQUE) */
 .cart-container-wrapper.active .cart-dropdown,
+.cart-container-wrapper.locked .cart-dropdown,
 .cart-summary.active+.cart-dropdown,
 .cart-dropdown.active {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: auto !important; 
 }
 
 .cart-items-list {
@@ -572,7 +603,7 @@ footer {
 
 .whatsapp-float {
     position: fixed;
-    bottom: 20px;
+    bottom: 90px; /* ALTERADO: Subiu para dar espaço para a seta ficar embaixo dele */
     right: 20px;
     background-color: #25d366;
     color: white;
@@ -1386,7 +1417,7 @@ footer {
     }
 }
 
-/* --- ESTILOS DO CARROSSEL DE DEPOIMENTOS --- */
+/* --- ESTILOS DO CARROSSEL DE DEPOIMENTOS (CORRIGIDO) --- */
 .testimonial-carousel-container {
     position: relative;
     display: flex;
@@ -1397,21 +1428,21 @@ footer {
 }
 
 .testimonial-carousel-track-wrapper {
-    overflow: hidden; /* Esconde os cards que estão fora da vez */
+    overflow: hidden; /* Esconde os cards que saem da tela */
     width: 100%;
 }
 
-/* Modifica o grid original para virar uma linha infinita com transição suave */
+/* Modifica o grid original para virar uma linha contínua no mobile */
 .testimonials-section .testimonials-grid {
     display: flex !important;
     gap: 20px !important;
     transition: transform 0.4s ease-in-out;
-    width: 100%;
+    width: auto !important; /* 🔥 CORREÇÃO: Permite que a esteira cresça infinitamente para os lados */
 }
 
-/* Garante que no celular cada card ocupe 100% do espaço disponível */
+/* Garante que no celular cada card ocupe exatamente a largura visível do carrossel */
 .testimonials-section .testimonial-card {
-    flex: 0 0 100%;
+    flex: 0 0 100% !important; /* 🔥 CORREÇÃO: Força o card a ter 100% da largura do wrapper no mobile */
     box-sizing: border-box;
 }
 
@@ -1465,47 +1496,54 @@ footer {
     height: 12px;
 }
 
-/* Computadores grandes: mostra os 3 lado a lado e esconde botões */
+/* Computadores grandes: desativa a esteira e exibe o grid estático */
 @media (min-width: 769px) {
+    .testimonials-section .testimonials-grid {
+        display: grid !important; /* 🔥 Retorna para Grid no desktop */
+        grid-template-columns: repeat(3, 1fr) !important; /* Fixa 3 colunas perfeitas */
+        transform: none !important; /* Cancela qualquer transição do JS residual */
+        width: 100% !important;
+    }
+    
     .testimonials-section .testimonial-card {
-        flex: 0 0 calc(33.333% - 14px); /* Divide em 3 colunas perfeitas */
+        flex: none !important; /* Desativa as propriedades flex no desktop */
     }
+    
     .carousel-nav-btn, .carousel-dots {
-        display: none !important; /* No desktop não precisa rodar se couber tudo */
+        display: none !important; /* Esconde controles desnecessários no monitor */
     }
+    
     .testimonial-carousel-container {
         padding: 0;
     }
 }
 
 /* ==========================================================================
-   11. BOTÃO VOLTAR AO TOPO (ESTILO MINIMALISTA)
+   11. BOTÃO VOLTAR AO TOPO (ESTILO MINIMALISTA - CORRIGIDO)
    ========================================================================== */
 #btn-topo {
-    display: none; /* Controlado pelo JS */
     position: fixed;
-    /* Ajuste o 'bottom' conforme necessário para afastar do WhatsApp */
-    bottom: 90px; 
-    right: 25px; 
+    bottom: 110px; /* Mantido os 110px para sair de cima do WhatsApp */
+    right: 30px;  /* Alinhado com o ícone do Whats */
     z-index: 9990;
     
-    /* Removemos o círculo e background */
-    background-color: transparent; 
+    background-color: transparent;
     border: none;
-    
-    /* Padding generoso para facilitar o clique sem precisar de fundo visível */
     padding: 10px;
-    
-    color: #555; /* Cor neutra da seta */
+    color: #555; 
     cursor: pointer;
-    font-size: 28px; /* Tamanho da seta */
+    font-size: 28px; 
     
     display: flex;
     align-items: center;
     justify-content: center;
     
-    /* Efeito suave de hover */
-    transition: color 0.3s ease, transform 0.2s ease;
+    /* CORREÇÃO: Começa totalmente invisível e intocável no topo da página */
+    opacity: 0;
+    pointer-events: none;
+    
+    /* Transição suave para a opacidade e para o efeito de hover */
+    transition: color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
 }
 
 #btn-topo:hover {
@@ -1516,8 +1554,57 @@ footer {
 /* Ajuste para mobile */
 @media (max-width: 480px) {
     #btn-topo {
-        bottom: 80px; /* Ajuste para manter distância do WhatsApp no mobile */
+        bottom: 85px; /* Mantém uma distância segura do WhatsApp no mobile */
         right: 15px;
         font-size: 24px;
     }
+}
+
+/* CLASSE QUE O JS ATIVA: Torna o botão visível e clicável após passar dos 300px */
+#btn-topo.visivel {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}/* ==========================================================================
+   11. BOTÃO VOLTAR AO TOPO (ABAIXO DO WHATSAPP)
+   ========================================================================== */
+#btn-topo {
+    position: fixed;
+    bottom: 25px; /* Agora fica na base da página, embaixo do WhatsApp */
+    right: 30px;  /* Alinhado na mesma linha lateral do Whats */
+    z-index: 9990;
+    
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    color: #555; 
+    cursor: pointer;
+    font-size: 28px; 
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
+}
+
+#btn-topo:hover {
+    color: #000;
+    transform: translateY(-3px);
+}
+
+/* Ajuste para mobile */
+@media (max-width: 480px) {
+    #btn-topo {
+        bottom: 20px; /* Ajuste fino na base para telas mobile */
+        right: 20px;
+        font-size: 24px;
+    }
+}
+
+/* Classe de ativação do JS */
+#btn-topo.visivel {
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }

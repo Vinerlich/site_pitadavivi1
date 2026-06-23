@@ -435,17 +435,14 @@
 
         <section class="about-section" style="background: #fff; padding: 60px 20px; text-align: center;">
             <div style="max-width: 800px; margin: 0 auto;">
-                <h2
-                    style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
+                <h2 style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
                     Feito com Afeto
-                    <span
-                        style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
+                    <span style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
                 </h2>
-                <p
-                    style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
+                <p style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
                     A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples em sorrisos
                     partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma história,
-                    um secret de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
+                    um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
                     rotina!
                 </p>
             </div>
@@ -461,8 +458,8 @@
             </div>
 
             <div class="testimonial-carousel-container">
-                <button class="carousel-nav-btn prev-btn" id="prev-testimonial"
-                    aria-label="Depoimento anterior">&#10094;</button>
+                <!-- ID corrigido aqui para evitar duplicidade -->
+                <button class="carousel-nav-btn prev-btn" id="prev-testimonial" aria-label="Depoimento anterior">&#10094;</button>
 
                 <div class="testimonial-carousel-track-wrapper">
                     <div class="testimonials-grid" id="testimonial-track">
@@ -496,8 +493,7 @@
                     </div>
                 </div>
 
-                <button class="carousel-nav-btn next-btn" id="next-testimonial"
-                    aria-label="Próximo depoimento">&#10095;</button>
+                <button class="carousel-nav-btn next-btn" id="next-testimonial" aria-label="Próximo depoimento">&#10095;</button>
             </div>
 
             <div class="carousel-dots" id="carousel-dots"></div>
@@ -538,39 +534,30 @@
     </div>
 
     <div id="confirm-modal" class="modal">
-        <div class="modal-content"
-            style="padding: 30px 25px; box-sizing: border-box; background: url('./img/papel-velho.jpg') repeat, #fcf8f2; border: 2px solid #e67e22; position: relative; overflow: hidden;">
+        <div class="modal-content" style="padding: 30px 25px; box-sizing: border-box; background: url('./img/papel-velho.jpg') repeat, #fcf8f2; border: 2px solid #e67e22; position: relative; overflow: hidden;">
 
-            <img src="./img/manjericao.png" alt="Decor"
-                style="position: absolute; top: -5px; left: -5px; width: 50px; transform: rotate(0deg); pointer-events: none;">
-            <img src="./img/manjericao.png" alt="Decor"
-                style="position: absolute; top: -5px; right: -5px; width: 50px; transform: rotate(90deg); pointer-events: none;">
-            <img src="./img/manjericao.png" alt="Decor"
-                style="position: absolute; bottom: -5px; left: -5px; width: 50px; transform: rotate(270deg); pointer-events: none;">
-            <img src="./img/manjericao.png" alt="Decor"
-                style="position: absolute; bottom: -5px; right: -5px; width: 50px; transform: rotate(180deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; top: -5px; left: -5px; width: 50px; transform: rotate(0deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; top: -5px; right: -5px; width: 50px; transform: rotate(90deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; bottom: -5px; left: -5px; width: 50px; transform: rotate(270deg); pointer-events: none;">
+            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; bottom: -5px; right: -5px; width: 50px; transform: rotate(180deg); pointer-events: none;">
 
             <div class="modal-icons-wrapper" style="margin-bottom: 5px; text-align: center;">
                 <span class="modal-icon" style="font-size: 2rem;">🎉🛒</span>
             </div>
 
-            <h2
-                style="font-size: 1.45rem; margin-bottom: 8px; line-height: 1.2; color: #4a302a; text-align: center; font-weight: bold;">
+            <h2 style="font-size: 1.45rem; margin-bottom: 8px; line-height: 1.2; color: #4a302a; text-align: center; font-weight: bold;">
                 Pedido enviado!</h2>
 
             <p style="font-size: 0.95rem; margin-bottom: 15px; line-height: 1.4; color: #4a302a; text-align: center;">
                 Seu carrinho já está na nossa cozinha via WhatsApp. Que escolha deliciosa! 👩‍🍳
             </p>
 
-            <div class="btn-container"
-                style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; position: relative; z-index: 2;">
-                <button class="action-btn" onclick="confirmarLimpezaCarrinho(false)"
-                    style="width: 100%; padding: 12px; font-weight: bold; background-color: #e67e22; border-radius: 25px; border: none; color: white; cursor: pointer; font-size: 0.95rem; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div class="btn-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; position: relative; z-index: 2;">
+                <button class="action-btn" onclick="confirmarLimpezaCarrinho(false)" style="width: 100%; padding: 12px; font-weight: bold; background-color: #e67e22; border-radius: 25px; border: none; color: white; cursor: pointer; font-size: 0.95rem; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                     🤩 Ver mais delícias e adicionar!
                 </button>
 
-                <button onclick="confirmarLimpezaCarrinho(true)"
-                    style="background: none; border: none; color: #a08075; text-decoration: underline; font-size: 0.85rem; cursor: pointer; padding: 5px; margin-top: 8px; display: inline-block; width: 100%; text-align: center;">
+                <button onclick="confirmarLimpezaCarrinho(true)" style="background: none; border: none; color: #a08075; text-decoration: underline; font-size: 0.85rem; cursor: pointer; padding: 5px; margin-top: 8px; display: inline-block; width: 100%; text-align: center;">
                     Limpar carrinho e recomeçar
                 </button>
             </div>
@@ -580,18 +567,19 @@
     <footer>
         <p>&copy; 2026 Pitadavivi Ltda. | Todos os direitos reservados.</p>
         <div class="social-links">
-            <a href="https://www.instagram.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i
-                    class="fab fa-instagram"></i></a>
-            <a href="https://www.facebook.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i
-                    class="fab fa-facebook"></i></a>
-            <a href="https://wa.me/5511987342562" target="_blank" rel="noopener noreferrer"><i
-                    class="fab fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+            <a href="https://wa.me/5511987342562" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
         </div>
     </footer>
 
     <a href="https://wa.me/5511987342562" class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
+
+    <button id="btn-topo" title="Voltar ao topo" aria-label="Voltar ao topo">
+        ↑
+    </button>
 
     <script>
         // --- CÁLCULO DE FRETE E MÁSCARAS ---
@@ -668,10 +656,6 @@
     </script>
     <script src="./js/script.js"></script>
 
-    <button id="btn-topo" title="Voltar ao topo" aria-label="Voltar ao topo">
-        ↑
-    </button>
-    
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. ESTADO GLOBAL DA APLICAÇÃO
+   1. ESTADO GLOBAL DA APLICAÇÃO E REGRAS INTELIGENTES (SAZONAIS BLINDADOS)
    ========================================================================== */
 let carrinho = [];
 let totalCompra = 0;
@@ -71,16 +71,57 @@ const catalogoProdutos = {
 };
 
 const rulesSazonais = {
-    'grid-pascoa': { mesInicio: 2, diaInicio: 1, mesFim: 3, diaFim: 30, titulo: 'Páscoa' },
-    'grid-dia-das-maes': { mesInicio: 4, diaInicio: 1, mesFim: 4, diaFim: 15, titulo: 'Dia das Mães' },
-    'grid-dia-dos-namorados': { mesInicio: 5, diaInicio: 1, mesFim: 5, diaFim: 15, titulo: 'Dia dos Namorados' },
-    'grid-festa-junina-julina': { mesInicio: 5, diaInicio: 1, mesFim: 6, diaFim: 31, titulo: 'Festa Junina/Julina' },
-    'grid-copa-do-mundo': { mesInicio: 5, diaInicio: 1, mesFim: 7, diaFim: 19, titulo: 'Copa do Mundo' },
-    'grid-dia-dos-pais': { mesInicio: 7, diaInicio: 1, mesFim: 7, diaFim: 15, titulo: 'Dia dos Pais' },
-    'grid-criancas-professores': { mesInicio: 9, diaInicio: 1, mesFim: 9, diaFim: 20, titulo: 'Crianças e Professores' },
-    'grid-natal': { mesInicio: 9, diaInicio: 15, mesFim: 11, diaFim: 26, titulo: 'Natal' },
-    'grid-ano-novo': { mesInicio: 11, diaInicio: 1, mesFim: 0, diaFim: 5, titulo: 'Ano Novo' }
+    // 1. DATA MÓVEL
+    'grid-pascoa': { tipo: 'movel', chave: 'pascoa', diasAntecedencia: 35, diasDuracaoPos: 1, titulo: 'Páscoa' },
+    
+    // 2. DATAS DE DOMINGOS MÓVEIS
+    'grid-dia-das-maes': { tipo: 'domingo', mes: 4, ordemDomingo: 2, diasAntecedencia: 21, titulo: 'Dia das Mães' }, 
+    'grid-dia-dos-pais': { tipo: 'domingo', mes: 7, ordemDomingo: 2, diasAntecedencia: 21, titulo: 'Dia dos Pais' }, 
+    
+    // 3. DATAS FIXAS
+    'grid-dia-dos-namorados': { tipo: 'fixa', mesInicio: 4, diaInicio: 15, mesFim: 5, diaFim: 12, titulo: 'Dia dos Namorados' }, 
+    'grid-festa-junina-julina': { tipo: 'fixa', mesInicio: 4, diaInicio: 15, mesFim: 6, diaFim: 31, titulo: 'Festa Junina/Julina' }, 
+    'grid-criancas-professores': { tipo: 'fixa', mesInicio: 8, diaInicio: 15, mesFim: 9, diaFim: 15, titulo: 'Crianças e Professores' }, 
+    'grid-natal': { tipo: 'fixa', mesInicio: 10, diaInicio: 15, mesFim: 11, diaFim: 25, titulo: 'Natal' }, 
+    'grid-ano-novo': { tipo: 'fixa', mesInicio: 10, diaInicio: 15, mesFim: 0, diaFim: 6, titulo: 'Ano Novo' }, 
+    'grid-copa-do-mundo': { tipo: 'fixa', mesInicio: 4, diaInicio: 15, mesFim: 7, diaFim: 19, titulo: 'Copa do Mundo' }
 };
+
+/* ==========================================================================
+   FUNÇÕES AUXILIARES DE CÁLCULO DE CALENDÁRIO DINÂMICO
+   ========================================================================== */
+function obterDomingoPascoa(ano) {
+    const a = ano % 19;
+    const b = Math.floor(ano / 100);
+    const c = ano % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const mes = Math.floor((h + l - 7 * m + 114) / 31);
+    const dia = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(ano, mes - 1, dia);
+}
+
+function obterDiaDoDomingo(ano, mes, ordem) {
+    let data = new Date(ano, mes, 1);
+    let contagemDomingos = 0;
+    while (data.getMonth() === mes) {
+        if (data.getDay() === 0) {
+            contagemDomingos++;
+            if (contagemDomingos === ordem) {
+                return data;
+            }
+        }
+        data.setDate(data.getDate() + 1);
+    }
+    return null;
+}
 
 /* ==========================================================================
    2. INICIALIZAÇÃO DA PÁGINA
@@ -104,46 +145,50 @@ window.onload = () => {
     }, 1000);
 
     renderizarCatalogo();
-    configurarCliquesSubmenu();
-    configurarMenuSanfonaMobile();
-    atualizarInterfaceCarrinho();
+    if (typeof configurarCliquesSubmenu === 'function') configurarCliquesSubmenu();
+    if (typeof configurarMenuSanfonaMobile === 'function') configurarMenuSanfonaMobile();
+    if (typeof atualizarInterfaceCarrinho === 'function') atualizarInterfaceCarrinho();
     configurarHoverCarrinho();
 };
 
 function configurarHoverCarrinho() {
     const cartIcon = document.querySelector('.cart-icon') || document.querySelector('.cart-toggle') || document.getElementById('cart-count')?.parentElement;
     const cartWrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
+    const cartBtn = document.getElementById('cart-summary-btn');
     
-    let carrinhoTravadoAberto = false;
+    if (!cartWrapper) return;
 
-    if (cartIcon && cartWrapper) {
+    // 1. COMPORTAMENTO DE HOVER (Apenas para consulta rápida)
+    if (cartIcon) {
         cartIcon.addEventListener('mouseenter', () => {
             cartWrapper.classList.add('active');
         });
 
-        cartIcon.addEventListener('mouseleave', (e) => {
+        cartIcon.addEventListener('mouseleave', () => {
             setTimeout(() => {
-                if (!carrinhoTravadoAberto && !cartWrapper.contains(document.activeElement)) {
-                    if (!cartWrapper.matches(':hover') && !cartIcon.matches(':hover')) {
-                        cartWrapper.classList.remove('active');
-                    }
+                if (!cartWrapper.classList.contains('locked') && !cartWrapper.matches(':hover') && !cartIcon.matches(':hover')) {
+                    cartWrapper.classList.remove('active');
                 }
             }, 100);
         });
+    }
 
-        cartWrapper.addEventListener('mouseleave', () => {
-            if (!carrinhoTravadoAberto) {
-                cartWrapper.classList.remove('active');
-            }
-        });
+    cartWrapper.addEventListener('mouseleave', () => {
+        if (!cartWrapper.classList.contains('locked')) {
+            cartWrapper.classList.remove('active');
+        }
+    });
 
-        cartIcon.addEventListener('click', (e) => {
+    // 2. COMPORTAMENTO DE CLIQUE (Para fixar e interagir)
+    const botaoDisparador = cartBtn || cartIcon;
+    if (botaoDisparador) {
+        botaoDisparador.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             
-            carrinhoTravadoAberto = !carrinhoTravadoAberto;
+            cartWrapper.classList.toggle('locked');
             
-            if (carrinhoTravadoAberto) {
+            if (cartWrapper.classList.contains('locked')) {
                 cartWrapper.classList.add('active');
                 cartWrapper.style.boxShadow = "0 4px 20px rgba(74, 48, 42, 0.25)";
             } else {
@@ -151,21 +196,24 @@ function configurarHoverCarrinho() {
                 cartWrapper.classList.remove('active');
             }
         });
-
-        cartWrapper.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (carrinhoTravadoAberto) {
-                carrinhoTravadoAberto = false;
-                if (cartWrapper) {
-                    cartWrapper.style.boxShadow = "";
-                    cartWrapper.classList.remove('active');
-                }
-            }
-        });
     }
+
+    // Evita que cliques dentro do próprio carrinho fechem ele
+    cartWrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    // 3. CLIQUE FORA UNIFICADO: Fecha o carrinho de forma segura sem interferir em menus/submenus
+    document.addEventListener('click', (e) => {
+        if (cartWrapper.classList.contains('active') || cartWrapper.classList.contains('locked')) {
+            // Se o clique NÃO foi no carrinho e NÃO foi no botão do carrinho, aí sim desativa
+            if (!cartWrapper.contains(e.target) && (botaoDisparador && !botaoDisparador.contains(e.target))) {
+                cartWrapper.classList.remove('active');
+                cartWrapper.classList.remove('locked');
+                cartWrapper.style.boxShadow = "";
+            }
+        }
+    });
 }
 
 function copiarCupom() {
@@ -218,7 +266,7 @@ function atualizarPrecoCard(inputElement, precoBase) {
 
         if (itemNoCarrinho) {
             itemNoCarrinho.quantidade = quantidade;
-            atualizarInterfaceCarrinho();
+            if (typeof atualizarInterfaceCarrinho === 'function') atualizarInterfaceCarrinho();
         }
     }
 }
@@ -228,20 +276,48 @@ window.atualizarPrecoCard = atualizarPrecoCard;
    4. RENDERIZAÇÃO DINÂMICA DO CATÁLOGO COM INTELIGÊNCIA SAZONAL
    ========================================================================== */
 function verificarSazonalAtivo(idGrid) {
-    if (!rulesSazonais[idGrid]) return true;
+    const regra = rulesSazonais[idGrid];
+    if (!regra) return true;
 
     const hoje = new Date();
-    const mes = hoje.getMonth();
-    const dia = hoje.getDate();
-    const regra = rulesSazonais[idGrid];
+    hoje.setHours(0, 0, 0, 0);
+    const anoAtual = hoje.getFullYear();
 
-    if (regra.mesInicio > regra.mesFim) {
-        return (mes === regra.mesInicio && dia >= regra.diaInicio) || (mes === regra.mesFim && dia <= regra.diaFim);
+    if (regra.tipo === 'movel' && regra.chave === 'pascoa') {
+        const domingoPascoa = obterDomingoPascoa(anoAtual);
+        if (!domingoPascoa) return false;
+
+        const dataInicio = new Date(domingoPascoa);
+        dataInicio.setDate(domingoPascoa.getDate() - regra.diasAntecedencia);
+        
+        const dataFim = new Date(domingoPascoa);
+        dataFim.setDate(domingoPascoa.getDate() + regra.diasDuracaoPos);
+
+        return (hoje >= dataInicio && hoje <= dataFim);
     }
 
-    const dInicio = new Date(hoje.getFullYear(), regra.mesInicio, regra.diaInicio);
-    const dFim = new Date(hoje.getFullYear(), regra.mesFim, regra.diaFim);
-    return hoje >= dInicio && hoje <= dFim;
+    if (regra.tipo === 'domingo') {
+        const domingoAlvo = obterDiaDoDomingo(anoAtual, regra.mes, regra.ordemDomingo);
+        if (!domingoAlvo) return false;
+
+        const dataInicio = new Date(domingoAlvo);
+        dataInicio.setDate(domingoAlvo.getDate() - regra.diasAntecedencia);
+
+        return (hoje >= dataInicio && hoje <= domingoAlvo);
+    }
+
+    let dataInicio = new Date(anoAtual, regra.mesInicio, regra.diaInicio, 0, 0, 0, 0);
+    let dataFim = new Date(anoAtual, regra.mesFim, regra.diaFim, 23, 59, 59, 999);
+
+    if (regra.mesInicio > regra.mesFim) {
+        if (hoje.getMonth() <= regra.mesFim) {
+            dataInicio.setFullYear(anoAtual - 1);
+        } else {
+            dataFim.setFullYear(anoAtual + 1);
+        }
+    }
+
+    return (hoje >= dataInicio && hoje <= dataFim);
 }
 
 function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEpoca) {
@@ -283,7 +359,7 @@ function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEp
 
 function renderizarCatalogo() {
     let containerSazonaisOcultosHTML = '';
-    const sectionSazonais = document.getElementById('sazonais');
+    let sectionSazonais = document.getElementById('sazonais');
 
     if (!document.getElementById('aviso-encomenda-geral')) {
         const avisoGeral = document.createElement('div');
@@ -315,71 +391,64 @@ function renderizarCatalogo() {
 
     for (let idGrid in catalogoProdutos) {
         const container = document.getElementById(idGrid);
-        const ehSazonal = !!rulesSazonais[idGrid];
-        const ativoAtualmente = verificarSazonalAtivo(idGrid);
+        
+        // Define se é sazonal (baseado no ID ou regras)
+        const ehSazonal = !!rulesSazonais[idGrid] || idGrid.includes('sazonal') || idGrid.includes('junina') || idGrid.includes('copa');
+        const ativoAtualmente = rulesSazonais[idGrid] ? verificarSazonalAtivo(idGrid) : false;
 
         if (ehSazonal) {
-            const h3Titulo = container ? container.previousElementSibling : null;
+            // Busca o bloco PAI geral que envolve o conteúdo sazonal no seu HTML
+            const blocoPai = container ? container.closest('.bloco-sazonal-epoca') : null;
 
-            if (ativoAtualmente) {
-                if (container) {
-                    if (h3Titulo) h3Titulo.style.display = 'block';
-                    container.style.display = 'grid';
-                    container.innerHTML = '';
-
-                    if (catalogoProdutos[idGrid].length > 0) {
-                        catalogoProdutos[idGrid].forEach(produto => {
-                            container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, false, false);
-                        });
-                    } else {
-                        container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Preparando novidades para esta época!</p>`;
-                    }
-                }
+            if (ativoAtualmente && container) {
+                // Se está ativo: mostra o bloco pai inteiro
+                if (blocoPai) blocoPai.style.display = 'block';
+                container.innerHTML = '';
+                catalogoProdutos[idGrid].forEach(produto => {
+                    container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, false, false);
+                });
             } else {
-                if (container) {
-                    if (h3Titulo) h3Titulo.style.display = 'none';
-                    container.style.display = 'none';
-                }
+                // Se não está ativo: esconde o bloco pai inteiro para não deixar rastros
+                if (blocoPai) blocoPai.style.display = 'none';
 
-                if (catalogoProdutos[idGrid].length > 0) {
+                // Adiciona na fila da Galeria/Portfólio
+                if (catalogoProdutos[idGrid] && catalogoProdutos[idGrid].length > 0) {
                     let cardsDoBloco = '';
                     catalogoProdutos[idGrid].forEach(produto => {
                         cardsDoBloco += gerarCardHTML(produto.nome, produto.preco, produto.img, false, true);
                     });
 
+                    let titulo = rulesSazonais[idGrid] ? rulesSazonais[idGrid].titulo : idGrid.replace('grid-', '').replace(/-/g, ' ');
                     containerSazonaisOcultosHTML += `
-                        <div id="wrapper-oculto-${idGrid}" style="margin-top: 20px;">
-                            <h4 style="color: #4a302a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px;">Menu de ${rulesSazonais[idGrid].titulo}</h4>
-                            <div class="grid-container" style="display: grid;">${cardsDoBloco}</div>
+                        <div class="bloco-sazonal-oculto" style="margin-top: 20px;">
+                            <h4 style="color: #4a302a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; text-transform: capitalize;">Menu de ${titulo}</h4>
+                            <div class="grid-container" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">${cardsDoBloco}</div>
                         </div>`;
                 }
             }
         } else {
+            // Itens comuns que não são sazonais
             if (container) {
                 container.innerHTML = '';
                 const eBoloFesta = (idGrid === 'grid-festa');
-
-                if (catalogoProdutos[idGrid].length > 0) {
-                    catalogoProdutos[idGrid].forEach(produto => {
-                        container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, eBoloFesta, false);
-                    });
-                } else {
-                    container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Em breve novidades nesta categoria!</p>`;
-                }
+                catalogoProdutos[idGrid].forEach(produto => {
+                    container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, eBoloFesta, false);
+                });
             }
         }
     }
 
-    if (sectionSazonais && containerSazonaisOcultosHTML !== '') {
-        const portfolioAntigo = document.getElementById('portfolio-sazonal-compacto');
-        if (portfolioAntigo) portfolioAntigo.remove();
+    const idGaleria = 'portfolio-sazonal-compacto';
+    const portfolioAntigo = document.getElementById(idGaleria);
+    if (portfolioAntigo) portfolioAntigo.remove();
 
+    if (containerSazonaisOcultosHTML !== '') {
         const portfolioWrapper = document.createElement('div');
-        portfolioWrapper.id = 'portfolio-sazonal-compacto';
-        portfolioWrapper.style.cssText = "margin-top: 50px; padding: 25px; background: #f5f2eb; border-radius: 12px; border: 1px solid #e2dacb;";
+        portfolioWrapper.id = idGaleria;
+        portfolioWrapper.style.cssText = "margin: 50px auto; padding: 25px; background: #f5f2eb; border-radius: 12px; border: 1px solid #e2dacb; max-width: 1200px; width: 90%; box-sizing: border-box;";
 
         portfolioWrapper.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px;">
+            <div id="ancora-galeria-exclusiva" style="text-align: center; margin-bottom: 20px;">
                 <h3 style="color: #4a302a; font-size: 1.4rem; font-weight: bold;"><i class="fas fa-images"></i> Galeria de Criações Exclusivas</h3>
                 <p style="font-size: 0.9rem; color: #666; font-style: italic; margin-top: 5px;">Inspirações e sabores que marcam época. Produzimos sob encomenda para tornar seu evento inesquecível!</p>
                 <button id="btn-toggle-portfolio" style="margin-top: 12px; background: #4a302a; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.3s;">Conhecer Menu Anual Completo</button>
@@ -389,7 +458,12 @@ function renderizarCatalogo() {
             </div>
         `;
 
-        sectionSazonais.appendChild(portfolioWrapper);
+        if (sectionSazonais) {
+            sectionSazonais.appendChild(portfolioWrapper);
+        } else {
+            const principal = document.querySelector('main') || document.body;
+            principal.appendChild(portfolioWrapper);
+        }
 
         const btnToggle = document.getElementById('btn-toggle-portfolio');
         if (btnToggle) {
@@ -414,6 +488,53 @@ function consultarProdutoForaDeEpoca(nomeProduto) {
     window.open(linkWa, '_blank');
 }
 window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;
+
+/* ==========================================================================
+   FUNÇÃO AUXILIAR DE NAVEGAÇÃO: IR ATÉ A ÉPOCA SELECIONADA (PERFEITA)
+   ========================================================================== */
+function mostrarApenasEpoca(idRecebido) {
+    if (!idRecebido) return;
+
+    const idGrid = idRecebido.replace('bloco-', 'grid-');
+    const container = document.getElementById(idGrid);
+    const ativoAtualmente = verificarSazonalAtivo(idGrid);
+
+    if (ativoAtualmente) {
+        if (container) {
+            const alvoVisual = container.previousElementSibling || container;
+            alvoVisual.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    } else {
+        const painelOculto = document.getElementById('conteudo-portfolio-oculto');
+        const btnToggle = document.getElementById('btn-toggle-portfolio');
+        const galeriaHeader = document.getElementById('ancora-galeria-exclusiva');
+        
+        if (painelOculto && painelOculto.style.display === 'none') {
+            painelOculto.style.display = 'block';
+            if (btnToggle) btnToggle.innerText = 'Recolher Menu Anual';
+        }
+
+        if (galeriaHeader) {
+            galeriaHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        const wrapperOculto = document.getElementById(`wrapper-oculto-${idGrid}`);
+        if (wrapperOculto) {
+            setTimeout(() => {
+                wrapperOculto.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+    }
+
+    const menuLinks = document.querySelector('.menu-links');
+    const sidebar = document.querySelector('.sidebar');
+    const dropdownItem = document.querySelector('.dropdown-item.open');
+
+    if (menuLinks) menuLinks.classList.remove('open');
+    if (sidebar) sidebar.classList.remove('open');
+    if (dropdownItem) dropdownItem.classList.remove('open');
+}
+window.mostrarApenasEpoca = mostrarApenasEpoca;
 
 /* ==========================================================================
    5. GERENCIAMENTO E INTERFACE DO CARRINHO
@@ -490,6 +611,7 @@ function atualizarInterfaceCarrinho() {
     if (totalCountSpan) totalCountSpan.innerText = totalItensContador;
     if (totalMoneySpan) totalMoneySpan.innerText = totalGeral.toFixed(2).replace('.', ',');
 }
+window.atualizarInterfaceCarrinho = atualizarInterfaceCarrinho;
 
 function alterarQuantidadeDropdown(index, modificador) {
     if (!carrinho[index]) return;
@@ -847,32 +969,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   10. BOTÃO VOLTAR AO TOPO - CORREÇÃO DEFINITIVA
+   10. BOTÃO VOLTAR AO TOPO - CONFIGURADO PARA APARECER DO MEIO PARA O FIM
    ========================================================================== */
 const btnTopo = document.getElementById("btn-topo");
 
 if (btnTopo) {
-    // 1. Função que controla a lógica
     const checkScroll = () => {
-        if (window.scrollY > 300) {
-            btnTopo.style.display = "flex";
+        // Mede a distância que o usuário já scrollou
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+        
+        // Calcula a altura total scrollável da página e descobre quanto é a metade dela
+        const alturaTotalDocumento = document.documentElement.scrollHeight - window.innerHeight;
+        const metadeDaPagina = alturaTotalDocumento / 2;
+        
+        // Só exibe se o usuário passou da metade da página
+        if (scrollTop > metadeDaPagina && alturaTotalDocumento > 300) {
+            btnTopo.classList.add("visivel");
         } else {
-            btnTopo.style.display = "none";
+            btnTopo.classList.remove("visivel");
         }
     };
 
-    // 2. Garante o estado inicial ao carregar a página
-    window.addEventListener("load", checkScroll);
-    
-    // 3. Monitora o scroll
     window.addEventListener("scroll", checkScroll);
+    window.addEventListener("load", checkScroll);
 
-    // 4. Ação de clique
+    // Clique limpo e funcional
     btnTopo.addEventListener("click", (e) => {
         e.preventDefault();
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+        document.body.scrollTo({ top: 0, behavior: "smooth" });
+        
+        const mainContainer = document.querySelector('main') || document.querySelector('.wrapper');
+        if (mainContainer) {
+            mainContainer.scrollTo({ top: 0, behavior: "smooth" });
+        }
     });
 }

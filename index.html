@@ -129,7 +129,42 @@
                 padding: 12px 15px !important;
             }
         }
+
+        /* ==========================================================================
+           ESTILO COMPLEMENTAR PARA O MENU TRAVAR DE VERDADE VIA JAVASCRIPT
+           ========================================================================== */
+        
+        /* Estado normal: O menu fica abaixo do logo respeitando o fluxo natural */
+        .main-nav {
+            position: relative !important;
+            width: 100% !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+            box-sizing: border-box !important;
+            z-index: 99999 !important;
+            transition: none !important;
+        }
+
+        /* Estado ativo (injetado via JS quando rola a página): Trava no topo na marra! */
+        .main-nav.fixo {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+        }
     </style>
+    
+    <script>
+        if (typeof toggleMenuMobile !== 'function') {
+            function toggleMenuMobile() {
+                const menuLinks = document.getElementById("nav-menu-links");
+                if (menuLinks) {
+                    menuLinks.classList.toggle("active");
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -145,11 +180,11 @@
         </defs>
     </svg>
 
-    <div class="logo-container">
+    <div class="logo-container" id="area-do-logo">
         <img src="img/Logo.png" alt="Pitadavivi" class="header-logo">
     </div>
 
-    <nav class="main-nav">
+    <nav class="main-nav" id="menu-navegacao">
         <div class="menu-toggle" id="mobile-menu-btn" onclick="toggleMenuMobile()">
             <i class="fas fa-bars"></i>
         </div>
@@ -440,7 +475,7 @@
                     <span style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
                 </h2>
                 <p style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
-                    A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples em sorrisos
+                    A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples in sorrisos
                     partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma história,
                     um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
                     rotina!
@@ -458,7 +493,6 @@
             </div>
 
             <div class="testimonial-carousel-container">
-                <!-- ID corrigido aqui para evitar duplicidade -->
                 <button class="carousel-nav-btn prev-btn" id="prev-testimonial" aria-label="Depoimento anterior">&#10094;</button>
 
                 <div class="testimonial-carousel-track-wrapper">
@@ -466,7 +500,7 @@
                         <div class="testimonial-card">
                             <div class="testimonial-stars">★★★★★</div>
                             <p class="testimonial-text">"O tempero é simplesmente maravilhoso, dá para sentir o cuidado
-                                e o afeto em cada detalhe. Virou item obrigatório nos meus almoços de domingo!"</p>
+                                e o afeto in cada detalhe. Virou item obrigatório nos meus almoços de domingo!"</p>
                             <span class="testimonial-author">Mariana Silva
                                 <span class="testimonial-city">São Paulo - SP</span>
                             </span>
@@ -633,7 +667,7 @@
             }
         }
 
-        // --- SCRIPTS DO CARRINHO (CORRIGIDOS) ---
+        // --- SCRIPTS DO CARRINHO E CONTROLE DE ROLAGEM EXCLUSIVO ---
         document.addEventListener('DOMContentLoaded', function () {
             const cartWrapper = document.getElementById('cart-wrapper');
             const cartBtn = document.getElementById('cart-summary-btn');
@@ -652,6 +686,27 @@
                     }
                 }
             });
+
+            // ==========================================================================
+            // CÓDIGO DE DETECÇÃO DE ROLAGEM VIA JAVASCRIPT (TRAVA GARANTIDA)
+            // ==========================================================================
+            const menu = document.getElementById('menu-navegacao');
+            const logoArea = document.getElementById('area-do-logo');
+
+            if (menu && logoArea) {
+                // Descobre a posição exata onde o menu começa na tela
+                const posicaoInicialMenu = menu.offsetTop;
+
+                window.addEventListener('scroll', function () {
+                    // Se a rolagem atual passar da posição do menu, adiciona a classe fixo
+                    if (window.scrollY >= posicaoInicialMenu) {
+                        menu.classList.add('fixo');
+                    } else {
+                        // Caso volte para o topo da página, libera o menu abaixo do logo
+                        menu.classList.remove('fixo');
+                    }
+                });
+            }
         });
     </script>
     <script src="./js/script.js"></script>

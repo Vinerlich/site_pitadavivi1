@@ -361,6 +361,7 @@ function renderizarCatalogo() {
     let containerSazonaisOcultosHTML = '';
     let sectionSazonais = document.getElementById('sazonais');
 
+    // 1. Injeção do Banner de Aviso Geral
     if (!document.getElementById('aviso-encomenda-geral')) {
         const avisoGeral = document.createElement('div');
         avisoGeral.id = 'aviso-encomenda-geral';
@@ -373,71 +374,91 @@ function renderizarCatalogo() {
                 </span>
             </p>
         `;
-
-        const corpoPrincipal = document.querySelector('main') || document.querySelector('.container') || document.body.firstElementChild;
+        const corpoPrincipal = document.querySelector('main');
         if (corpoPrincipal) {
-            if (corpoPrincipal.tagName === 'MAIN' || corpoPrincipal.classList.contains('container')) {
-                corpoPrincipal.insertBefore(avisoGeral, corpoPrincipal.firstChild);
-            } else {
-                const headerElement = document.querySelector('header') || document.querySelector('.navbar') || document.querySelector('#header');
-                if (headerElement) {
-                    headerElement.parentNode.insertBefore(avisoGeral, headerElement.nextSibling);
-                } else {
-                    document.body.insertBefore(avisoGeral, document.body.firstChild);
-                }
-            }
+            corpoPrincipal.insertBefore(avisoGeral, corpoPrincipal.firstChild);
         }
     }
 
+    // 2. Loop de varredura do objeto catalogoProdutos
     for (let idGrid in catalogoProdutos) {
         const container = document.getElementById(idGrid);
         
-        // Define se é sazonal (baseado no ID ou regras)
-        const ehSazonal = !!rulesSazonais[idGrid] || idGrid.includes('sazonal') || idGrid.includes('junina') || idGrid.includes('copa');
-        const ativoAtualmente = rulesSazonais[idGrid] ? verificarSazonalAtivo(idGrid) : false;
+        // Se o container não existir nesta página, pula para o próximo
+        if (!container) continue;
+
+        const ehSazonal = idGrid.includes('sazonal') || idGrid.includes('junina') || idGrid.includes('copa') || idGrid.includes('pascoa') || idGrid.includes('natal') || idGrid.includes('ano-novo') || idGrid.includes('namorados') || idGrid.includes('maes') || idGrid.includes('pais') || idGrid.includes('criancas');
+        
+        let ativoAtualmente = false;
+        
+        // Verifica se a data sazonal está ativa
+        try {
+            if (typeof rulesSazonais !== 'undefined' && rulesSazonais[idGrid]) {
+                ativoAtualmente = verificarSazonalAtivo(idGrid);
+            }
+        } catch (erro) {
+            ativoAtualmente = false; 
+        }
 
         if (ehSazonal) {
-            // Busca o bloco PAI geral que envolve o conteúdo sazonal no seu HTML
-            const blocoPai = container ? container.closest('.bloco-sazonal-epoca') : null;
+            // No seu HTML, o bloco pai usa a classe '.bloco-sazonal-epoca'
+            const blocoPai = container.closest('.bloco-sazonal-epoca');
 
-            if (ativoAtualmente && container) {
-                // Se está ativo: mostra o bloco pai inteiro
-                if (blocoPai) blocoPai.style.display = 'block';
+            if (ativoAtualmente) {
+                // Se estiver na época, exibe no topo tirando o 'display: none' do CSS
+                if (blocoPai) {
+                    blocoPai.style.setProperty('display', 'block', 'important');
+                    blocoPai.classList.add('ativo');
+                }
                 container.innerHTML = '';
-                catalogoProdutos[idGrid].forEach(produto => {
-                    container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, false, false);
-                });
-            } else {
-                // Se não está ativo: esconde o bloco pai inteiro para não deixar rastros
-                if (blocoPai) blocoPai.style.display = 'none';
 
-                // Adiciona na fila da Galeria/Portfólio
+                if (catalogoProdutos[idGrid].length > 0) {
+                    catalogoProdutos[idGrid].forEach(produto => {
+                        container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, false, false);
+                    });
+                } else {
+                    container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Preparando novidades para esta época!</p>`;
+                }
+            } else {
+                // Se NÃO estiver na época, garante que fique oculto no topo
+                if (blocoPai) {
+                    blocoPai.style.setProperty('display', 'none', 'important');
+                    blocoPai.classList.remove('ativo');
+                }
+
+                // Agrupa os produtos para mandar para a Galeria Bege do rodapé
                 if (catalogoProdutos[idGrid] && catalogoProdutos[idGrid].length > 0) {
                     let cardsDoBloco = '';
                     catalogoProdutos[idGrid].forEach(produto => {
                         cardsDoBloco += gerarCardHTML(produto.nome, produto.preco, produto.img, false, true);
                     });
 
-                    let titulo = rulesSazonais[idGrid] ? rulesSazonais[idGrid].titulo : idGrid.replace('grid-', '').replace(/-/g, ' ');
+                    // Define um título bonito baseado no ID
+                    let tituloConstruido = idGrid.replace('grid-', '').replace(/-/g, ' ');
+                    
                     containerSazonaisOcultosHTML += `
-                        <div class="bloco-sazonal-oculto" style="margin-top: 20px;">
-                            <h4 style="color: #4a302a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; text-transform: capitalize;">Menu de ${titulo}</h4>
+                        <div id="wrapper-oculto-${idGrid}" class="bloco-sazonal-oculto" style="margin-top: 30px; clear: both;">
+                            <h4 style="color: #4a302a; border-bottom: 2px solid #e67e22; padding-bottom: 5px; margin-bottom: 15px; text-transform: capitalize; font-size: 1.1rem; text-align: left;">✨ Menu de ${tituloConstruido}</h4>
                             <div class="grid-container" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">${cardsDoBloco}</div>
                         </div>`;
                 }
             }
         } else {
-            // Itens comuns que não são sazonais
-            if (container) {
-                container.innerHTML = '';
-                const eBoloFesta = (idGrid === 'grid-festa');
+            // CATEGORIAS FIXAS (Geleias, Antepastos, Bolos...)
+            container.innerHTML = '';
+            const eBoloFesta = (idGrid === 'grid-festa');
+
+            if (catalogoProdutos[idGrid].length > 0) {
                 catalogoProdutos[idGrid].forEach(produto => {
                     container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, eBoloFesta, false);
                 });
+            } else {
+                container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Em breve novidades!</p>`;
             }
         }
     }
 
+    // 3. Montagem Segura da Galeria Bege no final da Section #sazonais
     const idGaleria = 'portfolio-sazonal-compacto';
     const portfolioAntigo = document.getElementById(idGaleria);
     if (portfolioAntigo) portfolioAntigo.remove();
@@ -445,7 +466,7 @@ function renderizarCatalogo() {
     if (containerSazonaisOcultosHTML !== '') {
         const portfolioWrapper = document.createElement('div');
         portfolioWrapper.id = idGaleria;
-        portfolioWrapper.style.cssText = "margin: 50px auto; padding: 25px; background: #f5f2eb; border-radius: 12px; border: 1px solid #e2dacb; max-width: 1200px; width: 90%; box-sizing: border-box;";
+        portfolioWrapper.style.cssText = "margin: 50px auto; padding: 25px; background: #f5f2eb; border-radius: 12px; border: 1px solid #e2dacb; max-width: 1200px; width: 90%; box-sizing: border-box; clear: both; display: block;";
 
         portfolioWrapper.innerHTML = `
             <div id="ancora-galeria-exclusiva" style="text-align: center; margin-bottom: 20px;">
@@ -461,16 +482,19 @@ function renderizarCatalogo() {
         if (sectionSazonais) {
             sectionSazonais.appendChild(portfolioWrapper);
         } else {
-            const principal = document.querySelector('main') || document.body;
-            principal.appendChild(portfolioWrapper);
+            const principal = document.querySelector('main');
+            if (principal) principal.appendChild(portfolioWrapper);
         }
 
+        // Configuração do clique para abrir/fechar a galeria
         const btnToggle = document.getElementById('btn-toggle-portfolio');
         if (btnToggle) {
-            btnToggle.addEventListener('click', function () {
+            btnToggle.addEventListener('click', function (e) {
+                e.preventDefault();
                 const painel = document.getElementById('conteudo-portfolio-oculto');
                 if (!painel) return;
-                if (painel.style.display === 'none') {
+                
+                if (painel.style.display === 'none' || painel.style.display === '') {
                     painel.style.display = 'block';
                     this.innerText = 'Recolher Menu Anual';
                 } else {
@@ -482,12 +506,19 @@ function renderizarCatalogo() {
     }
 }
 
+// Inicializador automático para evitar problemas com a ordem do HTML
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderizarCatalogo);
+} else {
+    renderizarCatalogo();
+}
+
 function consultarProdutoForaDeEpoca(nomeProduto) {
     const txtMensagem = `Olá Vivi! Estava navegando no seu site e adorei o produto do portfólio: *${nomeProduto}*. Gostaria de saber se há disponibilidade de produção sob encomenda para um evento especial!`;
     const linkWa = `https://wa.me/5511987342562?text=${encodeURIComponent(txtMensagem)}`;
     window.open(linkWa, '_blank');
 }
-window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;
+window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;;
 
 /* ==========================================================================
    FUNÇÃO AUXILIAR DE NAVEGAÇÃO: IR ATÉ A ÉPOCA SELECIONADA (PERFEITA)
@@ -737,108 +768,128 @@ function confirmarLimpezaCarrinho(limpar) {
 window.confirmarLimpezaCarrinho = confirmarLimpezaCarrinho;
 
 /* ==========================================================================
-   8. COMPORTAMENTOS AUXILIARES (MENU MOBILE INTELIGENTE TOTALMENTE CORRIGIDO)
+   8. COMPORTAMENTOS AUXILIARES (MENU MOBILE E SUBMENUS - VERSÃO FORÇADA)
    ========================================================================== */
+
+// Função global exigida pelo "onclick" do botão sanduíche do seu HTML
+function toggleMenuMobile() {
+    const menuLinks = document.getElementById("nav-menu-links");
+    if (menuLinks) {
+        if (menuLinks.classList.contains("active") || menuLinks.style.display === "flex") {
+            menuLinks.classList.remove("active");
+            menuLinks.style.display = "";
+        } else {
+            menuLinks.classList.add("active");
+            menuLinks.style.display = "flex";
+        }
+    }
+}
+
+// Fecha tudo e limpa estilos forçados
+function fecharMenuAoClicar() {
+    const menuLinks = document.getElementById("nav-menu-links");
+    if (menuLinks) {
+        menuLinks.classList.remove("active");
+        menuLinks.style.display = "";
+    }
+    document.querySelectorAll(".dropdown-item").forEach(item => {
+        item.classList.remove("open", "active");
+        const sub = item.querySelector(".submenu");
+        if (sub) sub.style.display = "";
+    });
+}
+
 function configurarMenuSanfonaMobile() {
-    const menuToggle = document.querySelector(".menu-toggle");
-    const menuLinks = document.querySelector(".menu-links");
+    const menuToggle = document.getElementById("mobile-menu-btn") || document.querySelector(".menu-toggle");
+    const menuLinks = document.getElementById("nav-menu-links") || document.querySelector(".menu-links");
     const dropdownItems = document.querySelectorAll(".dropdown-item");
 
-    if (menuToggle && menuLinks) {
-        menuToggle.addEventListener("click", function (e) {
-            e.stopPropagation();
-            menuLinks.classList.toggle("active");
-        });
-    }
-
-    // 1. CUIDA DOS DROPDOWNS COM/SEM SUBMENU
     dropdownItems.forEach(item => {
         const mainBtn = item.querySelector(".blob-btn");
-        const temSubmenu = item.querySelector(".submenu") !== null;
+        const subMenu = item.querySelector(".submenu");
 
-        if (mainBtn) {
+        if (mainBtn && subMenu) {
             mainBtn.addEventListener("click", function (e) {
-                if (window.innerWidth <= 768) {
-                    // Se o item do dropdown NÃO possuir um submenu real, fecha tudo e deixa rolar
-                    if (!temSubmenu) {
-                        if (menuLinks) menuLinks.classList.remove("active");
-                        dropdownItems.forEach(otherItem => otherItem.classList.remove("open", "active"));
-                        return; 
-                    }
+                // Intercepta e mata o comportamento do '#' em qualquer tela
+                e.preventDefault();
+                e.stopPropagation();
 
-                    // Se possuir submenu, aplica o efeito sanfona (abre/fecha o bloco)
-                    e.preventDefault();
-                    e.stopPropagation();
+                // Verifica se este submenu específico já está visível
+                const jaEstaAberto = subMenu.style.display === "block" || item.classList.contains("open");
 
-                    dropdownItems.forEach(otherItem => {
-                        if (otherItem !== item) {
-                            otherItem.classList.remove("open", "active");
-                        }
-                    });
+                // 1. Fecha TODOS os outros submenus primeiro (Forçado)
+                dropdownItems.forEach(otherItem => {
+                    otherItem.classList.remove("open", "active");
+                    const otherSub = otherItem.querySelector(".submenu");
+                    if (otherSub) otherSub.style.display = "none";
+                });
 
-                    item.classList.toggle("open");
-                    item.classList.toggle("active");
+                // 2. Abre ou fecha o submenu atual baseado no estado anterior
+                if (!jaEstaAberto) {
+                    item.classList.add("open", "active");
+                    subMenu.style.display = "block"; // Força a exibição ignorando travas do CSS
+                } else {
+                    item.classList.remove("open", "active");
+                    subMenu.style.display = "none";
                 }
             });
         }
     });
 
-    // 2. CORREÇÃO CRÍTICA: Captura qualquer link comum direto no menu que não seja dropdown (Ex: Geleias, Depoimentos, etc)
+    // Links diretos (Geleias, Antepastos, etc.) fecham o menu ao clicar
     const linksDiretosMenu = document.querySelectorAll(".menu-links > a, .menu-links > li > a:not(.blob-btn)");
     linksDiretosMenu.forEach(link => {
         link.addEventListener("click", () => {
-            if (window.innerWidth <= 768 && menuLinks) {
-                menuLinks.classList.remove("active");
-                dropdownItems.forEach(item => item.classList.remove("open", "active"));
-            }
+            fecharMenuAoClicar();
         });
     });
 
-    // 3. Links internos de dentro dos submenus recolhem o menu todo
-    const linksFinaisSubmenu = document.querySelectorAll(".menu-links .submenu a");
-    linksFinaisSubmenu.forEach(link => {
-        link.addEventListener("click", () => {
-            if (menuLinks && menuLinks.classList.contains("active")) {
-                menuLinks.classList.remove("active");
-                dropdownItems.forEach(item => item.classList.remove("open", "active"));
-            }
-        });
-    });
-
-    // 4. Clicar em qualquer espaço em branco fora do menu também o recolhe
+    // Clicar fora fecha a estrutura
     document.addEventListener("click", function (e) {
-        if (menuLinks && menuLinks.classList.contains("active")) {
-            if (!menuLinks.contains(e.target) && !menuToggle.contains(e.target)) {
-                menuLinks.classList.remove("active");
-                dropdownItems.forEach(item => item.classList.remove("open", "active"));
+        if (menuLinks && (menuLinks.classList.contains("active") || menuLinks.style.display === "flex")) {
+            if (!menuLinks.contains(e.target) && (!menuToggle || !menuToggle.contains(e.target))) {
+                fecharMenuAoClicar();
             }
         }
     });
 }
 
 function configurarCliquesSubmenu() {
-    const linksSazonais = document.querySelectorAll('.sazonal-link, .dropdown-item .submenu a[data-data], .submenu a[data-data]');
+    const mapeamentoSazonais = {
+        "bloco-pascoa": "grid-pascoa",
+        "bloco-dia-das-maes": "grid-dia-das-maes",
+        "bloco-dia-dos-namorados": "grid-dia-dos-namorados",
+        "bloco-festa-junina-julina": "grid-festa-junina-julina",
+        "bloco-copa-do-mundo": "grid-copa-do-mundo",
+        "bloco-dia-dos-pais": "grid-dia-dos-pais",
+        "bloco-criancas-professores": "grid-criancas-professores",
+        "bloco-natal": "grid-natal",
+        "bloco-ano-novo": "grid-ano-novo"
+    };
+
+    const linksSazonais = document.querySelectorAll('.submenu a[href^="javascript:mostrarApenasEpoca"]');
+    
     linksSazonais.forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
-            const nomeData = this.getAttribute('data-data');
-
-            const mapeamentoContainers = {
-                "Páscoa": "grid-pascoa",
-                "Dia das Mães": "grid-dia-das-maes",
-                "Dia dos Namorados": "grid-dia-dos-namorados",
-                "Festa Junina/Julina": "grid-festa-junina-julina",
-                "Copa do Mundo": "grid-copa-do-mundo",
-                "Dia dos Pais": "grid-dia-dos-pais",
-                "Crianças e Professores": "grid-criancas-professores",
-                "Natal": "grid-natal",
-                "Ano Novo": "grid-ano-novo"
-            };
-
-            const containerId = mapeamentoContainers[nomeData];
+            const hrefValue = this.getAttribute('href');
+            const match = hrefValue.match(/'([^']+)'/);
+            if (!match) return;
+            
+            const blocoId = match[1];
+            const containerId = mapeamentoSazonais[blocoId];
             if (!containerId) return;
-            const estaAtivo = verificarSazonalAtivo(containerId);
+
+            let estaAtivo = false;
+            try {
+                if (typeof verificarSazonalAtivo === 'function') {
+                    estaAtivo = verificarSazonalAtivo(containerId);
+                }
+            } catch (err) {
+                estaAtivo = false;
+            }
 
             if (estaAtivo) {
                 const gridAlvo = document.getElementById(containerId);
@@ -866,41 +917,28 @@ function configurarCliquesSubmenu() {
                         }, 150);
                     }
                 }
-
-                const modal = document.getElementById('sazonal-modal');
-                const modalTitle = document.getElementById('sazonal-modal-title');
-                const modalText = document.getElementById('sazonal-modal-text');
-
-                if (modal && modalTitle && modalText) {
-                    modalTitle.innerText = `📅 Especial de ${nomeData}`;
-                    modalText.innerHTML = `No momento não estamos na época de <strong>${nomeData}</strong>. <br><br>Mas preparamos tudo sob encomenda para festas! Veja as fotos logo abaixo e fale conosco no WhatsApp.`;
-                    modal.style.display = 'block';
-                }
             }
 
-            const menuLinks = document.querySelector(".menu-links");
-            if (menuLinks) {
-                menuLinks.classList.remove("active");
-            }
-            document.querySelectorAll(".dropdown-item").forEach(item => item.classList.remove("open", "active"));
-
-            const wrapper = document.getElementById('cart-wrapper') || document.querySelector('.cart-container-wrapper');
-            if (wrapper) wrapper.classList.remove('active');
+            fecharMenuAoClicar();
         });
     });
 
-    const linksNormais = document.querySelectorAll('.submenu a:not([data-data])');
-    linksNormais.forEach(link => {
-        link.addEventListener('click', () => {
-            const menuLinks = document.querySelector(".menu-links");
-            if (menuLinks) {
-                menuLinks.classList.remove("active");
-            }
-            const dropdownItem = link.closest('.dropdown-item');
-            if (dropdownItem) dropdownItem.classList.remove('open', 'active');
+    const linksNormaisSubmenu = document.querySelectorAll('.submenu a:not([href^="javascript:"])');
+    linksNormaisSubmenu.forEach(link => {
+        link.addEventListener('click', function() {
+            fecharMenuAoClicar();
         });
     });
 }
+
+// Inicialização imediata e via evento para garantir execução
+configurarMenuSanfonaMobile();
+configurarCliquesSubmenu();
+
+document.addEventListener('DOMContentLoaded', function() {
+    configurarMenuSanfonaMobile();
+    configurarCliquesSubmenu();
+});
 
 /* ==========================================================================
    9. CARROSSEL DE DEPOIMENTOS ARTESANAL
@@ -1007,3 +1045,9 @@ if (btnTopo) {
         }
     });
 }
+
+// Garante que o catálogo só seja renderizado DEPOIS que todo o HTML foi lido
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM totalmente carregado. Iniciando renderização...");
+    renderizarCatalogo();
+});

@@ -1608,3 +1608,22 @@ footer {
     opacity: 1 !important;
     pointer-events: auto !important;
 }
+
+/* ==========================================================================
+   TAGS AFETIVAS - PITADAVIVI
+   ========================================================================== */
+
+/* 1. Garante que o card seja a base segura para a tag flutuar */
+.card {
+    position: relative !important;
+}
+
+/* 2. Força o zoom da imagem a funcionar, mesmo com a tag por cima */
+.card:hover .product-img {
+    transform: scale(1.1); /* Mantém o zoom original que você já tinha */
+}
+
+/* 3. Evita que qualquer elemento atrapalhe a imagem ao passar o mouse */
+.card .product-img {
+    transition: transform 0.3s ease-in-out;
+}

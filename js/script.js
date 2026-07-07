@@ -7,33 +7,33 @@ let valorFrete = 0;
 
 const catalogoProdutos = {
     'grid-geleias': [
-        { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg' },
+        { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg', tag: 'mais_vendido' },
         { nome: 'Geleia de Damasco Artesanal', preco: 22.00, img: 'GeleiaDamasco.jpg' },
-        { nome: 'Geleia de Pimenta Premium', preco: 24.50, img: 'GeleiaPimenta.jpg' }
+        { nome: 'Geleia de Pimenta Premium', preco: 24.50, img: 'GeleiaPimenta.jpg', tag: 'novidade' }
     ],
     'grid-antepastos': [
-        { nome: 'Caponata de Berinjela', preco: 22.00, img: 'caponata.jpg' }
+        { nome: 'Caponata de Berinjela', preco: 22.00, img: 'caponata.jpg', tag: 'especial' }
     ],
     'grid-sobremesas': [
         { nome: 'Pudim de Leite', preco: 75.30, img: 'sobr1.jpg' },
         { nome: 'Ovo de Colher Brigadeiro de Café', preco: 12.00, img: 'OvodeColher.webp' }
     ],
     'grid-caseirinhos': [
-        { nome: 'Bolo de Cenoura com Brigadeiro', preco: 37.90, img: 'BoloCenoura.jpg' },
+        { nome: 'Bolo de Cenoura com Brigadeiro', preco: 37.90, img: 'BoloCenoura.jpg', tag: 'mais_vendido' },
         { nome: 'Bolo Gelado de Coco', preco: 18.00, img: 'BoloGeladoCoco.jpg' },
         { nome: 'Bolo de Fubá na Marmita', preco: 25.00, img: 'bolo-fuba.jpg' }
     ],
     'grid-festa': [
         { nome: 'Bolo Chocolate com Ninho', preco: 85.00, img: 'BolochocolateFesta.jpg' },
-        { nome: 'Bolo Red Velvet', preco: 90.00, img: 'RedVelvet.jpg' },
+        { nome: 'Bolo Red Velvet', preco: 90.00, img: 'RedVelvet.jpg', tag: 'especial' },
         { nome: 'Naked Cake Frutas Vermelhas', preco: 95.00, img: 'NakedCake.jpg' }
     ],
     'grid-paes-doces': [
-        { nome: 'Rosca Creme de Coco', preco: 66.80, img: 'RoscaCoco.jpg' },
+        { nome: 'Rosca Creme de Coco', preco: 66.80, img: 'RoscaCoco.jpg', tag: 'mais_vendido' },
         { nome: 'Tranças de Canela e Açúcar', preco: 38.50, img: 'TrancasCanelaAcucar.jpeg' }
     ],
     'grid-paes-salgados': [
-        { nome: 'Pão de Queijo Recheado', preco: 15.00, img: 'pao-queijo.jpg' }
+        { nome: 'Pão de Queijo Recheado', preco: 15.00, img: 'pao-queijo.jpg', tag: 'novidade' }
     ],
     'grid-paes-semgluten': [],
     'grid-tortas-doces': [
@@ -43,7 +43,7 @@ const catalogoProdutos = {
         { nome: 'Mini Torta de Frango Cremoso', preco: 21.90, img: 'MiniTorta.webp' }
     ],
 
-    // CATEGORIAS SAZONAIS
+    // CATEGORIAS SAZONAIS (As tags só aparecem quando a seção estiver na época ativa!)
     'grid-pascoa': [
         { nome: 'Ovo de Páscoa Crocante', preco: 85.00, img: 'ovo-crocante.jpg' }
     ],
@@ -273,7 +273,7 @@ function atualizarPrecoCard(inputElement, precoBase) {
 window.atualizarPrecoCard = atualizarPrecoCard;
 
 /* ==========================================================================
-   4. RENDERIZAÇÃO DINÂMICA DO CATÁLOGO COM INTELIGÊNCIA SAZONAL
+   4. RENDERIZAÇÃO DINÂMICA DO CATÁLOGO COM INTELIGÊNCIA SAZONAL (ATUALIZADO)
    ========================================================================== */
 function verificarSazonalAtivo(idGrid) {
     const regra = rulesSazonais[idGrid];
@@ -320,7 +320,7 @@ function verificarSazonalAtivo(idGrid) {
     return (hoje >= dataInicio && hoje <= dataFim);
 }
 
-function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEpoca) {
+function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEpoca, tagType) {
     let seletorHTML = '';
 
     if (eBoloFesta) {
@@ -329,6 +329,63 @@ function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEp
         seletorHTML = `<div class="unit-selector"><span class="sale-type" style="background: #7f8c8d; color: white;">Portfólio / Eventos</span></div>`;
     } else {
         seletorHTML = `<div class="unit-selector" style="visibility: hidden; margin: 0; height: 0;"></div>`;
+    }
+
+    // Configuração ULTRA DELICADA e MINIMALISTA das tags
+    const CONFIG_TAGS = {
+        mais_vendido: { 
+            texto: "Pitada de Amor", 
+            icone: "fas fa-heart", 
+            corFundo: "rgba(255, 240, 245, 0.95)", 
+            corTexto: "#be123c", 
+            corBorda: "#fecdd3" 
+        },
+        novidade: { 
+            texto: "Pitada Quentinha", 
+            icone: "fas fa-fire-alt", 
+            corFundo: "rgba(255, 247, 237, 0.95)", 
+            corTexto: "#c2410c", 
+            corBorda: "#ffedd5" 
+        },
+        especial: { 
+            texto: "Receita de Coração", 
+            icone: "fas fa-star", 
+            corFundo: "rgba(253, 242, 248, 0.95)", 
+            corTexto: "#db2777", 
+            corBorda: "#fce7f3" 
+        }
+    };
+
+    // Gera o HTML da tag em tamanho mini
+    let tagHTML = '';
+    if (!ehSazonalForaDeEpoca && tagType && CONFIG_TAGS[tagType]) {
+        const tag = CONFIG_TAGS[tagType];
+        tagHTML = `
+            <span style="
+                position: absolute !important;
+                top: 10px !important;
+                left: 10px !important;
+                background-color: ${tag.corFundo} !important;
+                color: ${tag.corTexto} !important;
+                border: 1px solid ${tag.corBorda} !important;
+                padding: 2px 7px !important; /* Reduzido para ficar bem estreito */
+                border-radius: 20px !important;
+                font-size: 0.65rem !important; /* Letra menor e discreta */
+                font-weight: 700 !important;
+                letter-spacing: 0.2px !important;
+                box-shadow: 0 2px 5px rgba(74, 48, 42, 0.08) !important;
+                z-index: 10 !important;
+                pointer-events: none !important;
+                font-family: 'Open Sans', sans-serif !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                user-select: none !important;
+                line-height: 1 !important;
+            ">
+                <i class="${tag.icone}" style="font-size: 0.6rem; margin-top: -1px;"></i>
+                ${tag.texto}
+            </span>`;
     }
 
     if (ehSazonalForaDeEpoca) {
@@ -346,6 +403,7 @@ function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEp
 
     return `
         <div class="card">
+            ${tagHTML}
             <img src="img/${arquivoImagem}" alt="${nome}" class="product-img">
             <h4>${nome}</h4>
             ${seletorHTML}
@@ -414,7 +472,7 @@ function renderizarCatalogo() {
 
                 if (catalogoProdutos[idGrid].length > 0) {
                     catalogoProdutos[idGrid].forEach(produto => {
-                        container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, false, false);
+                        container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, false, false, produto.tag);
                     });
                 } else {
                     container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Preparando novidades para esta época!</p>`;
@@ -430,7 +488,7 @@ function renderizarCatalogo() {
                 if (catalogoProdutos[idGrid] && catalogoProdutos[idGrid].length > 0) {
                     let cardsDoBloco = '';
                     catalogoProdutos[idGrid].forEach(produto => {
-                        cardsDoBloco += gerarCardHTML(produto.nome, produto.preco, produto.img, false, true);
+                        cardsDoBloco += gerarCardHTML(produto.nome, produto.preco, produto.img, false, true, produto.tag);
                     });
 
                     // Define um título bonito baseado no ID
@@ -450,7 +508,7 @@ function renderizarCatalogo() {
 
             if (catalogoProdutos[idGrid].length > 0) {
                 catalogoProdutos[idGrid].forEach(produto => {
-                    container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, eBoloFesta, false);
+                    container.innerHTML += gerarCardHTML(produto.nome, produto.preco, produto.img, eBoloFesta, false, produto.tag);
                 });
             } else {
                 container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Em breve novidades!</p>`;
@@ -470,7 +528,7 @@ function renderizarCatalogo() {
 
         portfolioWrapper.innerHTML = `
             <div id="ancora-galeria-exclusiva" style="text-align: center; margin-bottom: 20px;">
-                <h3 style="color: #4a302a; font-size: 1.4rem; font-weight: bold;"><i class="fas fa-images"></i> Galeria de Criações Exclusivas</h3>
+                <h3><i class="fas fa-images"></i> Galeria de Criações Exclusivas</h3>
                 <p style="font-size: 0.9rem; color: #666; font-style: italic; margin-top: 5px;">Inspirações e sabores que marcam época. Produzimos sob encomenda para tornar seu evento inesquecível!</p>
                 <button id="btn-toggle-portfolio" style="margin-top: 12px; background: #4a302a; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.3s;">Conhecer Menu Anual Completo</button>
             </div>
@@ -518,7 +576,7 @@ function consultarProdutoForaDeEpoca(nomeProduto) {
     const linkWa = `https://wa.me/5511987342562?text=${encodeURIComponent(txtMensagem)}`;
     window.open(linkWa, '_blank');
 }
-window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;;
+window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;
 
 /* ==========================================================================
    FUNÇÃO AUXILIAR DE NAVEGAÇÃO: IR ATÉ A ÉPOCA SELECIONADA (PERFEITA)

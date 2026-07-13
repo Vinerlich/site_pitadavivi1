@@ -1,713 +1,796 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
+    <!-- ==========================================================================
+         1.HEAD, ESTILOS GLOBAIS E FONTES
+         ========================================================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitadavivi - Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Pitadavivi | Delícias Artesanais</title>
+
+    <!-- ==========================================================================
+         FONT AWESOME PARA ÍCONES
+         ========================================================================== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ==========================================================================
+         GOOGLE FONTS
+         ========================================================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- ==========================================================================
+         ARQUIVO CSS EXTERNO PRINCIPAL
+         ========================================================================== -->
     <link rel="stylesheet" href="./css/style.css">
+</head>
 
-    <style>
-        /* Esconde todos os blocos de eventos por padrão */
-        .bloco-sazonal-epoca {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        /* Mostra com suavidade apenas o bloco que receber a classe 'ativo' */
-        .bloco-sazonal-epoca.ativo {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Garante que o subtítulo da galeria continue visível se você quiser */
-        .instrucao-sazonal {
-            text-align: center;
-            color: #7a605a;
-            margin-bottom: 20px;
-            font-style: italic;
-        }
-
-        /* Estilização interna para o resultado do frete */
-        .frete-sucesso {
-            background-color: #fcf8f2;
-            border: 1px solid #e67e22;
-            padding: 12px;
-            border-radius: 8px;
-            color: #4a302a;
-            text-align: left;
-            font-size: 0.95rem;
-            margin-top: 8px;
-        }
-
-        .frete-sucesso p {
-            margin: 4px 0;
-        }
-
-        .frete-erro {
-            color: #c0392b;
-            background-color: #fdedec;
-            border: 1px solid #e74c3c;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-top: 8px;
-        }
-
-        /* Ajustes específicos para a caixinha de frete dentro do carrinho flutuante */
-        .shipping-box-cart {
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 15px 10px;
-            background: #fafafa;
-            margin-top: 10px;
-        }
-
-        .shipping-box-cart h4 {
-            margin: 0 0 10px 0;
-            color: #4a302a;
-            font-size: 0.9rem;
-            text-align: left;
-        }
-
-        /* Layout padrão: Computador e telas grandes */
-        .shipping-input-group {
+<!-- ==========================================================================
+         CORREÇÃO INJETADA DIRETA - SAZONAIS EM LINHA ÚNICA NO DESKTOP
+         ========================================================================== -->
+<style type="text/css">
+    /* --- AJUSTES PARA DESKTOP --- */
+    @media (min-width: 769px) {
+        #menu-navegacao.main-nav {
             display: flex !important;
-            gap: 8px !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
             align-items: center !important;
             justify-content: space-between !important;
-            width: 100% !important;
+            padding: 10px 40px !important;
         }
 
-        .shipping-input-group input {
-            width: 110px !important;
-            min-width: 110px !important;
-            padding: 10px !important;
-            border: 1px solid #ccc !important;
-            border-radius: 25px !important;
-            font-size: 0.9rem !important;
-            background-color: #fff !important;
-            color: #333 !important;
-            box-sizing: border-box !important;
-            text-align: center !important;
+        #nav-menu-links.menu-links {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 15px !important;
+            width: auto !important;
         }
 
-        .shipping-input-group button {
-            flex: 1 !important;
-            padding: 10px 15px !important;
-            font-size: 0.9rem !important;
-            cursor: pointer !important;
-            border-radius: 25px !important;
-            border: none !important;
-            background-color: #4a302a !important;
-            color: #fff !important;
-            font-weight: bold !important;
-            transition: background 0.2s;
+        #nav-menu-links .blob-btn {
+            margin: 0 !important;
+            display: inline-flex !important;
+            width: auto !important;
         }
 
-        .shipping-input-group button:hover {
-            background-color: #e67e22 !important;
+        #cart-wrapper.cart-container-wrapper {
+            display: flex !important;
+            margin: 0 !important;
+            width: auto !important;
         }
 
-        /* 📱 AJUSTE EXCLUSIVO PARA CELULARES (Telas menores que 480px) */
-        @media (max-width: 480px) {
-            .shipping-input-group {
-                flex-direction: column !important;
-                gap: 10px !important;
-            }
-
-            .shipping-input-group input {
-                width: 100% !important;
-                min-width: 100% !important;
-            }
-
-            .shipping-input-group button {
-                width: 100% !important;
-                padding: 12px 15px !important;
-            }
-        }
-
-        /* ==========================================================================
-           ESTILO COMPLEMENTAR PARA O MENU TRAVAR DE VERDADE VIA JAVASCRIPT
-           ========================================================================== */
-        
-        /* Estado normal: O menu fica abaixo do logo respeitando o fluxo natural */
-        .main-nav {
+        /* GAVETA SAZONAIS DESKTOP: Alargada para forçar uma única linha horizontal */
+        #gaveta-sazonais-container.gaveta-sazonais {
             position: relative !important;
             width: 100% !important;
-            background-color: #ffffff !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-            box-sizing: border-box !important;
-            z-index: 99999 !important;
-            transition: none !important;
+            order: 4 !important;
+            margin-top: 15px !important;
+            margin-bottom: 10px !important;
+            background: #ffffff !important;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.03), 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+            border-radius: 12px !important;
+            z-index: 999 !important;
         }
 
-        /* Estado ativo (injetado via JS quando rola a página): Trava no topo na marra! */
-        .main-nav.fixo {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
+        .gaveta-content {
+            display: flex !important;
+            flex-direction: row !important;
+            /* Garante o alinhamento em linha */
+            flex-wrap: nowrap !important;
+            /* IMPEDE terminantemente de quebrar linha */
+            justify-content: center !important;
+            /* Centraliza o bloco inteiro de botões */
+            align-items: center !important;
+            gap: 12px !important;
+            /* Espaço perfeito entre cada tag */
+            padding: 20px !important;
             width: 100% !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+            box-sizing: border-box !important;
         }
-    </style>
-    
-    <script>
-        if (typeof toggleMenuMobile !== 'function') {
-            function toggleMenuMobile() {
-                const menuLinks = document.getElementById("nav-menu-links");
-                if (menuLinks) {
-                    menuLinks.classList.toggle("active");
-                }
-            }
+
+        /* Garante que as tags individuais não encolham para caber */
+        .btn-sazonal-tag {
+            flex-shrink: 0 !important;
+            margin: 0 !important;
         }
-    </script>
-</head>
+    }
+
+    /* --- AJUSTES PARA MOBILE E TELAS MINIMIZADAS --- */
+    @media (max-width: 768px) {
+        #menu-navegacao.main-nav {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 15px 15px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        #mobile-menu-btn.menu-toggle {
+            order: 1 !important;
+            display: block !important;
+            margin: 0 !important;
+            font-size: 24px !important;
+        }
+
+        #cart-wrapper.cart-container-wrapper {
+            order: 2 !important;
+            width: auto !important;
+            display: flex !important;
+            margin: 0 !important;
+        }
+
+        #nav-menu-links.menu-links {
+            order: 3 !important;
+            display: none !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+
+            width: 100% !important;
+            gap: 10px !important;
+            padding: 15px 15px 20px 15px !important;
+            margin: 10px 0 0 0 !important;
+
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            box-sizing: border-box !important;
+        }
+
+        #nav-menu-links.menu-links::-webkit-scrollbar {
+            display: block !important;
+            height: 5px !important;
+        }
+
+        #nav-menu-links.menu-links::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05) !important;
+            border-radius: 10px !important;
+        }
+
+        #nav-menu-links.menu-links::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2) !important;
+            border-radius: 10px !important;
+        }
+
+        #nav-menu-links.menu-links::after {
+            content: '' !important;
+            display: block !important;
+            padding-right: 30px !important;
+            flex-shrink: 0 !important;
+        }
+
+        #nav-menu-links.menu-links.active {
+            display: flex !important;
+        }
+
+        #nav-menu-links .blob-btn,
+        #nav-menu-links [class*="blob-btn"] {
+            display: inline-flex !important;
+            flex-shrink: 0 !important;
+            width: auto !important;
+            padding: 10px 20px !important;
+            margin: 0 !important;
+            white-space: nowrap !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Gaveta de Sazonais no Mobile */
+        #gaveta-sazonais-container.gaveta-sazonais {
+            order: 4 !important;
+            width: 100% !important;
+            position: relative !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            top: auto !important;
+            right: auto !important;
+        }
+
+        .gaveta-content {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            padding: 10px 0 !important;
+        }
+
+        .btn-sazonal-tag {
+            margin: 0 !important;
+        }
+    }
+</style>
 
 <body>
 
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
-        <defs>
-            <filter id="goo">
-                <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo">
-                </feColorMatrix>
-                <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
-            </filter>
-        </defs>
-    </svg>
+    <body>
 
-    <div class="logo-container" id="area-do-logo">
-        <img src="img/Logo.png" alt="Pitadavivi" class="header-logo">
-    </div>
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7"
+                        result="goo">
+                    </feColorMatrix>
+                    <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+                </filter>
+            </defs>
+        </svg>
 
-    <nav class="main-nav" id="menu-navegacao">
-        <div class="menu-toggle" id="mobile-menu-btn" onclick="toggleMenuMobile()">
-            <i class="fas fa-bars"></i>
+        <div class="logo-container" id="area-do-logo">
+            <img src="img/Logo.png" alt="Pitadavivi" class="header-logo">
         </div>
 
-        <div class="menu-links" id="nav-menu-links">
+        <nav class="main-nav" id="menu-navegacao">
+            <div class="menu-toggle" id="mobile-menu-btn" onclick="toggleMenuMobile()">
+                <i class="fas fa-bars"></i>
+            </div>
 
-            <a href="#geleias" class="blob-btn" onclick="fecharMenuAoClicar()">Geleias
-                <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                    </span></span>
-            </a>
-
-            <a href="#antepastos" class="blob-btn" onclick="fecharMenuAoClicar()">Antepastos
-                <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                    </span></span>
-            </a>
-
-            <a href="#sobremesas" class="blob-btn" onclick="fecharMenuAoClicar()">Sobremesas
-                <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                    </span></span>
-            </a>
-
-            <div class="dropdown-item">
-                <a href="#" class="blob-btn toggle-menu">Bolos <i class="fas fa-chevron-down arrow-icon"
-                        style="font-size: 12px; margin-left: 5px;"></i>
+            <div class="menu-links" id="nav-menu-links">
+                <a href="#geleias" class="blob-btn" onclick="fecharMenuAoClicar()">Geleias
                     <span class="blob-btn__inner"><span class="blob-btn__blobs">
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         </span></span>
                 </a>
-                <div class="submenu">
-                    <a href="#grid-caseirinhos" onclick="fecharMenuAoClicar()">Caseirinhos</a>
-                    <a href="#grid-festa" onclick="fecharMenuAoClicar()">Festa</a>
-                </div>
-            </div>
-
-            <div class="dropdown-item">
-                <a href="#" class="blob-btn toggle-menu">Pães <i class="fas fa-chevron-down arrow-icon"
-                        style="font-size: 12px; margin-left: 5px;"></i>
+                <a href="#antepastos" class="blob-btn" onclick="fecharMenuAoClicar()">Antepastos
                     <span class="blob-btn__inner"><span class="blob-btn__blobs">
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         </span></span>
                 </a>
-                <div class="submenu">
-                    <a href="#grid-paes-doces" onclick="fecharMenuAoClicar()">Doces</a>
-                    <a href="#grid-paes-salgados" onclick="fecharMenuAoClicar()">Salgados</a>
-                    <a href="#grid-paes-semgluten" onclick="fecharMenuAoClicar()">Sem gluten</a>
-                </div>
-            </div>
-
-            <div class="dropdown-item">
-                <a href="#" class="blob-btn toggle-menu">Tortas <i class="fas fa-chevron-down arrow-icon"
-                        style="font-size: 12px; margin-left: 5px;"></i>
+                <a href="#sobremesas" class="blob-btn" onclick="fecharMenuAoClicar()">Sobremesas
                     <span class="blob-btn__inner"><span class="blob-btn__blobs">
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         </span></span>
                 </a>
-                <div class="submenu">
-                    <a href="#grid-tortas-doces" onclick="fecharMenuAoClicar()">Doces</a>
-                    <a href="#grid-tortas-salgadas" onclick="fecharMenuAoClicar()">Salgadas</a>
-                </div>
-            </div>
-
-            <div class="dropdown-item">
-                <a href="#" class="blob-btn toggle-menu">Sazonais
-                    <i class="fas fa-chevron-down arrow-icon" style="font-size: 12px; margin-left: 5px;"></i>
+                <a href="#bolos" class="blob-btn" onclick="fecharMenuAoClicar()">Bolos
                     <span class="blob-btn__inner"><span class="blob-btn__blobs">
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                             <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
                         </span></span>
                 </a>
-                <div class="submenu">
-                    <a href="javascript:mostrarApenasEpoca('bloco-pascoa')">Páscoa</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-dia-das-maes')">Dia das Mães</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-namorados')">Dia dos Namorados</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-festa-junina-julina')">Festa Junina / Julina</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-copa-do-mundo')">Copa do Mundo</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-dia-dos-pais')">Dia dos Pais</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-criancas-professores')">Crianças / Professores</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-natal')">Natal</a>
-                    <a href="javascript:mostrarApenasEpoca('bloco-ano-novo')">Ano Novo</a>
+                <a href="#paes" class="blob-btn" onclick="fecharMenuAoClicar()">Pães
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        </span></span>
+                </a>
+                <a href="#tortas" class="blob-btn" onclick="fecharMenuAoClicar()">Tortas
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        </span></span>
+                </a>
+                <div class="dropdown-item" id="dropdown-sazonais">
+                    <a href="javascript:void(0)" class="blob-btn" onclick="toggleSazonaisMenu(event)">
+                        Sazonais <i class="fas fa-chevron-down arrow-icon"
+                            style="font-size: 12px; margin-left: 5px;"></i>
+                        <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                                <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                                <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            </span></span>
+                    </a>
                 </div>
+                <a href="#depoimentos" class="blob-btn" onclick="fecharMenuAoClicar()">Depoimentos
+                    <span class="blob-btn__inner"><span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
+                        </span></span>
+                </a>
             </div>
-
-            <a href="#depoimentos" class="blob-btn" onclick="fecharMenuAoClicar()">Depoimentos
-                <span class="blob-btn__inner"><span class="blob-btn__blobs">
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                        <span class="blob-btn__blob"></span><span class="blob-btn__blob"></span>
-                    </span></span>
-            </a>
-
-        </div>
-
-        <div class="cart-container-wrapper" id="cart-wrapper">
-            <div class="cart-summary" id="cart-summary-btn">
-                🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
-            </div>
-            <div class="cart-dropdown" id="cart-dropdown">
-                <div class="cart-items-list" id="cart-items-list">
-                    <p class="empty-cart-msg">Seu carrinho ainda está vazio... Que tal recheá-lo com nossas delícias?
-                        👩‍🍳</p>
+            <div class="cart-container-wrapper" id="cart-wrapper">
+                <div class="cart-summary" id="cart-summary-btn">
+                    🛒 <span id="cart-count">0</span> itens | R$ <span id="cart-total">0,00</span>
                 </div>
+                <div class="cart-dropdown" id="cart-dropdown">
 
-                <div class="shipping-box-cart">
-                    <h4>Calcular Entrega</h4>
-                    <div class="shipping-input-group">
-                        <input type="text" id="cep-input" placeholder="00000-000" maxlength="9"
-                            oninput="aplicarMascaraCep(this)">
-                        <button type="button" onclick="buscarCep(event)">Calcular</button>
+                    <div class="container-frete-gratis">
+                        <p class="texto-frete" id="texto-frete">Faltam apenas R$ 150,00 para você ganhar Frete Grátis!
+                        </p>
+                        <div class="barra-progresso-fundo">
+                            <div class="barra-progresso-preenchimento" id="barra-progresso" style="width: 0%"></div>
+                        </div>
                     </div>
-                    <div id="shipping-result"></div>
-                </div>
-
-                <div class="cart-dropdown-footer">
-                    <button class="action-btn" onclick="solicitarConfirmacaoCompra()" style="width: 100%;">Finalizar por
-                        WhatsApp</button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main>
-        <section id="geleias" class="product-section">
-            <div class="section-header-premium">
-                <h2>Geleias</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-apple-alt"></i>
+                    <div class="cart-items-list" id="cart-items-list">
+                        <p class="empty-cart-msg">Seu carrinho ainda está vazio... Que tal recheá-lo com nossas
+                            delícias? 👩‍🍳</p>
                     </div>
-                </div>
-                <p class="premium-subtitle">Frutas selecionadas e doçura na medida exata</p>
-            </div>
-            <div class="grid-container" id="grid-geleias"></div>
-        </section>
-
-        <section id="antepastos" class="product-section">
-            <div class="section-header-premium">
-                <h2>Antepastos</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-cheese"></i> <i class="fas fa-bread-slice"></i>
+                    <div class="shipping-box-cart">
+                        <h4>Calcular Entrega</h4>
+                        <div class="shipping-input-group">
+                            <input type="text" id="cep-input" placeholder="00000-000" maxlength="9"
+                                oninput="aplicarMascaraCep(this)">
+                            <button type="button" onclick="buscarCep(event)">Calcular</button>
+                        </div>
+                        <div id="shipping-result"></div>
+                    </div>
+                    <div class="cart-dropdown-footer">
+                        <button class="action-btn" onclick="solicitarConfirmacaoCompra()" style="width: 100%;">Finalizar
+                            por WhatsApp</button>
                     </div>
                 </div>
-                <p class="premium-subtitle">Acompanhamentos artesanais perfeitos para momentos especiais</p>
             </div>
-            <div class="grid-container" id="grid-antepastos"></div>
-        </section>
 
-        <section id="sobremesas" class="product-section">
-            <div class="section-header-premium">
-                <h2>Sobremesas</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-birthday-cake"></i> <i class="fas fa-ice-cream"></i> <i
-                            class="fas fa-cookie"></i>
-                    </div>
+            <div class="gaveta-sazonais" id="gaveta-sazonais-container">
+                <div class="gaveta-content">
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-pascoa')" class="btn-sazonal-tag">🌸
+                        Páscoa</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-dia-das-maes')"
+                        class="btn-sazonal-tag">💝 Dia das Mães</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-dia-dos-namorados')"
+                        class="btn-sazonal-tag">💘 Namorados</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-festa-junina-julina')"
+                        class="btn-sazonal-tag">🔥 Festa Junina</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-copa-do-mundo')"
+                        class="btn-sazonal-tag">⚽ Copa do Mundo</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-dia-dos-pais')"
+                        class="btn-sazonal-tag">👔 Dia dos Pais</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-criancas-professores')"
+                        class="btn-sazonal-tag">🧸 Crianças / Profs</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-natal')" class="btn-sazonal-tag">🎄
+                        Natal</a>
+                    <a href="javascript:void(0)" onclick="mostrarApenasEpoca('bloco-ano-novo')"
+                        class="btn-sazonal-tag">🥂 Ano Novo</a>
                 </div>
-                <p class="premium-subtitle">Uma Coleção de Delícias Artesanais Afetivas - Feito com Carinho</p>
             </div>
-            <div class="grid-container" id="grid-sobremesas"></div>
-        </section>
+        </nav>
 
-        <section id="bolos" class="product-section">
-            <div class="section-header-premium">
-                <h2>Bolos</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-mortar-pestle"></i>
-                    </div>
-                </div>
-                <p class="premium-subtitle">Massas fofinhas e recheios caseiros inesquecíveis</p>
-            </div>
-            <h3>Caseirinhos</h3>
-            <div class="grid-container" id="grid-caseirinhos"></div>
-            <h3>Festa</h3>
-            <div class="grid-container" id="grid-festa"></div>
-        </section>
-
-        <section id="paes" class="product-section">
-            <div class="section-header-premium">
-                <h2>Pães</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-bread-slice"></i>
-                    </div>
-                </div>
-                <p class="premium-subtitle">Fornadas quentinhas com fermentação natural e afeto</p>
-            </div>
-            <h3>Doces</h3>
-            <div class="grid-container" id="grid-paes-doces"></div>
-            <h3>Salgados</h3>
-            <div class="grid-container" id="grid-paes-salgados"></div>
-            <h3>Sem Glúten</h3>
-            <div class="grid-container" id="grid-paes-semgluten"></div>
-        </section>
-
-        <section id="tortas" class="product-section">
-            <div class="section-header-premium">
-                <h2>Tortas</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-stroopwafel"></i>
-                    </div>
-                </div>
-                <p class="premium-subtitle">Crostas crocantes e combinações que derretem na boca</p>
-            </div>
-            <h3>Doces</h3>
-            <div class="grid-container" id="grid-tortas-doces"></div>
-            <h3>Salgadas</h3>
-            <div class="grid-container" id="grid-tortas-salgadas"></div>
-        </section>
-
-        <section id="sazonais" class="product-section">
-            <div id="encomendas-especiais" class="section-header-premium">
-                <h2>Eventos Especiais</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">
-                        <i class="fas fa-gift"></i> <i class="fas fa-heart"></i>
-                    </div>
-                </div>
-                <p class="premium-subtitle">Edições limitadas e menu completo para celebrar datas com muito mais sabor
-                </p>
-            </div>
-
-            <div id="bloco-pascoa" class="bloco-sazonal-epoca">
-                <h3>Páscoa</h3>
-                <div class="grid-container" id="grid-pascoa"></div>
-            </div>
-
-            <div id="bloco-dia-das-maes" class="bloco-sazonal-epoca">
-                <h3>Dia das Mães</h3>
-                <div class="grid-container" id="grid-dia-das-maes"></div>
-            </div>
-
-            <div id="bloco-dia-dos-namorados" class="bloco-sazonal-epoca">
-                <h3>Dia dos Namorados</h3>
-                <div class="grid-container" id="grid-dia-dos-namorados"></div>
-            </div>
-
-            <div id="bloco-festa-junina-julina" class="bloco-sazonal-epoca">
-                <h3>Festa Junina / Julina</h3>
-                <div class="grid-container" id="grid-festa-junina-julina"></div>
-            </div>
-
-            <div id="bloco-copa-do-mundo" class="bloco-sazonal-epoca">
-                <div class="section-header-premium" style="margin-top: 10px; margin-bottom: 15px;">
-                    <h2>Copa do Mundo</h2>
+        <!-- ==========================================================================
+        3. CONTEÚDO PRINCIPAL (MAIN), MODAIS, RODAPÉ E SCRIPTS
+         ========================================================================== -->
+        <main>
+            <!-- SEÇÃO: GELEIAS -->
+            <section id="geleias" class="product-section">
+                <div class="section-header-premium">
+                    <h2>Geleias</h2>
                     <div class="premium-divider">
-                        <div class="premium-divider-icon">⚽✨🏆</div>
-                    </div>
-                    <p class="premium-subtitle">Kits Torcida e Doces Temáticos para vibrar pelo Hexa</p>
-                </div>
-                <div class="grid-container" id="grid-copa-do-mundo"></div>
-            </div>
-
-            <div id="bloco-dia-dos-pais" class="bloco-sazonal-epoca">
-                <h3>Dia dos Pais</h3>
-                <div class="grid-container" id="grid-dia-dos-pais"></div>
-            </div>
-
-            <div id="bloco-criancas-professores" class="bloco-sazonal-epoca">
-                <h3>Dia das Crianças e Professores</h3>
-                <div class="grid-container" id="grid-criancas-professores"></div>
-            </div>
-
-            <div id="bloco-natal" class="bloco-sazonal-epoca">
-                <h3>Natal</h3>
-                <div class="grid-container" id="grid-natal"></div>
-            </div>
-
-            <div id="bloco-ano-novo" class="bloco-sazonal-epoca">
-                <h3>Ano Novo</h3>
-                <div class="grid-container" id="grid-ano-novo"></div>
-            </div>
-        </section>
-
-        <section class="about-section" style="background: #fff; padding: 60px 20px; text-align: center;">
-            <div style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
-                    Feito com Afeto
-                    <span style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
-                </h2>
-                <p style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
-                    A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples in sorrisos
-                    partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma história,
-                    um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e adoce a sua
-                    rotina!
-                </p>
-            </div>
-        </section>
-
-        <section id="depoimentos" class="testimonials-section">
-            <div class="section-header-premium">
-                <h2>Quem já provou, aprovou!</h2>
-                <div class="premium-divider">
-                    <div class="premium-divider-icon">✨</div>
-                </div>
-                <p class="premium-subtitle">O carinho e os temperos que conquistaram nossos clientes</p>
-            </div>
-
-            <div class="testimonial-carousel-container">
-                <button class="carousel-nav-btn prev-btn" id="prev-testimonial" aria-label="Depoimento anterior">&#10094;</button>
-
-                <div class="testimonial-carousel-track-wrapper">
-                    <div class="testimonials-grid" id="testimonial-track">
-                        <div class="testimonial-card">
-                            <div class="testimonial-stars">★★★★★</div>
-                            <p class="testimonial-text">"O tempero é simplesmente maravilhoso, dá para sentir o cuidado
-                                e o afeto in cada detalhe. Virou item obrigatório nos meus almoços de domingo!"</p>
-                            <span class="testimonial-author">Mariana Silva
-                                <span class="testimonial-city">São Paulo - SP</span>
-                            </span>
-                        </div>
-
-                        <div class="testimonial-card">
-                            <div class="testimonial-stars">★★★★★</div>
-                            <p class="testimonial-text">"Os produtos chegaram super frescos e muito bem embalados. A
-                                Pitadavivi tem um atendimento impecável e um sabor inigualável."</p>
-                            <span class="testimonial-author">Carlos Eduardo
-                                <span class="testimonial-city">Campinas - SP</span>
-                            </span>
-                        </div>
-
-                        <div class="testimonial-card">
-                            <div class="testimonial-stars">★★★★★</div>
-                            <p class="testimonial-text">"Que grata surpresa! O aroma quando abri a caixinha já
-                                conquistou a casa toda. Recomendo de olhos fechados para quem ama comida de verdade."
-                            </p>
-                            <span class="testimonial-author">Beatriz Costa
-                                <span class="testimonial-city">Rio de Janeiro - RJ</span>
-                            </span>
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-apple-alt"></i>
                         </div>
                     </div>
+                    <p class="premium-subtitle">Frutas selecionadas e doçura na medida exata</p>
+                </div>
+                <div class="grid-container" id="grid-geleias"></div>
+            </section>
+
+            <!-- SEÇÃO: ANTEPASTOS -->
+            <section id="antepastos" class="product-section">
+                <div class="section-header-premium">
+                    <h2>Antepastos</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-cheese"></i> <i class="fas fa-bread-slice"></i>
+                        </div>
+                    </div>
+                    <p class="premium-subtitle">Acompanhamentos artesanais perfeitos para momentos especiais</p>
+                </div>
+                <div class="grid-container" id="grid-antepastos"></div>
+            </section>
+
+            <!-- SEÇÃO: SOBREMESAS -->
+            <section id="sobremesas" class="product-section">
+                <div class="section-header-premium">
+                    <h2>Sobremesas</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-birthday-cake"></i> <i class="fas fa-ice-cream"></i> <i
+                                class="fas fa-cookie"></i>
+                        </div>
+                    </div>
+                    <p class="premium-subtitle">Uma Coleção de Delícias Artesanais Afetivas - Feito com Carinho</p>
+                </div>
+                <div class="grid-container" id="grid-sobremesas"></div>
+            </section>
+
+            <!-- SEÇÃO: BOLOS -->
+            <section id="bolos" class="product-section">
+                <div class="section-header-premium">
+                    <h2>Bolos</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-mortar-pestle"></i>
+                        </div>
+                    </div>
+                    <p class="premium-subtitle">Massas fofinhas e recheios caseiros inesquecíveis</p>
+                </div>
+                <h3>Caseirinhos</h3>
+                <div class="grid-container" id="grid-caseirinhos"></div>
+                <h3>Festa</h3>
+                <div class="grid-container" id="grid-festa"></div>
+            </section>
+
+            <!-- SEÇÃO: PÃES -->
+            <section id="paes" class="product-section">
+                <div class="section-header-premium">
+                    <h2>Pães</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-bread-slice"></i>
+                        </div>
+                    </div>
+                    <p class="premium-subtitle">Fornadas quentinhas com fermentação natural e afeto</p>
+                </div>
+                <h3>Doces</h3>
+                <div class="grid-container" id="grid-paes-doces"></div>
+                <h3>Salgados</h3>
+                <div class="grid-container" id="grid-paes-salgados"></div>
+                <h3>Sem Glúten</h3>
+                <div class="grid-container" id="grid-paes-semgluten"></div>
+            </section>
+
+            <!-- SEÇÃO: TORTAS -->
+            <section id="tortas" class="product-section">
+                <div class="section-header-premium">
+                    <h2>Tortas</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-stroopwafel"></i>
+                        </div>
+                    </div>
+                    <p class="premium-subtitle">Crostas crocantes e combinações que derretem na boca</p>
+                </div>
+                <h3>Doces</h3>
+                <div class="grid-container" id="grid-tortas-doces"></div>
+                <h3>Salgadas</h3>
+                <div class="grid-container" id="grid-tortas-salgadas"></div>
+            </section>
+
+            <!-- SEÇÃO: SAZONAIS / DATAS ESPECIAIS -->
+            <section id="sazonais" class="product-section">
+                <div id="encomendas-especiais" class="section-header-premium">
+                    <h2>Eventos Especiais</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">
+                            <i class="fas fa-gift"></i> <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <p class="premium-subtitle">Edições limitadas e menu completo para celebrar datas com muito mais
+                        sabor</p>
                 </div>
 
-                <button class="carousel-nav-btn next-btn" id="next-testimonial" aria-label="Próximo depoimento">&#10095;</button>
-            </div>
+                <div id="bloco-pascoa" class="bloco-sazonal-epoca">
+                    <h3>Páscoa</h3>
+                    <div class="grid-container" id="grid-pascoa"></div>
+                </div>
 
-            <div class="carousel-dots" id="carousel-dots"></div>
-        </section>
+                <div id="bloco-dia-das-maes" class="bloco-sazonal-epoca">
+                    <h3>Dia das Mães</h3>
+                    <div class="grid-container" id="grid-dia-das-maes"></div>
+                </div>
 
-    </main>
+                <div id="bloco-dia-dos-namorados" class="bloco-sazonal-epoca">
+                    <h3>Dia dos Namorados</h3>
+                    <div class="grid-container" id="grid-dia-dos-namorados"></div>
+                </div>
 
-    <div id="promo-modal" class="modal">
-        <div class="modal-content">
-            <img src="./img/manjericao.png" class="manjericao-topo-esquerdo" alt="Decor">
-            <img src="./img/manjericao.png" class="manjericao-topo-direito" alt="Decor">
-            <img src="./img/manjericao.png" class="manjericao-baixo-esquerdo" alt="Decor">
-            <img src="./img/manjericao.png" class="manjericao-baixo-direito" alt="Decor">
+                <div id="bloco-festa-junina-julina" class="bloco-sazonal-epoca">
+                    <h3>Festa Junina / Julina</h3>
+                    <div class="grid-container" id="grid-festa-junina-julina"></div>
+                </div>
 
-            <button class="btn-modal-close-x" onclick="fecharModal()" aria-label="Fechar modal">&times;</button>
+                <div id="bloco-copa-do-mundo" class="bloco-sazonal-epoca">
+                    <div class="section-header-premium" style="margin-top: 10px; margin-bottom: 15px;">
+                        <h2>Copa do Mundo</h2>
+                        <div class="premium-divider">
+                            <div class="premium-divider-icon">⚽✨🏆</div>
+                        </div>
+                        <p class="premium-subtitle">Kits Torcida e Doces Temáticos para vibrar pelo Hexa</p>
+                    </div>
+                    <div class="grid-container" id="grid-copa-do-mundo"></div>
+                </div>
 
-            <div class="modal-icons-wrapper">
-                <span class="modal-icon">👩‍🍳🎁</span>
-            </div>
+                <div id="bloco-dia-dos-pais" class="bloco-sazonal-epoca">
+                    <h3>Dia dos Pais</h3>
+                    <div class="grid-container" id="grid-dia-dos-pais"></div>
+                </div>
 
-            <h2>Um mimo para você!</h2>
-            <p>Faça sua primeira encomenda e ganhe um presente artesanal exclusivo.</p>
+                <div id="bloco-criancas-professores" class="bloco-sazonal-epoca">
+                    <h3>Dia das Crianças e Professores</h3>
+                    <div class="grid-container" id="grid-criancas-professores"></div>
+                </div>
 
-            <div class="cupom-container">
-                <button class="cupom-tag" onclick="copiarCupom()">
-                    QUEROMIMO <span class="icone-copiar">📋</span>
-                </button>
-                <span class="dica-copiar">Clique acima para copiar o cupom!</span>
+                <div id="bloco-natal" class="bloco-sazonal-epoca">
+                    <h3>Natal</h3>
+                    <div class="grid-container" id="grid-natal"></div>
+                </div>
+
+                <div id="bloco-ano-novo" class="bloco-sazonal-epoca">
+                    <h3>Ano Novo</h3>
+                    <div class="grid-container" id="grid-ano-novo"></div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: QUEM SOMOS / AFETO -->
+            <section class="about-section" style="background: #fff; padding: 60px 20px; text-align: center;">
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <h2
+                        style="color: #4a302a; font-family: 'Open Sans', sans-serif; display: inline-block; margin-bottom: 20px; font-size: 2rem; position: relative;">
+                        Feito com Afeto
+                        <span
+                            style="display: block; width: 60px; height: 3px; background-color: #e67e22; margin: 10px auto 0 auto;"></span>
+                    </h2>
+                    <p
+                        style="color: #555; font-size: 1.15rem; line-height: 1.8; font-family: 'Open Sans', sans-serif; margin-bottom: 0;">
+                        A <strong>Pitadavivi</strong> nasceu da paixão por transformar ingredientes simples em sorrisos
+                        partilhados ao redor da mesa. Cada geleia, bolo e pão que sai da nossa cozinha carrega uma
+                        história, um segredo de família e, acima de tudo, uma pitada generosa de amor. Junte-se a nós e
+                        adoce a sua rotina!
+                    </p>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: TESTEMUNHOS / DEPOIMENTOS -->
+            <section id="depoimentos" class="testimonials-section">
+                <div class="section-header-premium">
+                    <h2>Quem já provou, aprovou!</h2>
+                    <div class="premium-divider">
+                        <div class="premium-divider-icon">✨</div>
+                    </div>
+                    <p class="premium-subtitle">O carinho e os temperos que conquistaram nossos clientes</p>
+                </div>
+
+                <div class="testimonial-carousel-container">
+                    <button class="carousel-nav-btn prev-btn" id="prev-testimonial"
+                        aria-label="Depoimento anterior">&#10094;</button>
+
+                    <div class="testimonial-carousel-track-wrapper">
+                        <div class="testimonials-grid" id="testimonial-track">
+                            <div class="testimonial-card">
+                                <div class="testimonial-stars">★★★★★</div>
+                                <p class="testimonial-text">"O tempero é simplesmente maravilhoso, dá para sentir o
+                                    cuidado e o afeto em cada detalhe. Virou item obrigatório nos meus almoços de
+                                    domingo!"</p>
+                                <span class="testimonial-author">Mariana Silva
+                                    <span class="testimonial-city">São Paulo - SP</span>
+                                </span>
+                            </div>
+
+                            <div class="testimonial-card">
+                                <div class="testimonial-stars">★★★★★</div>
+                                <p class="testimonial-text">"Os produtos chegaram super frescos e muito bem embalados. A
+                                    Pitadavivi tem um atendimento impecável e um sabor inigualável."</p>
+                                <span class="testimonial-author">Carlos Eduardo
+                                    <span class="testimonial-city">Campinas - SP</span>
+                                </span>
+                            </div>
+
+                            <div class="testimonial-card">
+                                <div class="testimonial-stars">★★★★★</div>
+                                <p class="testimonial-text">"Que grata surpresa! O aroma quando abri a caixinha já
+                                    conquistou a casa toda. Recomendo de olhos fechados para quem ama comida de
+                                    verdade."</p>
+                                <span class="testimonial-author">Beatriz Costa
+                                    <span class="testimonial-city">Rio de Janeiro - RJ</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="carousel-nav-btn next-btn" id="next-testimonial"
+                        aria-label="Próximo depoimento">&#10095;</button>
+                </div>
+
+                <div class="carousel-dots" id="carousel-dots"></div>
+            </section>
+        </main>
+
+        <!-- ==========================================================================
+         MODAIS (BOAS-VINDAS / CONFIRMAÇÃO DE PEDIDO)
+         ========================================================================== -->
+        <div id="promo-modal" class="modal">
+            <div class="modal-content">
+                <img src="./img/manjericao.png" class="manjericao-topo-esquerdo" alt="Decor">
+                <img src="./img/manjericao.png" class="manjericao-topo-direito" alt="Decor">
+                <img src="./img/manjericao.png" class="manjericao-baixo-esquerdo" alt="Decor">
+                <img src="./img/manjericao.png" class="manjericao-baixo-direito" alt="Decor">
+
+                <button class="btn-modal-close-x" onclick="fecharModal()" aria-label="Fechar modal">&times;</button>
+
+                <div class="modal-icons-wrapper">
+                    <span class="modal-icon">👩‍🍳🎁</span>
+                </div>
+
+                <h2>Um mimo para você!</h2>
+                <p>Faça sua primeira encomenda e ganhe um presente artesanal exclusivo.</p>
+
+                <div class="cupom-container">
+                    <button class="cupom-tag" onclick="copiarCupom()">
+                        QUEROMIMO <span class="icone-copiar">📋</span>
+                    </button>
+                    <span class="dica-copiar">Clique acima para copiar o cupom!</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="cupom-lembrete" class="cupom-flutuante" onclick="abrirModal()">
-        🎁 Meu Mimo
-    </div>
+        <div id="cupom-lembrete" class="cupom-flutuante" onclick="abrirModal()">
+            🎁 Meu Mimo
+        </div>
 
-    <div id="confirm-modal" class="modal">
-        <div class="modal-content" style="padding: 30px 25px; box-sizing: border-box; background: url('./img/papel-velho.jpg') repeat, #fcf8f2; border: 2px solid #e67e22; position: relative; overflow: hidden;">
+        <div id="confirm-modal" class="modal">
+            <div class="modal-content"
+                style="padding: 30px 25px; box-sizing: border-box; background: url('./img/papel-velho.jpg') repeat, #fcf8f2; border: 2px solid #e67e22; position: relative; overflow: hidden;">
+                <img src="./img/manjericao.png" alt="Decor"
+                    style="position: absolute; top: -5px; left: -5px; width: 50px; transform: rotate(0deg); pointer-events: none;">
+                <img src="./img/manjericao.png" alt="Decor"
+                    style="position: absolute; top: -5px; right: -5px; width: 50px; transform: rotate(90deg); pointer-events: none;">
+                <img src="./img/manjericao.png" alt="Decor"
+                    style="position: absolute; bottom: -5px; left: -5px; width: 50px; transform: rotate(270deg); pointer-events: none;">
+                <img src="./img/manjericao.png" alt="Decor"
+                    style="position: absolute; bottom: -5px; right: -5px; width: 50px; transform: rotate(180deg); pointer-events: none;">
 
-            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; top: -5px; left: -5px; width: 50px; transform: rotate(0deg); pointer-events: none;">
-            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; top: -5px; right: -5px; width: 50px; transform: rotate(90deg); pointer-events: none;">
-            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; bottom: -5px; left: -5px; width: 50px; transform: rotate(270deg); pointer-events: none;">
-            <img src="./img/manjericao.png" alt="Decor" style="position: absolute; bottom: -5px; right: -5px; width: 50px; transform: rotate(180deg); pointer-events: none;">
+                <div class="modal-icons-wrapper" style="margin-bottom: 5px; text-align: center;">
+                    <span class="modal-icon" style="font-size: 2rem;">🎉🛒</span>
+                </div>
 
-            <div class="modal-icons-wrapper" style="margin-bottom: 5px; text-align: center;">
-                <span class="modal-icon" style="font-size: 2rem;">🎉🛒</span>
-            </div>
+                <h2
+                    style="font-size: 1.45rem; margin-bottom: 8px; line-height: 1.2; color: #4a302a; text-align: center; font-weight: bold;">
+                    Pedido enviado!</h2>
+                <p
+                    style="font-size: 0.95rem; margin-bottom: 15px; line-height: 1.4; color: #4a302a; text-align: center;">
+                    Seu carrinho já está na nossa cozinha. Que escolha deliciosa! 👩‍🍳 </p>
 
-            <h2 style="font-size: 1.45rem; margin-bottom: 8px; line-height: 1.2; color: #4a302a; text-align: center; font-weight: bold;">
-                Pedido enviado!</h2>
-
-            <p style="font-size: 0.95rem; margin-bottom: 15px; line-height: 1.4; color: #4a302a; text-align: center;">
-                Seu carrinho já está na nossa cozinha via WhatsApp. Que escolha deliciosa! 👩‍🍳
-            </p>
-
-            <div class="btn-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; position: relative; z-index: 2;">
-                <button class="action-btn" onclick="confirmarLimpezaCarrinho(false)" style="width: 100%; padding: 12px; font-weight: bold; background-color: #e67e22; border-radius: 25px; border: none; color: white; cursor: pointer; font-size: 0.95rem; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    🤩 Ver mais delícias e adicionar!
-                </button>
-
-                <button onclick="confirmarLimpezaCarrinho(true)" style="background: none; border: none; color: #a08075; text-decoration: underline; font-size: 0.85rem; cursor: pointer; padding: 5px; margin-top: 8px; display: inline-block; width: 100%; text-align: center;">
-                    Limpar carrinho e recomeçar
-                </button>
+                <div class="btn-container"
+                    style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; position: relative; z-index: 2;">
+                    <button class="action-btn" onclick="confirmarLimpezaCarrinho(false)"
+                        style="width: 100%; padding: 12px; font-weight: bold; background-color: #e67e22; border-radius: 25px; border: none; color: white; cursor: pointer; font-size: 0.95rem; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        🤩 Ver mais delícias e adicionar! </button>
+                    <button onclick="confirmarLimpezaCarrinho(true)"
+                        style="background: none; border: none; color: #a08075; text-decoration: underline; font-size: 0.85rem; cursor: pointer; padding: 5px; margin-top: 8px; display: inline-block; width: 100%; text-align: center;">
+                        Limpar carrinho e recomeçar </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <footer>
-        <p>&copy; 2026 Pitadavivi Ltda. | Todos os direitos reservados.</p>
-        <div class="social-links">
-            <a href="https://www.instagram.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.facebook.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-            <a href="https://wa.me/5511987342562" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
-        </div>
-    </footer>
+        <!-- ==========================================================================
+         RODAPÉ DO SITE (FOOTER)
+         ========================================================================== -->
+        <footer>
+            <p>&copy; 2026 Pitadavivi Ltda. | Todos os direitos reservados.</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/pitadavivi" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-facebook"></i></a>
+                <a href="https://wa.me/5511987342562" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-whatsapp"></i></a>
+            </div>
+        </footer>
 
-    <a href="https://wa.me/5511987342562" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+        <!-- ==========================================================================
+         BOTÕES FLUTUANTES (WHATSAPP / VOLTAR AO TOPO)
+         ========================================================================== -->
+        <a href="https://wa.me/5511987342562" class="whatsapp-float" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
 
-    <button id="btn-topo" title="Voltar ao topo" aria-label="Voltar ao topo">
-        ↑
-    </button>
+        <button id="btn-topo" title="Voltar ao topo" aria-label="Voltar ao topo"> ↑ </button>
 
-    <script>
-        // --- CÁLCULO DE FRETE E MÁSCARAS ---
-        function aplicarMascaraCep(input) {
-            let valor = input.value.replace(/\D/g, '');
-            if (valor.length > 5) {
-                valor = valor.substring(0, 5) + '-' + valor.substring(5, 8);
+        <!-- ==========================================================================
+         SCRIPTS INTERNOS (FRETE, CONTROLES DE INTERAÇÃO, NAVEGAÇÃO)
+         ========================================================================== -->
+        <script>
+            // --- CÁLCULO DE FRETE E MÁSCARAS ---
+            function aplicarMascaraCep(input) {
+                let valor = input.value.replace(/\D/g, '');
+                if (valor.length > 5) {
+                    valor = valor.substring(0, 5) + '-' + valor.substring(5, 8);
+                }
+                input.value = valor;
             }
-            input.value = valor;
-        }
 
-        async function buscarCep(event) {
-            if (event) event.stopPropagation();
+            async function buscarCep(event) {
+                if (event) event.stopPropagation();
 
-            const cepInput = document.getElementById('cep-input');
-            const resultadoDiv = document.getElementById('shipping-result');
-            const cepDigitado = cepInput.value.replace(/\D/g, '');
+                const cepInput = document.getElementById('cep-input');
+                const resultadoDiv = document.getElementById('shipping-result');
+                const cepDigitado = cepInput.value.replace(/\D/g, '');
 
-            if (cepDigitado.length !== 8) {
-                resultadoDiv.innerHTML = `<div class="frete-erro">Por favor, digite um CEP válido com 8 números.</div>`;
-                return;
-            }
+                if (cepDigitado.length !== 8) {
+                    resultadoDiv.innerHTML = `<div class="frete-erro">Por favor, digite um CEP válido com 8 números.</div>`;
+                    return;
+                }
 
-            resultadoDiv.innerHTML = `<span style="display:block; margin-top:8px;">⏳ Calculando...</span>`;
+                resultadoDiv.innerHTML = `<span style="display:block; margin-top:8px;">⏳ Calculando...</span>`;
 
-            try {
-                const urlApi = 'http://localhost:5254';
-                const resposta = await fetch(urlApi, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cepDestino: cepDigitado })
-                });
+                try {
+                    const urlApi = 'http://localhost:5254';
+                    const resposta = await fetch(urlApi, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cepDestino: cepDigitado })
+                    });
 
-                const dados = await resposta.json();
+                    const dados = await resposta.json();
 
-                if (resposta.ok) {
-                    resultadoDiv.innerHTML = `
+                    if (resposta.ok) {
+                        resultadoDiv.innerHTML = `
                         <div class="frete-sucesso">
                             <p>📍 <strong>Endereço:</strong> ${dados.logradouroDestino} - ${dados.bairroDestino}, ${dados.cidadeDestino}</p>
                             <p>🛣️ <strong>Distância:</strong> ${dados.distanciaKm} km</p>
                             <p>💰 <strong>Valor do Frete:</strong> R$ ${dados.valorFrete.toFixed(2)}</p>
                         </div>
                     `;
-                } else {
-                    resultadoDiv.innerHTML = `<div class="frete-erro">❌ ${dados.mensagem || 'Erro ao processar frete.'}</div>`;
-                }
-
-            } catch (error) {
-                console.error("Erro ao conectar no servidor local C#:", error);
-                resultadoDiv.innerHTML = `<div class="frete-erro">⚠️ Erro de conexão. Certifique-se que sua API C# está rodando!</div>`;
-            }
-        }
-
-        // --- SCRIPTS DO CARRINHO E CONTROLE DE ROLAGEM EXCLUSIVO ---
-        document.addEventListener('DOMContentLoaded', function () {
-            const cartWrapper = document.getElementById('cart-wrapper');
-            const cartBtn = document.getElementById('cart-summary-btn');
-
-            if (cartBtn && cartWrapper) {
-                cartBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    cartWrapper.classList.toggle('active');
-                });
-            }
-
-            document.addEventListener('click', function (e) {
-                if (cartWrapper && cartWrapper.classList.contains('active')) {
-                    if (!cartWrapper.contains(e.target)) {
-                        cartWrapper.classList.remove('active');
+                    } else {
+                        resultadoDiv.innerHTML = `<div class="frete-erro">❌ ${dados.mensagem || 'Erro ao processar frete.'}</div>`;
                     }
+
+                } catch (error) {
+                    console.error("Erro ao conectar no servidor local C#:", error);
+                    resultadoDiv.innerHTML = `<div class="frete-erro">⚠️ Erro de conexão. Certifique-se que sua API C# está rodando!</div>`;
+                }
+            }
+
+            // ===========================================================================
+            // CONTROLE DA GAVETA RETRÁTIL SAZONAIS (OPÇÃO 1)
+            // ===========================================================================
+            function toggleSazonaisMenu(event) {
+                event.stopPropagation();
+                const gaveta = document.getElementById('gaveta-sazonais-container');
+                const dropdown = document.getElementById('dropdown-sazonais');
+
+                if (gaveta && dropdown) {
+                    gaveta.classList.toggle('active');
+                    dropdown.classList.toggle('active');
+                }
+            }
+
+            // Fecha a gaveta se o usuário clicar em qualquer outro lugar da tela
+            document.addEventListener('click', function (e) {
+                const gaveta = document.getElementById('gaveta-sazonais-container');
+                const dropdown = document.getElementById('dropdown-sazonais');
+                if (gaveta && !gaveta.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
+                    gaveta.classList.remove('active');
+                    dropdown.classList.remove('active');
                 }
             });
+            // ===========================================================================
 
-            // ==========================================================================
-            // CÓDIGO DE DETECÇÃO DE ROLAGEM VIA JAVASCRIPT (TRAVA GARANTIDA)
-            // ==========================================================================
-            const menu = document.getElementById('menu-navegacao');
-            const logoArea = document.getElementById('area-do-logo');
+            // --- SCRIPTS DO CARRINHO E CONTROLE DE ROLAGEM EXCLUSIVO ---
+            document.addEventListener('DOMContentLoaded', function () {
+                const cartWrapper = document.getElementById('cart-wrapper');
+                const cartBtn = document.getElementById('cart-summary-btn');
 
-            if (menu && logoArea) {
-                // Descobre a posição exata onde o menu começa na tela
-                const posicaoInicialMenu = menu.offsetTop;
+                if (cartBtn && cartWrapper) {
+                    cartBtn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        cartWrapper.classList.toggle('active');
+                    });
+                }
 
-                window.addEventListener('scroll', function () {
-                    // Se a rolagem atual passar da posição do menu, adiciona a classe fixo
-                    if (window.scrollY >= posicaoInicialMenu) {
-                        menu.classList.add('fixo');
-                    } else {
-                        // Caso volte para o topo da página, libera o menu abaixo do logo
-                        menu.classList.remove('fixo');
+                document.addEventListener('click', function (e) {
+                    if (cartWrapper && cartWrapper.classList.contains('active')) {
+                        if (!cartWrapper.contains(e.target)) {
+                            cartWrapper.classList.remove('active');
+                        }
                     }
                 });
-            }
-        });
-    </script>
-    <script src="./js/script.js"></script>
 
-</body>
+                const menu = document.getElementById('menu-navegacao');
+                const logoArea = document.getElementById('area-do-logo');
+
+                if (menu && logoArea) {
+                    const posicaoInicialMenu = menu.offsetTop;
+
+                    window.addEventListener('scroll', function () {
+                        if (window.scrollY >= posicaoInicialMenu) {
+                            menu.classList.add('fixo');
+                        } else {
+                            menu.classList.remove('fixo');
+                        }
+                    });
+                }
+            });
+        </script>
+        <script src="./js/script.js"></script>
+
+    </body>
 
 </html>

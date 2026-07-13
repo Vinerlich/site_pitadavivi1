@@ -33,8 +33,19 @@ body {
     z-index: 999;
 }
 
+/* --- CLASSE QUE O SEU JAVASCRIPT ATIVA AO ROLAR A PÁGINA --- */
+#menu-navegacao.fixo {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 100000 !important; /* Garante que fique na frente de tudo */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra bonita que aparece só ao rolar */
+    background-color: #ffffff; /* Ajuste para a cor de fundo do seu menu se precisar */
+}
+
 main {
-    padding-top: 20px;
+    padding-top: 20px; 
     flex: 1;
 }
 
@@ -64,16 +75,20 @@ main {
    ========================================================================== */
 .main-nav {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Mantém tudo separado */
     align-items: center;
     padding: 15px 5%;
     background: #ffffff;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     box-sizing: border-box;
     z-index: 99999;
-    transition: all 0.2s ease; /* Transição suave quando fixar */
+}
+
+/* Adicione esta regra logo abaixo para garantir o carrinho */
+.cart-container-wrapper {
+    margin-left: auto; /* Isso joga o carrinho para a direita, longe dos links */
+    display: flex !important;
+    align-items: center;
 }
 
 /* Nova classe que o JavaScript vai injetar APENAS ao rolar a página */
@@ -286,7 +301,10 @@ main {
    ========================================================================== */
 .cart-container-wrapper {
     position: relative;
-    display: inline-block;
+    display: flex; /* Mudei de inline-block para flex */
+    align-items: center;
+    justify-content: center;
+    margin-left: auto; /* Isso empurra o carrinho para a direita no Desktop */
 }
 
 .cart-summary {
@@ -391,6 +409,39 @@ main {
     border-radius: 4px !important;
     box-shadow: none !important;
     margin: 0 !important;
+}
+
+/* --- BARRA DE PROGRESSO DO FRETE GRÁTIS --- */
+.container-frete-gratis {
+    background-color: #fcfbfa; /* Tom creme bem suave para o fundo do box */
+    border: 1px solid #f1ece4; /* Bordas no tom neutro do seu layout */
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.texto-frete {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #4a302a; /* <--- TEXTO EM MARROM: Garante leitura perfeita e combina com os botões */
+    margin: 0 0 8px 0;
+}
+
+.barra-progresso-fundo {
+    width: 100%;
+    height: 10px; /* Aumentei um tiquinho para a cor aparecer melhor */
+    background-color: #f1ece4; /* Fundo cinza/creme claro da barra */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.barra-progresso-preenchimento {
+    height: 100%;
+    width: 0%; /* O JavaScript vai controlar a porcentagem aqui */
+    background-color: #e67e22; /* <--- BARRA EM LARANJA: Dá o destaque ideal enquanto enche */
+    border-radius: 10px;
+    transition: width 0.3s ease-in-out; 
 }
 
 /* ==========================================================================
@@ -961,194 +1012,69 @@ footer {
 /* --- FIM DO ESTILO DO LEMBRETE --- */
 
 /* ==========================================================================
-   7. SEÇÃO DE RESPONSIVIDADE (MOBILE AJUSTADO)
+   7. SEÇÃO DE RESPONSIVIDADE (MOBILE AJUSTADO - DEFINITIVO CORRIGIDO)
    ========================================================================== */
 @media (max-width: 768px) {
-    main {
-        padding-top: 10px;
-    }
-
-    .logo-container {
-        height: 25vw;
-        min-height: 90px;
-    }
-
-    .product-section,
-    .product-section h2,
-    .product-section h3,
-    .section-header-premium,
-    .grid-container[id],
-    div[id],
-    section[id] {
-        scroll-margin-top: 170px !important;
-    }
-
+    /* Força o container principal a ser uma coluna limpa */
     .main-nav {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: nowrap;
-        padding: 10px 15px;
-        background: #ffffff;
-        height: auto;
-        z-index: 999999 !important; /* Garante que a barra principal fique sempre visível no topo */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 10px !important;
     }
 
-    .menu-toggle {
-        display: block !important;
-        order: 1;
-    }
-
+    /* 1. Carrinho no topo de tudo, largura total mas centralizado */
     .cart-container-wrapper {
-        width: auto;
-        margin-top: 0;
-        order: 2;
+        order: 1 !important; 
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        margin-bottom: 15px !important; /* Espaço entre carrinho e o resto */
+        margin-left: 0 !important; 
     }
 
-    .cart-summary {
-        font-size: 13px;
-        padding: 8px 16px;
-        white-space: nowrap;
+    /* 2. Hambúrguer logo abaixo do carrinho */
+    .menu-toggle {
+        order: 2 !important;
+        display: block !important;
+        margin-bottom: 15px !important;
     }
 
-    /* VOLTANDO AO COMPORTAMENTO SEGURO: Menu flutua sobre o conteúdo sem empurrar e sem tela cheia */
+    /* 3. Links de Filtro (Mudado para ROW com WRAP para alinhar horizontalmente) */
     .menu-links {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        position: absolute !important; /* Mantém o padrão original que respeita o topo */
-        top: 100%; /* Abre exatamente abaixo da barra de navegação */
-        left: 0;
-        width: 100%;
-        background: #ffffff;
-        gap: 10px;
-        padding: 15px 0;
-        border-top: 1px solid #f1ece4;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15); /* Sombra elegante para dar sensação de flutuação */
-        z-index: 999999 !important; /* Fica acima de qualquer coisa no site (incluindo o carrossel) */
+        order: 3 !important;
+        display: none !important; 
+        flex-direction: row !important;  /* <- Mudado de column para row */
+        flex-wrap: wrap !important;      /* <- Permite quebrar linha de forma limpa */
+        justify-content: center !important; /* <- Centraliza os botões */
+        gap: 12px !important;            /* <- Cria o espaçamento perfeito entre eles */
+        width: 100% !important;
+        padding: 10px 0 !important;
     }
 
+    /* 4. Quando o menu abre */
     .menu-links.active {
         display: flex !important;
     }
 
-    .dropdown-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
+    /* 5. Ajuste dos botões individuais (Corrige as bordas sobrepostas da foto 2) */
+    .menu-links .blob-btn {
+        margin: 0 !important;            /* Limpa margens antigas ruins */
+        white-space: nowrap !important;  /* Impede o texto do botão de quebrar sozinho */
     }
 
-    .blob-btn {
+    /* 6. Ajuste da gaveta de sazonais (Botões de Páscoa, Dia das Mães, etc.) */
+    .gaveta-content {
         display: flex !important;
-        align-items: center !important;
+        flex-wrap: wrap !important;      /* Faz os sazonais quebrarem linha em vez de esticar */
         justify-content: center !important;
-        width: 100% !important;
-        max-width: 260px !important;
-        height: 40px !important;
-        font-size: 12px !important;
-        color: #4a302a !important;
-        background: transparent !important;
-        border: 2px solid #4a302a !important;
-        border-radius: 30px !important;
+        gap: 12px !important;            /* Espaço uniforme entre os botões sazonais */
+        padding: 10px !important;
     }
 
-    .dropdown-item.open .blob-btn,
-    .dropdown-item.active .blob-btn {
-        background-color: #4a302a !important;
-        color: #ffffff !important;
-    }
-
-    .blob-btn__inner,
-    .blob-btn__blobs,
-    .blob-btn__blob,
-    .blob-btn:before {
-        display: none !important;
-    }
-
-    .dropdown-item .submenu {
-        display: none !important;
-    }
-
-    .dropdown-item.open .submenu,
-    .dropdown-item.active .submenu {
-        display: block !important;
-        position: relative !important;
-        top: 0 !important;
-        left: 0 !important;
-        transform: none !important;
-        width: 100% !important;
-        max-width: 260px !important;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05) !important;
-        border: 1px solid #4a302a !important;
-        margin: 5px 0 !important;
-        border-radius: 10px !important;
-        background-color: #fdfbf7 !important;
-        max-height: none !important;
-        padding: 4px 0 !important;
-        z-index: 999999 !important;
-    }
-
-    .submenu a {
-        display: block !important;
-        color: #4a302a !important;
-        padding: 10px 16px !important;
-        font-size: 12px !important;
-        border-bottom: 1px solid #f5ede6 !important;
-        white-space: normal !important;
-    }
-
-    .submenu a:last-child {
-        border-bottom: none !important;
-    }
-
-    /* Ajuste fino do carrinho mobile */
-    .cart-dropdown {
-        width: calc(100vw - 30px);
-        position: absolute;
-        top: 45px;
-        right: 0;
-        left: auto;
-        z-index: 999999 !important;
-    }
-
-    .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 12px;
-    }
-
-    .card {
-        padding: 12px;
-    }
-
-    .product-img {
-        height: 130px;
-    }
-
-    .product-img:hover {
-        transform: none;
-    }
-
-    .card h4 {
-        font-size: 0.95rem;
-        min-height: 36px;
-    }
-
-    .price-qty-container {
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        width: 100% !important;
-        padding: 6px 8px !important;
-    }
-
-    .qty-input {
-        width: 50px !important;
-        padding: 4px !important;
-        font-size: 13px !important;
+    .btn-sazonal-tag {
+        margin: 0 !important;            /* Evita desalinhamentos nas tags */
     }
 }
 
@@ -1564,8 +1490,10 @@ footer {
 #btn-topo.visivel {
     opacity: 1 !important;
     pointer-events: auto !important;
-}/* ==========================================================================
-   11. BOTÃO VOLTAR AO TOPO (ABAIXO DO WHATSAPP)
+}
+
+/* ==========================================================================
+   11. BOTÃO VOLTAR AO TOPO (ABAIXO DO WHATSAPP) + BALÃO CUSTOMIZADO (TOOLTIP)
    ========================================================================== */
 #btn-topo {
     position: fixed;
@@ -1580,9 +1508,8 @@ footer {
     cursor: pointer;
     font-size: 28px; 
     
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block; /* Alterado para bloco para garantir o posicionamento do balão */
+    text-align: center;
     
     opacity: 0;
     pointer-events: none;
@@ -1590,8 +1517,59 @@ footer {
 }
 
 #btn-topo:hover {
-    color: #000;
+    color: #4a302a; /* Tom marronzinho escuro identidade do Pitadavivi */
     transform: translateY(-3px);
+}
+
+/* --- ESTRUTURA DO BALÃO CUSTOMIZADO (PITADAVIVI STYLE - VERSÃO ALEGRE) --- */
+/* O corpo do balão */
+#btn-topo::before {
+    content: "Voltar ao topo";
+    position: absolute;
+    bottom: 120%; /* Faz o balão nascer logo acima da setinha */
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    
+    /* Cores alegres e convidativas */
+    background-color: #fff7ed; /* Fundo creme/laranja bem clarinho e iluminado */
+    color: #c2410c;            /* Texto em tom terracota/laranja vibrante */
+    border: 1px solid #ffedd5; /* Borda suave para dar acabamento */
+    
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;          /* Texto um pouco mais grosso para destacar bem */
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    padding: 5px 12px;
+    border-radius: 20px;       /* Bordas bem arredondadas para ficar mais amigável */
+    box-shadow: 0 4px 10px rgba(194, 65, 12, 0.08); /* Sombra levemente colorida */
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* A setinha do balão (o triângulo na base) */
+#btn-topo::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #ffedd5 transparent transparent transparent; /* Triângulo acompanhando a cor da borda */
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* --- EFEITO AO PASSAR O MOUSE --- */
+#btn-topo:hover::before,
+#btn-topo:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Ajuste para mobile */
@@ -1600,6 +1578,10 @@ footer {
         bottom: 20px; /* Ajuste fino na base para telas mobile */
         right: 20px;
         font-size: 24px;
+    }
+    /* Desativa o balão no celular para não atrapalhar o toque do dedo */
+    #btn-topo::before, #btn-topo::after {
+        display: none !important;
     }
 }
 
@@ -1610,7 +1592,7 @@ footer {
 }
 
 /* ==========================================================================
-   TAGS AFETIVAS - PITADAVIVI
+  12. TAGS AFETIVAS - PITADAVIVI
    ========================================================================== */
 
 /* 1. Garante que o card seja a base segura para a tag flutuar */
@@ -1626,4 +1608,132 @@ footer {
 /* 3. Evita que qualquer elemento atrapalhe a imagem ao passar o mouse */
 .card .product-img {
     transition: transform 0.3s ease-in-out;
+}
+
+/* 3. Evita que qualquer elemento atrapalhe a imagem ao passar o mouse */
+.card .product-img {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* ==========================================================================
+   GAVETA RETRÁTIL PARA O MENU SAZONAIS (ESTRUTURA DE FLUXO NATURAL)
+   ========================================================================== */
+.gaveta-sazonais {
+    display: block;
+    width: 100%;
+    background-color: #fdfbf7; /* Tom creme aconchegante */
+    max-height: 0; /* Começa totalmente fechada e sem ocupar espaço */
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, visibility 0.3s, padding 0.3s ease;
+    
+    /* O SEGREDO: Mudar para relative faz ela empurrar o carrinho e o conteúdo do site para baixo */
+    position: relative !important; 
+    border-bottom: none;
+    box-shadow: none;
+    z-index: 10;
+}
+
+/* Quando ativa pelo clique, expande o tamanho e empurra o site suavemente */
+.gaveta-sazonais.active {
+    max-height: 180px; 
+    opacity: 1;
+    visibility: visible;
+    padding: 15px 0;
+    border-bottom: 1px solid #e2dacb;
+    box-shadow: inset 0px -8px 10px rgba(0, 0, 0, 0.02); /* Sombra sutil interna */
+}
+
+.gaveta-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 20px;
+}
+
+/* Botões arredondados idênticos aos seus filtros */
+.btn-sazonal-tag {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #4a302a;
+    background: #ffffff;
+    border: 1px solid #e2dacb;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-sazonal-tag:hover {
+    background-color: #4a302a;
+    color: #ffffff;
+    border-color: #4a302a;
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   CONFIGURAÇÃO DE LAYOUT E RESPONSIVIDADE
+   ========================================================================== */
+
+/* --- PARA DESKTOP (Telão) --- */
+@media (min-width: 769px) {
+    .menu-toggle, #mobile-menu-btn {
+        display: none !important;
+    }
+    
+    .main-nav {
+        display: flex !important;
+        flex-direction: row !important; /* Em linha */
+        align-items: center;
+        justify-content: space-between; /* Empurra o carrinho para um lado, menu para outro */
+    }
+
+    .menu-links {
+        display: flex !important; /* Sempre visível no desktop */
+        flex-direction: row !important;
+    }
+}
+
+/* --- PARA MOBILE (Celular) --- */
+@media (max-width: 768px) {
+    .main-nav {
+        display: flex !important;
+        flex-direction: column !important; /* Em coluna */
+        align-items: center;
+        width: 100%;
+    }
+
+    .menu-toggle {
+        display: block !important;
+        order: 1;
+    }
+
+    .cart-container-wrapper {
+        order: 2; /* Carrinho logo após o menu */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .menu-links {
+        order: 3;
+        display: none; /* Escondido por padrão */
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    .menu-links.active {
+        display: flex !important;
+    }
+
+    .gaveta-sazonais.active {
+        max-height: 350px;
+    }
 }

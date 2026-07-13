@@ -7,8 +7,8 @@ let valorFrete = 0;
 
 const catalogoProdutos = {
     'grid-geleias': [
-        { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg', tag: 'mais_vendido' },
-        { nome: 'Geleia de Damasco Artesanal', preco: 22.00, img: 'GeleiaDamasco.jpg' },
+        { nome: 'Geleia de Amora com manjericão', preco: 18.50, img: 'GeleiaAmora.jpg'},
+        { nome: 'Geleia de Damasco Artesanal', preco: 22.00, img: 'GeleiaDamasco.jpg', tag: 'mais_vendido' },
         { nome: 'Geleia de Pimenta Premium', preco: 24.50, img: 'GeleiaPimenta.jpg', tag: 'novidade' }
     ],
     'grid-antepastos': [
@@ -331,57 +331,59 @@ function gerarCardHTML(nome, preco, arquivoImagem, eBoloFesta, ehSazonalForaDeEp
         seletorHTML = `<div class="unit-selector" style="visibility: hidden; margin: 0; height: 0;"></div>`;
     }
 
-    // Configuração ULTRA DELICADA e MINIMALISTA das tags
+    // Configuração com as descrições (title) explicativas e sutis
     const CONFIG_TAGS = {
         mais_vendido: { 
             texto: "Pitada de Amor", 
             icone: "fas fa-heart", 
             corFundo: "rgba(255, 240, 245, 0.95)", 
             corTexto: "#be123c", 
-            corBorda: "#fecdd3" 
+            corBorda: "#fecdd3",
+            explicacao: "O queridinho dos nossos clientes e o mais vendido da casa!" 
         },
         novidade: { 
             texto: "Pitada Quentinha", 
             icone: "fas fa-fire-alt", 
             corFundo: "rgba(255, 247, 237, 0.95)", 
             corTexto: "#c2410c", 
-            corBorda: "#ffedd5" 
+            corBorda: "#ffedd5",
+            explicacao: "Novidade fresquinha que acabou de chegar ao catálogo!" 
         },
         especial: { 
             texto: "Receita de Coração", 
             icone: "fas fa-star", 
             corFundo: "rgba(253, 242, 248, 0.95)", 
             corTexto: "#db2777", 
-            corBorda: "#fce7f3" 
+            corBorda: "#fce7f3",
+            explicacao: "Uma receita exclusiva desenvolvida com muito carinho pela Vivi!" 
         }
     };
 
-    // Gera o HTML da tag em tamanho mini
     let tagHTML = '';
     if (!ehSazonalForaDeEpoca && tagType && CONFIG_TAGS[tagType]) {
         const tag = CONFIG_TAGS[tagType];
         tagHTML = `
-            <span style="
+            <span title="${tag.explicacao}" style="
                 position: absolute !important;
                 top: 10px !important;
                 left: 10px !important;
                 background-color: ${tag.corFundo} !important;
                 color: ${tag.corTexto} !important;
                 border: 1px solid ${tag.corBorda} !important;
-                padding: 2px 7px !important; /* Reduzido para ficar bem estreito */
+                padding: 2px 7px !important;
                 border-radius: 20px !important;
-                font-size: 0.65rem !important; /* Letra menor e discreta */
+                font-size: 0.65rem !important;
                 font-weight: 700 !important;
                 letter-spacing: 0.2px !important;
                 box-shadow: 0 2px 5px rgba(74, 48, 42, 0.08) !important;
                 z-index: 10 !important;
-                pointer-events: none !important;
                 font-family: 'Open Sans', sans-serif !important;
                 display: inline-flex !important;
                 align-items: center !important;
                 gap: 4px !important;
                 user-select: none !important;
                 line-height: 1 !important;
+                cursor: help !important;
             ">
                 <i class="${tag.icone}" style="font-size: 0.6rem; margin-top: -1px;"></i>
                 ${tag.texto}
@@ -438,18 +440,66 @@ function renderizarCatalogo() {
         }
     }
 
+    // 1B. INJEÇÃO DOS BOTÕES DE FILTRO DE CATEGORIAS (PITADAVIVI STYLE)
+    if (!document.getElementById('container-filtros-topo')) {
+        const filtrosWrapper = document.createElement('div');
+        filtrosWrapper.id = 'container-filtros-topo';
+        filtrosWrapper.style.cssText = "margin: 0 auto 30px auto; max-width: 1200px; width: 90%; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; overflow-x: auto; padding: 5px 0; box-sizing: border-box;";
+
+        const botoesCategorias = [
+            { id: 'grid-geleias', nome: '🍓 Geleias' },
+            { id: 'grid-antepastos', nome: '🍆 Antepastos' },
+            { id: 'grid-sobremesas', nome: '🍮 Sobremesas' },
+            { id: 'grid-caseirinhos', nome: '🍞 Caseirinhos' },
+            { id: 'grid-festa', nome: '🎂 Bolos de Festa' },
+            { id: 'grid-paes-doces', nome: '🥐 Pães Doces' },
+            { id: 'grid-paes-salgados', nome: '🥖 Pães Salgados' },
+            { id: 'grid-tortas-doces', nome: '🥧 Tortas Doces' },
+            { id: 'grid-tortas-salgadas', nome: '🍗 Tortas Salgadas' }
+        ];
+
+        let botoesHTML = '';
+        botoesCategorias.forEach(cat => {
+            if (document.getElementById(cat.id)) {
+                botoesHTML += `
+                    <button class="filtro-btn" onclick="rolarParaCategoria('${cat.id}')" style="
+                        background-color: #fff7ed;
+                        color: #c2410c;
+                        border: 1px solid #ffedd5;
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        font-family: 'Open Sans', sans-serif;
+                        font-size: 0.85rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        box-shadow: 0 2px 6px rgba(194, 65, 12, 0.04);
+                        transition: all 0.2s ease;
+                        white-space: nowrap;
+                    " onmouseover="this.style.backgroundColor='#ffedd5'; this.style.transform='translateY(-1px)';" onmouseout="this.style.backgroundColor='#fff7ed'; this.style.transform='translateY(0)';">
+                        ${cat.nome}
+                    </button>
+                `;
+            }
+        });
+
+        if (botoesHTML !== '') {
+            filtrosWrapper.innerHTML = botoesHTML;
+            const avisoGeral = document.getElementById('aviso-encomenda-geral');
+            const corpoPrincipal = document.querySelector('main');
+            if (avisoGeral && corpoPrincipal) {
+                avisoGeral.insertAdjacentElement('afterend', filtrosWrapper);
+            }
+        }
+    }
+
     // 2. Loop de varredura do objeto catalogoProdutos
     for (let idGrid in catalogoProdutos) {
         const container = document.getElementById(idGrid);
-        
-        // Se o container não existir nesta página, pula para o próximo
         if (!container) continue;
 
         const ehSazonal = idGrid.includes('sazonal') || idGrid.includes('junina') || idGrid.includes('copa') || idGrid.includes('pascoa') || idGrid.includes('natal') || idGrid.includes('ano-novo') || idGrid.includes('namorados') || idGrid.includes('maes') || idGrid.includes('pais') || idGrid.includes('criancas');
-        
         let ativoAtualmente = false;
         
-        // Verifica se a data sazonal está ativa
         try {
             if (typeof rulesSazonais !== 'undefined' && rulesSazonais[idGrid]) {
                 ativoAtualmente = verificarSazonalAtivo(idGrid);
@@ -459,11 +509,9 @@ function renderizarCatalogo() {
         }
 
         if (ehSazonal) {
-            // No seu HTML, o bloco pai usa a classe '.bloco-sazonal-epoca'
             const blocoPai = container.closest('.bloco-sazonal-epoca');
 
             if (ativoAtualmente) {
-                // Se estiver na época, exibe no topo tirando o 'display: none' do CSS
                 if (blocoPai) {
                     blocoPai.style.setProperty('display', 'block', 'important');
                     blocoPai.classList.add('ativo');
@@ -478,20 +526,17 @@ function renderizarCatalogo() {
                     container.innerHTML = `<p style="grid-column: 1/-1; color: #777; font-style: italic; padding: 10px;">Preparando novidades para esta época!</p>`;
                 }
             } else {
-                // Se NÃO estiver na época, garante que fique oculto no topo
                 if (blocoPai) {
                     blocoPai.style.setProperty('display', 'none', 'important');
                     blocoPai.classList.remove('ativo');
                 }
 
-                // Agrupa os produtos para mandar para a Galeria Bege do rodapé
                 if (catalogoProdutos[idGrid] && catalogoProdutos[idGrid].length > 0) {
                     let cardsDoBloco = '';
                     catalogoProdutos[idGrid].forEach(produto => {
                         cardsDoBloco += gerarCardHTML(produto.nome, produto.preco, produto.img, false, true, produto.tag);
                     });
 
-                    // Define um título bonito baseado no ID
                     let tituloConstruido = idGrid.replace('grid-', '').replace(/-/g, ' ');
                     
                     containerSazonaisOcultosHTML += `
@@ -502,7 +547,6 @@ function renderizarCatalogo() {
                 }
             }
         } else {
-            // CATEGORIAS FIXAS (Geleias, Antepastos, Bolos...)
             container.innerHTML = '';
             const eBoloFesta = (idGrid === 'grid-festa');
 
@@ -544,7 +588,6 @@ function renderizarCatalogo() {
             if (principal) principal.appendChild(portfolioWrapper);
         }
 
-        // Configuração do clique para abrir/fechar a galeria
         const btnToggle = document.getElementById('btn-toggle-portfolio');
         if (btnToggle) {
             btnToggle.addEventListener('click', function (e) {
@@ -564,7 +607,6 @@ function renderizarCatalogo() {
     }
 }
 
-// Inicializador automático para evitar problemas com a ordem do HTML
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderizarCatalogo);
 } else {
@@ -578,9 +620,6 @@ function consultarProdutoForaDeEpoca(nomeProduto) {
 }
 window.consultarProdutoForaDeEpoca = consultarProdutoForaDeEpoca;
 
-/* ==========================================================================
-   FUNÇÃO AUXILIAR DE NAVEGAÇÃO: IR ATÉ A ÉPOCA SELECIONADA (PERFEITA)
-   ========================================================================== */
 function mostrarApenasEpoca(idRecebido) {
     if (!idRecebido) return;
 
@@ -626,6 +665,18 @@ function mostrarApenasEpoca(idRecebido) {
 window.mostrarApenasEpoca = mostrarApenasEpoca;
 
 /* ==========================================================================
+   FUNÇÃO AUXILIAR DE NAVEGAÇÃO: ROLAR ATÉ A CATEGORIA FIXA SELECIONADA
+   ========================================================================== */
+function rolarParaCategoria(idGrid) {
+    const container = document.getElementById(idGrid);
+    if (container) {
+        const tituloSecao = container.previousElementSibling || container;
+        tituloSecao.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+window.rolarParaCategoria = rolarParaCategoria;
+
+/* ==========================================================================
    5. GERENCIAMENTO E INTERFACE DO CARRINHO
    ========================================================================== */
 function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
@@ -659,6 +710,11 @@ function atualizarInterfaceCarrinho() {
     const listaContainer = document.getElementById('cart-items-list');
     const totalCountSpan = document.getElementById('cart-count');
     const totalMoneySpan = document.getElementById('cart-total');
+    
+    // Elementos da barra de frete grátis
+    const textoFrete = document.getElementById('texto-frete');
+    const barraProgresso = document.getElementById('barra-progresso');
+    const valorMinimoFreteGratis = 150.00;
 
     if (!listaContainer) return;
 
@@ -667,6 +723,12 @@ function atualizarInterfaceCarrinho() {
         if (totalCountSpan) totalCountSpan.innerText = '0';
         if (totalMoneySpan) totalMoneySpan.innerText = '0,00';
         totalCompra = 0;
+
+        /* --- AJUSTE FRETE GRÁTIS: CARRINHO VAZIO --- */
+        if (textoFrete && barraProgresso) {
+            barraProgresso.style.width = '0%';
+            textoFrete.innerHTML = `Faltam apenas <strong>R$ 150,00</strong> para você ganhar Frete Grátis!`;
+        }
         return;
     }
 
@@ -699,6 +761,22 @@ function atualizarInterfaceCarrinho() {
     totalCompra = totalGeral;
     if (totalCountSpan) totalCountSpan.innerText = totalItensContador;
     if (totalMoneySpan) totalMoneySpan.innerText = totalGeral.toFixed(2).replace('.', ',');
+
+    /* --- AJUSTE FRETE GRÁTIS: ATUALIZAÇÃO DINÂMICA DO PROGRESSO --- */
+    if (textoFrete && barraProgresso) {
+        const quantoFalta = valorMinimoFreteGratis - totalGeral;
+        const porcentagem = Math.min((totalGeral / valorMinimoFreteGratis) * 100, 100);
+
+        // Define a largura da barra laranja
+        barraProgresso.style.width = `${porcentagem}%`;
+
+        // Modifica o texto baseado no valor restante
+        if (quantoFalta > 0) {
+            textoFrete.innerHTML = `Faltam apenas <strong>R$ ${quantoFalta.toFixed(2).replace('.', ',')}</strong> para você ganhar Frete Grátis!`;
+        } else {
+            textoFrete.innerHTML = "Parabéns! Você ganhou <strong>Frete Grátis</strong> 🎉";
+        }
+    }
 }
 window.atualizarInterfaceCarrinho = atualizarInterfaceCarrinho;
 

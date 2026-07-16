@@ -124,7 +124,7 @@ function obterDiaDoDomingo(ano, mes, ordem) {
 }
 
 /* ==========================================================================
-   2. INICIALIZAÇÃO DA PÁGINA
+   2. INICIALIZAÇÃO DA PÁGINA E MODAIS
    ========================================================================== */
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
@@ -137,12 +137,23 @@ window.addEventListener('beforeunload', () => {
 window.onload = () => {
     window.scrollTo(0, 0);
 
-    setTimeout(() => {
-        const modal = document.getElementById('promo-modal');
-        if (modal) {
-            modal.classList.add('show');
+    // Só mostra o modal inicial se o usuário ainda NÃO resgatou o mimo
+    const mimoResgatado = localStorage.getItem('pitadavivi_mimo_resgatado');
+    
+    if (mimoResgatado !== 'true') {
+        setTimeout(() => {
+            const modal = document.getElementById('promo-modal');
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }, 1000);
+    } else {
+        // Se já foi resgatado e pago em uma compra anterior, garante que o botão flutuante comece escondido
+        const lembrete = document.getElementById('cupom-lembrete');
+        if (lembrete) {
+            lembrete.style.display = 'none';
         }
-    }, 1000);
+    }
 
     renderizarCatalogo();
     if (typeof configurarCliquesSubmenu === 'function') configurarCliquesSubmenu();
@@ -233,15 +244,20 @@ function fecharModal() {
         modal.classList.remove('show');
     }
 
-    localStorage.setItem('modalMimoVisto', 'true');
+    // Marca apenas que o modal foi visto para não abrir em cada clique interno,
+    // mas não guarda como resgatado no localStorage.
+    sessionStorage.setItem('modalMimoVisto', 'true');
 
-    if (lembrete) {
+    // Sempre mostra o botão flutuante se a compra ainda não tiver sido concluída/paga definitivamente
+    const mimoResgatado = localStorage.getItem('pitadavivi_mimo_resgatado');
+    if (lembrete && mimoResgatado !== 'true') {
         setTimeout(() => {
             lembrete.classList.add('show');
         }, 300);
     }
 }
 
+// Expõe as funções dos modais globalmente
 window.copiarCupom = copiarCupom;
 window.fecharModal = fecharModal;
 
@@ -692,6 +708,7 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
     if (itemExistente) {
         itemExistente.quantidade = quantidade;
     } else {
+        // CORRIGIDO: Agora usa "quantidade" perfeitamente em português!
         carrinho.push({ nome: nome, tipo: tipoVenda, preco: precoBase, quantidade: quantidade });
     }
 
@@ -704,7 +721,42 @@ function adicionarAoCarrinho(nome, precoBase, tipoVenda, botao) {
         botao.style.background = "";
     }, 800);
 }
-window.adicionarAoCarrinho = adicionarAoCarrinho;
+
+/**
+ * Adiciona o Mimo diretamente no seu array global de carrinho "carrinho"
+ * Mantém o botão flutuante ativo no site até a conclusão real do pagamento.
+ */
+function adicionarMimoDireto() {
+    const itemMimo = {
+        nome: '🎁 Mimo Especial: Doce Artesanal',
+        preco: 0.00,
+        tipo: 'Unidade', // Ajustado para conversar com seu labelTipo (kg ou un)
+        quantidade: 1
+    };
+
+    // Garante que a variável carrinho global exista no escopo
+    if (typeof carrinho === 'undefined') {
+        window.carrinho = [];
+    }
+
+    // Escudo protetor: Verifica se o mimo já foi inserido para evitar duplicados
+    const jaTemMimo = carrinho.some(item => item.nome === itemMimo.nome);
+
+    if (!jaTemMimo) {
+        // Empurra o item de mimo diretamente para o seu array global
+        carrinho.push(itemMimo);
+        
+        // Atualiza a visualização do carrinho usando a sua função
+        atualizarInterfaceCarrinho();
+        
+        alert("🎉 Delícia! Seu mimo exclusivo de primeira compra foi adicionado ao seu carrinho!");
+    } else {
+        alert("Seu mimo já está garantido no carrinho! 😉");
+    }
+
+    // NOTA: Não limpamos o botão ou gravamos no localStorage aqui!
+    // Ele só sairá de cena no futuro com a nossa integração de pagamento aprovado.
+}
 
 function atualizarInterfaceCarrinho() {
     const listaContainer = document.getElementById('cart-items-list');
@@ -778,7 +830,6 @@ function atualizarInterfaceCarrinho() {
         }
     }
 }
-window.atualizarInterfaceCarrinho = atualizarInterfaceCarrinho;
 
 function alterarQuantidadeDropdown(index, modificador) {
     if (!carrinho[index]) return;
@@ -786,13 +837,18 @@ function alterarQuantidadeDropdown(index, modificador) {
     if (carrinho[index].quantidade <= 0) { carrinho.splice(index, 1); }
     atualizarInterfaceCarrinho();
 }
-window.alterarQuantidadeDropdown = alterarQuantidadeDropdown;
 
 function removerItemDropdown(index) {
     if (!carrinho[index]) return;
     carrinho.splice(index, 1);
     atualizarInterfaceCarrinho();
 }
+
+// Expõe as funções do carrinho globalmente para o HTML
+window.adicionarAoCarrinho = adicionarAoCarrinho;
+window.adicionarMimoDireto = adicionarMimoDireto;
+window.atualizarInterfaceCarrinho = atualizarInterfaceCarrinho;
+window.alterarQuantidadeDropdown = alterarQuantidadeDropdown;
 window.removerItemDropdown = removerItemDropdown;
 
 /* ==========================================================================
@@ -1187,3 +1243,25 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM totalmente carregado. Iniciando renderização...");
     renderizarCatalogo();
 });
+
+/* ==========================================================================
+   14. FUTURA INTEGRAÇÃO: CONFIRMAÇÃO DE PAGAMENTO (Tarefa do Keep)
+   ========================================================================== 
+   Esta função será ativada automaticamente pelo gateway de pagamento 
+   (Mercado Pago, etc.) assim que o PIX/cartão for aprovado. 
+   Ela garante que o mimo seja considerado "usado" definitivamente. */
+
+/*
+function confirmarPagamentoSite() {
+    // Código para processar o pedido e fechar a venda...
+    
+    // Agora sim! O pagamento foi confirmado de verdade, então o mimo é "consumido"
+    localStorage.setItem('pitadavivi_mimo_resgatado', 'true');
+    
+    // Opcional: Recarrega ou esconde o botão flutuante se o cliente ainda estiver na página
+    const lembrete = document.getElementById('cupom-lembrete');
+    if (lembrete) {
+        lembrete.style.display = 'none';
+    }
+}
+*/
